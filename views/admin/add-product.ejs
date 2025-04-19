@@ -1,0 +1,684 @@
+<%- include('../partials/admin/header') %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Laptop</title>
+    <style>
+       * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Form Container */
+.form-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Title */
+.form-title {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+/* Form Sections */
+.form-section {
+    margin-bottom: 30px;
+}
+
+.section-title {
+    font-size: 18px;
+    color: #34495e;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+
+/* Form Rows for Side-by-Side Fields */
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+/* Form Group */
+.form-group {
+    flex: 1;
+    min-width: 250px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #3498db;
+}
+
+.form-group textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+/* Error Messages */
+.error-message {
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+/* Image Upload Section */
+.image-upload {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    background-color: #fafafa;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.image-upload:hover {
+    border-color: #3498db;
+}
+
+.image-upload i {
+    font-size: 40px;
+    color: #7f8c8d;
+    margin-bottom: 10px;
+}
+
+.upload-text {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.upload-hint {
+    font-size: 12px;
+    color: #777;
+}
+
+.image-upload input[type="file"] {
+    display: none;
+}
+
+/* Thumbnail Preview */
+.thumbnail-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.thumbnail {
+    position: relative;
+    width: 100px;
+    height: 100px;
+}
+
+.thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.thumbnail .remove-img {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 20px;
+    height: 20px;
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    font-size: 14px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.thumbnail .remove-img:hover {
+    background-color: #c0392b;
+}
+
+/* Action Buttons */
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.btn-outline {
+    padding: 10px 20px;
+    font-size: 14px;
+    color: #333;
+    background-color: transparent;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+    background-color: #f0f0f0;
+    border-color: #999;
+}
+
+.btn-primary {
+    padding: 10px 20px;
+    font-size: 14px;
+    color: #fff;
+    background-color: #3498db;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .form-container {
+        margin: 20px;
+        padding: 15px;
+    }
+
+    .form-row {
+        flex-direction: column;
+    }
+
+    .form-group {
+        min-width: 100%;
+    }
+
+    .actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn-outline,
+    .btn-primary {
+        width: 100%;
+    }
+}
+
+/* Cropper Modal Styles */
+.cropper-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.cropper-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 90%;
+    max-height: 90%;
+    width: 800px;
+}
+
+.cropper-preview {
+    max-width: 100%;
+    max-height: 400px;
+}
+
+.cropper-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.cropper-buttons button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.cropper-cancel {
+    background-color: #dc3545;
+    color: white;
+}
+
+.cropper-apply {
+    background-color: #28a745;
+    color: white;
+}
+
+.cropper-options {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.cropper-options button {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+}
+
+.cropper-options button:hover {
+    background: #f0f0f0;
+}
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+</head>
+<body>
+    <div class="form-container">
+        <h2 class="form-title">Add New Laptop</h2>
+        
+        <% if (error) { %>
+            <div style="color: red; margin-bottom: 15px;"><%= error %></div>
+        <% } %>
+
+        <form id="add-product-form" method="post" action="/admin/addProducts" enctype="multipart/form-data">
+            <!-- Basic Information -->
+            <div class="form-section">
+                <h3 class="section-title">Basic Information</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="product-name">Product Name*</label>
+                        <input type="text" id="product-name" name="productName" placeholder="Enter laptop name" required>
+                        <span id="productName-error" class="error-message" style="color: red; display: none;"></span>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="category">Category*</label>
+                        <select id="category" name="category">
+                            <option value="" disabled selected>Select</option>
+                            <% for(let i=0; i<cat.length; i++) { %>
+                                <option value="<%= cat[i].name %>"><%= cat[i].name %></option>
+                            <% } %>
+                        </select>
+                        <span id="category-error" class="error-message" style="color: red; display: none;"></span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Product Description*</label>
+                    <textarea id="descriptionid" name="description" placeholder="Describe the laptop features and benefits" required></textarea>
+                    <span id="description-error" class="error-message" style="color: red; display: none;"></span>
+                </div>
+            </div>
+            
+            <!-- Pricing Information -->
+            <div class="form-section">
+                <h3 class="section-title">Pricing Information</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="regular-price">Regular Price ($)*</label>
+                        <input type="number" id="regular-price" name="regularPrice" min="0" step="0.01" placeholder="0.00" required>
+                        <span id="regularPrice-error" class="error-message" style="color: red; display: none;"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="sale-price">Sale Price ($)</label>
+                        <input type="number" id="sale-price" name="salePrice" min="0" step="0.01" placeholder="0.00">
+                        <span id="salePrice-error" class="error-message" style="color: red; display: none;"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Inventory -->
+            <div class="form-section">
+                <h3 class="section-title">Inventory</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="stock">Stock Quantity*</label>
+                        <input type="number" id="stock" name="quantity" min="0" placeholder="0" required>
+                        <span id="quantity-error" class="error-message" style="color: red; display: none;"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Images -->
+            <div class="form-section">
+                <h3 class="section-title">Product Images</h3>
+                <div class="image-upload">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p class="upload-text">Drag and drop or click to upload images</p>
+                    <p class="upload-hint">JPEG, PNG formats, up to 5MB, max 4 images</p>
+                    <input type="file" id="input1" name="productImages" multiple accept="image/jpeg,image/jpg,image/png,image/webp" required>
+                </div>
+                <span id="images-error" class="error-message" style="color: red; display: none;"></span>
+                <div class="thumbnail-preview" id="thumbnail-preview"></div>
+            </div>
+            
+            <div class="actions">
+                <button type="button" class="btn-outline" onclick="window.location.href='/admin/products'">Cancel</button>
+                <button type="submit" class="btn-primary">Add Product</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+         
+        let cropper;
+        let currentFile;
+        let croppedImages = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const input = document.getElementById('input1');
+            const imageUploadDiv = document.querySelector('.image-upload');
+            const previewContainer = document.getElementById('thumbnail-preview');
+            const errorSpan = document.getElementById('images-error');
+            let selectedFiles = [];
+
+            imageUploadDiv.addEventListener('click', () => input.click());
+
+            input.addEventListener('change', function() {
+                const newFiles = Array.from(this.files);
+                if (newFiles.length > 4) {
+                    errorSpan.textContent = 'Maximum 4 images allowed';
+                    errorSpan.style.display = 'block';
+                    return;
+                }
+                selectedFiles = newFiles;
+                if (selectedFiles.length > 0) {
+                    openCropper(selectedFiles[0]);
+                }
+            });
+
+            function openCropper(file) {
+                currentFile = file;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const modal = document.getElementById('cropperModal');
+                    const image = document.getElementById('cropperImage');
+                    image.src = e.target.result;
+                    modal.style.display = 'block';
+                    
+                    if (cropper) {
+                        cropper.destroy();
+                    }
+                    
+                    cropper = new Cropper(image, {
+                        aspectRatio: 1,
+                        viewMode: 1,
+                        autoCropArea: 1,
+                        responsive: true,
+                        restore: false,
+                        modal: true,
+                        guides: true,
+                        highlight: true,
+                        cropBoxMovable: true,
+                        cropBoxResizable: true,
+                        toggleDragModeOnDblclick: false,
+                        minCropBoxWidth: 100,
+                        minCropBoxHeight: 100,
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+
+            window.rotateLeft = function() {
+                if (cropper) {
+                    cropper.rotate(-90);
+                }
+            };
+
+            window.rotateRight = function() {
+                if (cropper) {
+                    cropper.rotate(90);
+                }
+            };
+
+            window.flipHorizontal = function() {
+                if (cropper) {
+                    cropper.scaleX(-cropper.getData().scaleX || -1);
+                }
+            };
+
+            window.flipVertical = function() {
+                if (cropper) {
+                    cropper.scaleY(-cropper.getData().scaleY || -1);
+                }
+            };
+
+            window.resetCrop = function() {
+                if (cropper) {
+                    cropper.reset();
+                }
+            };
+
+            window.cancelCrop = function() {
+                const modal = document.getElementById('cropperModal');
+                modal.style.display = 'none';
+                if (cropper) {
+                    cropper.destroy();
+                }
+                input.value = '';
+                selectedFiles = [];
+                croppedImages = [];
+                renderThumbnails();
+            };
+
+            window.applyCrop = function() {
+                if (cropper) {
+                    const canvas = cropper.getCroppedCanvas({
+                        width: 440,
+                        height: 440,
+                        minWidth: 256,
+                        minHeight: 256,
+                        maxWidth: 4096,
+                        maxHeight: 4096,
+                        fillColor: '#fff',
+                        imageSmoothingEnabled: true,
+                        imageSmoothingQuality: 'high',
+                    });
+                    
+                    canvas.toBlob((blob) => {
+                        const croppedFile = new File([blob], currentFile.name, {
+                            type: 'image/jpeg',
+                            lastModified: Date.now()
+                        });
+                        
+                        croppedImages.push(croppedFile);
+                        renderThumbnails();
+                        
+                        const modal = document.getElementById('cropperModal');
+                        modal.style.display = 'none';
+                        cropper.destroy();
+                        
+                        if (selectedFiles.length > croppedImages.length) {
+                            openCropper(selectedFiles[croppedImages.length]);
+                        }
+                    }, 'image/jpeg', 0.9);
+                }
+            };
+
+            function renderThumbnails() {
+                previewContainer.innerHTML = '';
+                if (croppedImages.length === 0) {
+                    errorSpan.style.display = 'block';
+                    errorSpan.textContent = 'Please select at least one image';
+                } else {
+                    errorSpan.style.display = 'none';
+                }
+
+                croppedImages.forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const thumbnail = document.createElement('div');
+                        thumbnail.className = 'thumbnail';
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        const removeBtn = document.createElement('button');
+                        removeBtn.className = 'remove-img';
+                        removeBtn.innerHTML = '×';
+                        removeBtn.addEventListener('click', () => {
+                            croppedImages.splice(index, 1);
+                            selectedFiles.splice(index, 1);
+                            updateFileInput();
+                            renderThumbnails();
+                        });
+                        thumbnail.appendChild(img);
+                        thumbnail.appendChild(removeBtn);
+                        previewContainer.appendChild(thumbnail);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+
+            function updateFileInput() {
+                const dataTransfer = new DataTransfer();
+                croppedImages.forEach(file => dataTransfer.items.add(file));
+                input.files = dataTransfer.files;
+            }
+
+            document.getElementById('add-product-form').addEventListener('submit', function(e) {
+                console.log('Form submission attempted');
+                if (!validateForm()) {
+                    console.log('Validation failed');
+                    e.preventDefault();
+                } else {
+                    console.log('Validation passed, submitting form');
+                }
+            });
+
+            function validateForm() {
+                clearErrorMessages();
+                const name = document.getElementById('product-name').value;
+                const description = document.getElementById('descriptionid').value;
+                const price = document.getElementById('regular-price').value;
+                const salePrice = document.getElementById('sale-price').value || '0';
+                const category = document.getElementById('category').value;
+                const quantity = document.getElementById('stock').value;
+                let isValid = true;
+
+                if (name.trim() === "") {
+                    displayErrorMessage('productName-error', 'Please enter a product name');
+                    isValid = false;
+                } else if (!/^[a-zA-Z0-9\s,()\-.]+$/.test(name.trim())) {
+                    displayErrorMessage('productName-error', 'Product name should contain only alphabetic characters, numbers, spaces, commas, parentheses, hyphens, and periods');
+                    isValid = false;
+                }
+                if (description.trim() === "") {
+                    displayErrorMessage('description-error', 'Please enter a product description');
+                    isValid = false;
+                } else if (!/^[a-zA-Z0-9\s,()\-.]+$/.test(description.trim())) {
+                    displayErrorMessage('description-error', 'Product description should contain only alphabetic characters, numbers, spaces, commas, parentheses, hyphens, and periods');
+                    isValid = false;
+                }
+
+                if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
+                    displayErrorMessage('regularPrice-error', 'Please enter a valid non-negative price');
+                    isValid = false;
+                }
+
+                if (salePrice && (!/^\d+(\.\d{1,2})?$/.test(salePrice) || parseFloat(salePrice) < 0)) {
+                    displayErrorMessage('salePrice-error', 'Please enter a valid non-negative price');
+                    isValid = false;
+                }
+
+                if (parseFloat(price) <= parseFloat(salePrice)) {
+                    displayErrorMessage('regularPrice-error', 'Regular price must be greater than sale price');
+                    isValid = false;
+                }
+
+                if (!quantity || parseInt(quantity) < 0) {
+                    displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity');
+                    isValid = false;
+                }
+
+                if (selectedFiles.length === 0) {
+                    displayErrorMessage('images-error', 'Please select at least one image');
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+
+            function displayErrorMessage(elementId, message) {
+                const errorElement = document.getElementById(elementId);
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            }
+
+            function clearErrorMessages() {
+                const errorElements = document.getElementsByClassName('error-message');
+                Array.from(errorElements).forEach(element => {
+                    element.textContent = '';
+                    element.style.display = 'none';
+                });
+            }
+        });
+    </script>
+    <div class="cropper-modal" id="cropperModal">
+        <div class="cropper-container">
+            <img id="cropperImage" class="cropper-preview">
+            <div class="cropper-options">
+                <button onclick="rotateLeft()"><i class="fas fa-undo"></i> Rotate Left</button>
+                <button onclick="rotateRight()"><i class="fas fa-redo"></i> Rotate Right</button>
+                <button onclick="flipHorizontal()"><i class="fas fa-arrows-alt-h"></i> Flip Horizontal</button>
+                <button onclick="flipVertical()"><i class="fas fa-arrows-alt-v"></i> Flip Vertical</button>
+                <button onclick="resetCrop()"><i class="fas fa-sync"></i> Reset</button>
+            </div>
+            <div class="cropper-buttons">
+                <button class="cropper-cancel" onclick="cancelCrop()">Cancel</button>
+                <button class="cropper-apply" onclick="applyCrop()">Apply</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,1782 @@
+<%- include('../partials/admin/header') %>
+<link rel="stylesheet" href="/css/admin/category.css"/>
+<style>
+  /* Admin Category Page Styles */
+/* Admin Category Page Styles */
+
+
+.content-main {
+  /* padding: 20px; */
+  padding-left: 250px;
+  padding-right: 100px;
+}
+
+.content-header {
+  margin-bottom: 20px;
+}
+
+.content-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Card Styles */
+.card {
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
+  background-color: #fff;
+  border: none;
+}
+
+.card-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+/* Search and Create Button Section */
+.div-sec {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  border-radius: 15px;
+  
+}
+
+.input-group {
+  border-radius: 6px;
+  overflow: hidden;
+  max-width: 500px;
+}
+
+.input-group input {
+  height: 40px;
+  font-size: 14px;
+}
+
+.input-group .btn {
+  padding: 8px 16px;
+}
+
+.btn-primary {
+  background-color: #3b7ddd;
+  border-color: #3b7ddd;
+}
+
+.btn-primary:hover {
+  background-color: #326abc;
+  border-color: #2f64b1;
+}
+
+/* Form Elements */
+.form-label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #495057;
+}
+
+.form-control {
+  padding: 16px 20px;
+  border-radius: 15px;
+  width: 350px;
+  /* border: 1px solid #ced4da; */
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(59, 125, 221, 0.25);
+}
+
+textarea.form-control {
+  min-height: 100px;
+}
+
+/* Error Messages */
+.error-message {
+  color: #dc3545;
+  font-size: 13px;
+  margin-top: 5px;
+  display: none;
+}
+
+/* Table Styles */
+.table {
+  margin-bottom: 0;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Fixed table header alignment */
+.table thead th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+  font-size: 14px;
+  padding: 12px 8px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+/* Specific header column alignments to match content */
+.table thead th:nth-child(3), /* Offer Price */
+.table thead th:nth-child(4), /* Offer */
+.table thead th:nth-child(5), /* Status */
+.table thead th:nth-child(6), /* List/Unlist */
+.table thead th:nth-child(7), /* Edit */
+.table thead th:nth-child(8) /* Delete */ {
+  text-align: center;
+}
+
+/* Table data cell styles */
+.table tbody td {
+  vertical-align: middle;
+  padding: 12px 8px;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Center specific columns in the table body */
+.table tbody td:nth-child(3), /* Offer Price */
+.table tbody td:nth-child(4), /* Offer */
+.table tbody td:nth-child(5), /* Status */
+.table tbody td:nth-child(6), /* List/Unlist */
+.table tbody td:nth-child(7), /* Edit */
+.table tbody td:nth-child(8) /* Delete */ {
+  text-align: center;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(59, 125, 221, 0.05);
+}
+
+/* Badge Styles */
+.badge {
+  padding: 6px 10px;
+  font-weight: 500;
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+/* Button Styles */
+.action-btn, .status-btn {
+  padding: 5px 10px;
+  font-size: 13px;
+  border-radius: 4px;
+  font-weight: 500;
+  display: inline-block;
+  min-width: 80px;
+  text-align: center;
+}
+
+/* Action button styles */
+.btn-info {
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+}
+
+.btn-info:hover {
+  background-color: #138496;
+  border-color: #117a8b;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+
+.btn-success {
+  background-color: #28a745;
+  border-color: #28a745;
+}
+
+.btn-success:hover {
+  background-color: #218838;
+  border-color: #1e7e34;
+}
+
+/* Status styling */
+.btn-danger.status-btn,
+.badge.bg-danger {
+  background-color:#dc3545;
+  border-color: #dc3545;
+  text-decoration: none;
+}
+
+.btn-success.status-btn,
+.badge.bg-success {
+  background-color: #2ecc71 !important;
+  border-color: #2ecc71 !important;
+}
+
+/* Edit button */
+.btn-info.text-white {
+  background-color:  #2ecc71 !important;
+  border-color:  #2ecc71 !important;
+  width: 55px;
+  border-radius: 3px;
+  height: 27px;
+
+}
+
+/* Delete button */
+.btn-info.text-white[style*="background-color: #dc3545"] {
+  background-color: #e74c3c !important;
+  border-color: #e74c3c !important;
+  border-radius: 5px;
+  width: 80px;
+  height: 30px;
+}
+
+/* Pagination Styles */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination-container a, .pagination-container span {
+  padding: 8px 12px;
+  margin: 0 4px;
+  border-radius: 4px;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.pagination-container a {
+  background-color: #f8f9fa;
+  color: #6B6AE4;
+  border: 1px solid #dee2e6;
+}
+
+.pagination-container a:hover {
+  background-color: #e9ecef;
+  border-color: #dee2e6;
+}
+
+.pagination-container .current-page {
+  background-color: #6B6AE4;
+  color: white;
+  border: 1px solid #6B6AE4;
+}
+
+/* Popup Styles */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.popup-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.popup-container {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-20px);
+  transition: transform 0.3s ease;
+}
+
+.popup-overlay.active .popup-container {
+  transform: translateY(0);
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #6c757d;
+}
+
+.popup-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.cancel-btn {
+  background-color: #6c757d;
+  color: white;
+  border-color: #6c757d;
+}
+
+.cancel-btn:hover {
+  background-color: #5a6268;
+  border-color: #545b62;
+}
+
+/* Search bar and create button styling */
+.btn.btn-primary.btn-sm {
+  background-color: #6B6AE4;
+  border-color: #6B6AE4;
+  padding: 8px 16px;
+  font-weight: 500;
+  border-radius: 7px;
+}
+
+.input-group.input-group-sm {
+  border: 1px solid #dfe6e9;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-left: 30px;
+}
+
+/* .input-group.input-group-sm input {
+  border: none;
+  box-shadow: none;
+} */
+
+.input-group.input-group-sm .btn {
+  border: none;
+  background-color: #6B6AE4;
+  border-radius: 5px;
+  width: 100px;
+}
+/* Popup Overlay */
+#editCategoryPopup.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Slightly darker overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out;
+}
+
+#editCategoryPopup.popup-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Popup Container */
+#editCategoryPopup .popup-container {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 25px;
+  width: 90%;
+  max-width: 480px;
+  position: relative;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  transform: scale(0.95);
+  transition: transform 0.3s ease-in-out;
+}
+
+#editCategoryPopup.popup-overlay.active .popup-container {
+  transform: scale(1);
+}
+
+/* Close Button */
+#editCategoryPopup .close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 26px;
+  font-weight: 300;
+  color: #6c757d; /* Gray */
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+#editCategoryPopup .close-btn:hover {
+  color: #343a40; /* Darker gray */
+  transform: rotate(90deg); /* Subtle rotate effect */
+}
+
+/* Popup Title */
+#editCategoryPopup .popup-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #2D3047; /* Dark blue-gray */
+  margin: 0 0 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e9ecef; /* Light gray border */
+}
+
+/* Form Elements */
+#editCategoryPopup .mb-4 {
+  margin-bottom: 20px;
+}
+
+#editCategoryPopup .form-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #495057; /* Medium gray */
+  margin-bottom: 6px;
+  display: block;
+}
+
+#editCategoryPopup .form-control {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #333;
+  background-color: #f8f9fa; /* Light background */
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+#editCategoryPopup .form-control:focus {
+  border-color: #FFAA8A; /* Peach */
+  box-shadow: 0 0 0 3px rgba(255, 170, 138, 0.3); /* Soft peach glow */
+  outline: none;
+  background-color: #fff;
+}
+
+#editCategoryPopup textarea.form-control {
+  min-height: 90px;
+  resize: vertical; /* Vertical resize only */
+}
+
+/* Error Messages */
+#editCategoryPopup .error-message {
+  font-size: 12px;
+  color: #dc3545; /* Red */
+  margin-top: 4px;
+  display: none;
+  font-weight: 400;
+}
+
+/* Popup Buttons */
+#editCategoryPopup .popup-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 25px;
+}
+
+#editCategoryPopup .btn {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+#editCategoryPopup .cancel-btn {
+  background-color: #6c757d; /* Gray */
+  color: #fff;
+}
+
+#editCategoryPopup .cancel-btn:hover {
+  background-color: #5a6268; /* Darker gray */
+  transform: translateY(-1px); /* Slight lift */
+}
+
+#editCategoryPopup .btn-primary {
+  background-color: #FFAA8A; /* Peach */
+  color: #fff;
+}
+
+#editCategoryPopup .btn-primary:hover {
+  background-color: #FF8C61; /* Darker peach */
+  transform: translateY(-1px);
+}
+
+#editCategoryPopup .btn-primary:active {
+  transform: translateY(0); /* Reset on click */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  #editCategoryPopup .popup-container {
+    padding: 20px;
+    max-width: 90%;
+  }
+
+  #editCategoryPopup .popup-title {
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+
+  #editCategoryPopup .form-label {
+    font-size: 13px;
+  }
+
+  #editCategoryPopup .form-control {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  #editCategoryPopup textarea.form-control {
+    min-height: 80px;
+  }
+
+  #editCategoryPopup .popup-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #editCategoryPopup .btn {
+    width: 100%;
+    padding: 12px;
+  }
+
+  #editCategoryPopup .close-btn {
+    font-size: 22px;
+    top: 10px;
+    right: 10px;
+  }
+}
+
+@media (max-width: 576px) {
+  #editCategoryPopup .popup-container {
+    padding: 15px;
+  }
+
+  #editCategoryPopup .popup-title {
+    font-size: 18px;
+    padding-bottom: 8px;
+  }
+
+  #editCategoryPopup .form-label {
+    font-size: 12px;
+  }
+
+  #editCategoryPopup .form-control {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+
+  #editCategoryPopup .error-message {
+    font-size: 11px;
+  }
+
+  #editCategoryPopup .btn {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  #editCategoryPopup .mb-4 {
+    margin-bottom: 15px;
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 900px) {
+  .div-sec {
+    flex-direction: column;
+    align-items: stretch;
+  
+  }
+  
+  .div-sec .input-group {
+    margin-bottom: 15px;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .card-body .row {
+    flex-direction: column;
+  }
+  
+  .col-md-3, .col-md-8 {
+    width: 100%;
+  }
+  
+  .col-md-3 {
+    margin-bottom: 20px;
+  }
+  
+  .table-responsive {
+    overflow-x: auto;
+  }
+  
+  .action-btn, .status-btn {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+}
+
+/* Card Styles */
+.card {
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
+  background-color: #fff;
+  border: none;
+}
+
+.card-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+/* Search and Create Button Section */
+.div-sec {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+
+
+}
+
+.input-group {
+  border-radius: 6px;
+  overflow: hidden;
+  max-width: 500px;
+}
+
+.input-group input {
+  height: 40px;
+  font-size: 14px;
+}
+
+.input-group .btn {
+  padding: 8px 16px;
+}
+
+.btn-primary {
+  background-color: #3b7ddd;
+  border-color: #3b7ddd;
+}
+
+.btn-primary:hover {
+  background-color: #326abc;
+  border-color: #2f64b1;
+}
+
+/* Form Elements */
+.form-label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #495057;
+}
+
+.form-control {
+  padding: 10px 12px;
+  border-radius: 5px;
+  border: 1px solid #ced4da;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(59, 125, 221, 0.25);
+}
+
+textarea.form-control {
+  min-height: 100px;
+}
+
+/* Error Messages */
+.error-message {
+  color: #dc3545;
+  font-size: 13px;
+  margin-top: 5px;
+  display: none;
+}
+
+/* Table Styles */
+.table {
+  margin-bottom: 0;
+}
+
+.table thead th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+  font-size: 14px;
+  padding: 12px 8px;
+}
+
+.table tbody td {
+  vertical-align: middle;
+  padding: 12px 8px;
+  font-size: 14px;
+  color: #333;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(59, 125, 221, 0.05);
+}
+
+/* Badge Styles */
+.badge {
+  padding: 6px 10px;
+  font-weight: 500;
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+/* Button Styles */
+.action-btn, .status-btn {
+  padding: 5px 10px;
+  font-size: 13px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.btn-info {
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+}
+
+.btn-info:hover {
+  background-color: #138496;
+  border-color: #117a8b;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+
+.btn-success {
+  background-color: #28a745;
+  border-color: #28a745;
+}
+
+.btn-success:hover {
+  background-color: #218838;
+  border-color: #1e7e34;
+}
+
+/* Pagination Styles */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination-container a, .pagination-container span {
+  padding: 8px 12px;
+  margin: 0 4px;
+  border-radius: 4px;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.pagination-container a {
+  background-color: #f8f9fa;
+  color: #3b7ddd;
+  border: 1px solid #dee2e6;
+}
+
+.pagination-container a:hover {
+  background-color: #e9ecef;
+  border-color: #dee2e6;
+}
+
+.pagination-container .current-page {
+  background-color: #3b7ddd;
+  color: white;
+  border: 1px solid #3b7ddd;
+}
+
+/* Popup Styles */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.popup-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.popup-container {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-20px);
+  transition: transform 0.3s ease;
+}
+
+.popup-overlay.active .popup-container {
+  transform: translateY(0);
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #6c757d;
+}
+
+.popup-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.cancel-btn {
+  background-color: #6c757d;
+  color: white;
+  border-color: #6c757d;
+}
+
+.cancel-btn:hover {
+  background-color: #5a6268;
+  border-color: #545b62;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+  .div-sec {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .div-sec .input-group {
+    margin-bottom: 15px;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .card-body .row {
+    flex-direction: column;
+  }
+  
+  .col-md-3, .col-md-8 {
+    width: 100%;
+  }
+  
+  .col-md-3 {
+    margin-bottom: 20px;
+  }
+  
+  .table-responsive {
+    overflow-x: auto;
+  }
+  
+  .action-btn, .status-btn {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+}
+/* Popup Overlay */
+#createCategoryPopup.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Darker overlay for contrast */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out;
+}
+
+#createCategoryPopup.popup-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Popup Container */
+#createCategoryPopup .popup-container {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 25px;
+  width: 90%;
+  max-width: 480px;
+  position: relative;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  transform: scale(0.95);
+  transition: transform 0.3s ease-in-out;
+}
+
+#createCategoryPopup.popup-overlay.active .popup-container {
+  transform: scale(1);
+}
+
+/* Close Button */
+#createCategoryPopup .close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 26px;
+  font-weight: 300;
+  color: #6c757d; /* Gray */
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+#createCategoryPopup .close-btn:hover {
+  color: #343a40; /* Darker gray */
+  transform: rotate(90deg); /* Rotate effect on hover */
+}
+
+/* Popup Title */
+#createCategoryPopup .popup-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #2D3047; /* Dark blue-gray */
+  margin: 0 0 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e9ecef; /* Light gray border */
+}
+
+/* Form Elements */
+#createCategoryPopup .mb-4 {
+  margin-bottom: 20px;
+}
+
+#createCategoryPopup .form-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #495057; /* Medium gray */
+  margin-bottom: 6px;
+  display: block;
+}
+
+#createCategoryPopup .form-control {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #333;
+  background-color: #f8f9fa; /* Light background */
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+#createCategoryPopup .form-control:focus {
+  border-color: #FFAA8A; /* Peach */
+  box-shadow: 0 0 0 3px rgba(255, 170, 138, 0.3); /* Soft peach glow */
+  outline: none;
+  background-color: #fff;
+}
+
+#createCategoryPopup textarea.form-control {
+  min-height: 90px;
+  resize: vertical; /* Vertical resize only */
+}
+
+/* Error Messages */
+#createCategoryPopup .error-message {
+  font-size: 12px;
+  color: #dc3545; /* Red */
+  margin-top: 4px;
+  display: none;
+  font-weight: 400;
+}
+
+/* Popup Buttons */
+#createCategoryPopup .popup-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 25px;
+}
+
+#createCategoryPopup .btn {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+#createCategoryPopup .cancel-btn {
+  background-color: #6c757d; /* Gray */
+  color: #fff;
+}
+
+#createCategoryPopup .cancel-btn:hover {
+  background-color: #5a6268; /* Darker gray */
+  transform: translateY(-1px); /* Slight lift */
+}
+
+#createCategoryPopup .btn-primary {
+  background-color: #FFAA8A; /* Peach */
+  color: #fff;
+}
+
+#createCategoryPopup .btn-primary:hover {
+  background-color: #FF8C61; /* Darker peach */
+  transform: translateY(-1px);
+}
+
+#createCategoryPopup .btn-primary:active {
+  transform: translateY(0); /* Reset on click */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  #createCategoryPopup .popup-container {
+    padding: 20px;
+    max-width: 90%;
+  }
+
+  #createCategoryPopup .popup-title {
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+
+  #createCategoryPopup .form-label {
+    font-size: 13px;
+  }
+
+  #createCategoryPopup .form-control {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  #createCategoryPopup textarea.form-control {
+    min-height: 80px;
+  }
+
+  #createCategoryPopup .popup-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #createCategoryPopup .btn {
+    width: 100%;
+    padding: 12px;
+  }
+
+  #createCategoryPopup .close-btn {
+    font-size: 22px;
+    top: 10px;
+    right: 10px;
+  }
+}
+
+@media (max-width: 576px) {
+  #createCategoryPopup .popup-container {
+    padding: 15px;
+  }
+
+  #createCategoryPopup .popup-title {
+    font-size: 18px;
+    padding-bottom: 8px;
+  }
+
+  #createCategoryPopup .form-label {
+    font-size: 12px;
+  }
+
+  #createCategoryPopup .form-control {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+
+  #createCategoryPopup .error-message {
+    font-size: 11px;
+  }
+
+  #createCategoryPopup .btn {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  #createCategoryPopup .mb-4 {
+    margin-bottom: 15px;
+  }
+}
+</style>
+
+<body>
+  <section class="content-main">
+    <!-- Content Header -->
+    <div class="content-header">
+      <div>
+        <h2 class="content-title card-title">Category</h2>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="card-header px-4 py-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <!-- Search Bar -->
+          <form action="/admin/category/" method="get" class="flex-grow-1 me-1">
+            <div class="div-sec">
+              <div class="input-group input-group-sm shadow-sm">
+                <input type="text" class="form-control border-0 py-2" placeholder="Search categories" name="search"/>
+                <button class="btn btn-light border-start" type="submit">
+                  <i class="bi bi-search"></i> Search
+                </button>
+              </div>
+              
+              <button type="button" class="btn btn-primary btn-sm shadow-sm py-2 px-3" onclick="openCreatePopup()">
+                <i class="bi bi-plus-circle"></i> Create New Category
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card-body">
+      <div class="row">
+        
+        <div class="col-md-8">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <!-- <th class="text-center" width="5%">#</th> -->
+                  <th width="15%">Name</th>
+                  <th width="20%">Description</th>
+                  <!-- <th width="10%">Offer Price</th> -->
+                  <th class="text-center" width="20%">status</th>
+                  <th class="text-center" width="10%">List/Unlist</th>
+                  <th class="text-center" width="10%">Edit</th>
+                  <th class="text-center" width="10%">Delete</th>
+                  <!-- <th class="text-center" width="10%">Delete</th> -->
+                </tr>
+              </thead>
+              <tbody>
+                <% if (cat && cat.length > 0) { %>
+                  <% cat.slice().reverse().forEach((category, index) => { %>
+                    <% if(category.isDeleted === false) { %>
+                      <tr>
+                        <!-- <td class="text-center"><%= index + 1 %></td> -->
+                        <td class="text-center"><%= category.name %></td>
+                        <td><%= category.description %></td>
+                        <!-- <td>
+                          <% if (category.categoryOffer) { %>
+                            <%= category.categoryOffer %>%
+                          <% } else { %>
+                            0%
+                          <% } %>
+                        </td> -->
+                        <!-- <td class="text-center">
+                          <% if (category.categoryOffer === 0) { %>
+                            <a href="#" class="btn btn-info text-white action-btn" onclick="addOffer('<%= category._id %>')">Add Offer</a>
+                          <% } else { %>
+                            <a href="#" class="btn btn-info text-white action-btn" onclick="removeOffer('<%= category._id %>')">Remove</a>
+                          <% } %>
+                        </td> -->
+                        <td class="text-center">
+                          <% if (category.isListed) { %>
+                            <span class="badge bg-success">Listed</span>
+                          <% } else { %>
+                            <span class="badge bg-danger">Unlisted</span>
+                          <% } %>
+                        </td>
+                        <td class="text-center">
+                          <% if (category.isListed) { %>
+                            <a href="/admin/unlistCategory?id=<%= category._id %>" class="btn btn-danger text-white status-btn">Unlist</a>
+                          <% } else { %>
+                            <a href="/admin/listCategory?id=<%= category._id %>" class="btn btn-success text-white status-btn">List</a>
+                          <% } %>
+                        </td>
+                        <td class="text-center">
+                          <button class="btn btn-info text-white" onclick="openEditPopup('<%= category._id %>', '<%= category.name %>', '<%= category.description %>')">Edit</button>
+                        </td>
+                        <td class="text-center">
+                          <button class="btn btn-info text-white" style="background-color: #dc3545; border-color: #dc3545;" onclick="confirmDelete('<%=category._id%>')">Delete</button>
+                        </td>
+                      </tr>
+                    <% } %>
+                  <% }); %>
+                <% } %>
+              </tbody>
+            </table>
+            
+            <!-- Pagination Section -->
+            <div class="pagination-container">
+              <% if (typeof currentPage !== 'undefined' && typeof totalPages !== 'undefined') { %>
+                <% if (currentPage > 1) { %>
+                  <a href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
+                <% } %>
+            
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                  <% if (i === currentPage) { %>
+                    <span class="current-page"><%= i %></span>
+                  <% } else { %>
+                    <a href="?page=<%= i %>"><%= i %></a>
+                  <% } %>
+                <% } %>
+            
+                <% if (currentPage < totalPages) { %>
+                  <a href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+                <% } %>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Edit Category Popup -->
+  <div id="editCategoryPopup" class="popup-overlay">
+    <div class="popup-container">
+      <button class="close-btn" onclick="closeEditPopup()">&times;</button>
+      <h2 class="popup-title">Edit Category</h2>
+      <form id="editCategoryForm">
+        <input type="hidden" id="editCategoryId" name="categoryId">
+        <div class="mb-4">
+          <label for="editCategoryName" class="form-label">Category Name</label>
+          <input type="text" id="editCategoryName" name="categoryName" class="form-control" placeholder="Enter category name" required>
+          <div id="edit-name-error" class="error-message"></div>
+        </div>
+        
+        <div class="mb-4">
+          <label for="editCategoryDescription" class="form-label">Description</label>
+          <textarea id="editCategoryDescription" name="categoryDescription" class="form-control" placeholder="Enter category description"></textarea>
+          <div id="edit-description-error" class="error-message"></div>
+        </div>
+
+        <div class="popup-buttons">
+          <button type="button" class="btn cancel-btn" onclick="closeEditPopup()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update Category</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Create Category Popup -->
+  <div id="createCategoryPopup" class="popup-overlay">
+    <div class="popup-container">
+      <button class="close-btn" onclick="closeCreatePopup()">&times;</button>
+      <h2 class="popup-title">Create New Category</h2>
+      <form id="createCategoryForm">
+        <div class="mb-4">
+          <label for="createCategoryName" class="form-label">Category Name</label>
+          <input type="text" id="createCategoryName" name="categoryName" class="form-control" placeholder="Enter category name" required>
+          <div id="create-name-error" class="error-message"></div>
+        </div>
+        
+        <div class="mb-4">
+          <label for="createCategoryDescription" class="form-label">Description</label>
+          <textarea id="createCategoryDescription" name="categoryDescription" class="form-control" placeholder="Enter category description"></textarea>
+          <div id="create-description-error" class="error-message"></div>
+        </div>
+
+        <div class="popup-buttons">
+          <button type="button" class="btn cancel-btn" onclick="closeCreatePopup()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Category</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const addCategoryForm = document.querySelector("#addCategoryForm");
+      const editCategoryForm = document.querySelector("#editCategoryForm");
+      const createCategoryForm = document.querySelector("#createCategoryForm");
+
+      if (addCategoryForm) {
+        addCategoryForm.addEventListener("submit", handleFormSubmit);
+      }
+      
+      if (editCategoryForm) {
+        editCategoryForm.addEventListener("submit", handleEditFormSubmit);
+      }
+      
+      if (createCategoryForm) {
+        createCategoryForm.addEventListener("submit", handleCreateFormSubmit);
+      }
+    });
+
+    // Add Category Form Handler
+    async function handleFormSubmit(event) {
+      event.preventDefault();
+
+      if (!validateForm()) {
+        return;
+      }
+
+      const name = document.getElementById('product_name').value.trim();
+      const description = document.getElementById('descriptionId').value.trim();
+
+      try {
+        const response = await fetch('/admin/addCategory', {
+          method: "POST",
+          headers: {
+            'Content-Type': "application/json"
+          },
+          body: JSON.stringify({ name, description })
+        });
+
+        let data = await response.json();
+
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          alert("Error: " + data.message);
+        }
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+    }
+
+    // Validate Form
+    function validateForm() {
+      clearErrorMessages();
+
+      const name = document.getElementById('product_name').value.trim();
+      const description = document.getElementById('descriptionId').value.trim();
+      let isValid = true;
+
+      if (name === "") {
+        displayErrorMessage('name-error', 'Please enter a name');
+        isValid = false;
+      } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+        displayErrorMessage('name-error', 'Category name should contain only alphabetic characters');
+        isValid = false;
+      }
+
+      if (description === "") {
+        displayErrorMessage("description-error", "Please enter a description");
+        isValid = false;
+      }
+
+      return isValid;
+    }
+
+    // Display Error Message
+    function displayErrorMessage(elementId, message) {
+      var errorElement = document.getElementById(elementId);
+      errorElement.innerText = message;
+      errorElement.style.display = 'block';
+    }
+
+    // Clear Error Messages
+    function clearErrorMessages() {
+      const errorElements = document.getElementsByClassName('error-message');
+      Array.from(errorElements).forEach((element) => {
+        element.innerText = "";
+        element.style.display = "none";
+      });
+    }
+
+    // Category Offer Functions
+    // async function addOffer(categoryId) {
+    //   const { value: amount } = await Swal.fire({
+    //     title: "Offer in percentage",
+    //     input: "number",
+    //     inputLabel: "Percentage",
+    //     inputPlaceholder: "%",
+    //   });
+
+    //   if (amount) {
+    //     try {
+    //       const response = await fetch('/admin/addCategoryOffer', {
+    //         method: "POST",
+    //         headers: {
+    //           "Content-Type": "application/json",
+    //         },
+    //         body: JSON.stringify({
+    //           percentage: amount,
+    //           categoryId: categoryId,
+    //         }),
+    //       });
+
+    //       const data = await response.json();
+    //       if (response.ok && data.status === true) {
+    //         Swal.fire("Offer added", "The offer has been added", "success").then(() => {
+    //           location.reload();
+    //         });
+    //       } else {
+    //         Swal.fire("Failed", data.message || "Adding offer failed", "error");
+    //       }
+    //     } catch (error) {
+    //       Swal.fire("Error", "An error occurred while adding the offer", "error");
+    //       console.error("Error adding offer", error);
+    //     }
+    //   }
+    // }
+
+    // async function removeOffer(categoryId) {
+    //   const confirmRemove = await Swal.fire({
+    //     title: "Are you sure?",
+    //     text: "This will remove the category offer.",
+    //     icon: "warning",
+    //     showCancelButton: true,
+    //     confirmButtonText: "Yes, remove it!",
+    //     cancelButtonText: "Cancel",
+    //   });
+
+    //   if (confirmRemove.isConfirmed) {
+    //     try {
+    //       const response = await fetch('/admin/removeCategoryOffer', {
+    //         method: "POST",
+    //         headers: {
+    //           "Content-Type": "application/json",
+    //         },
+    //         body: JSON.stringify({ categoryId: categoryId }),
+    //       });
+
+    //       const data = await response.json();
+    //       if (response.ok && data.status === true) {
+    //         Swal.fire("Offer Removed", "The category offer has been removed", "success").then(() => {
+    //           location.reload();
+    //         });
+    //       } else {
+    //         Swal.fire("Failed", data.message || "Removing offer failed", "error");
+    //       }
+    //     } catch (error) {
+    //       Swal.fire("Error", "An error occurred while removing the offer", "error");
+    //       console.error("Error removing offer", error);
+    //     }
+    //   }
+    // }
+
+    // Edit Category Popup Functions
+    function openEditPopup(categoryId, categoryName, categoryDescription) {
+      // Decode HTML entities if necessary
+      categoryName = categoryName.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
+      categoryDescription = categoryDescription.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
+      
+      // Set values in the form
+      document.getElementById('editCategoryId').value = categoryId;
+      document.getElementById('editCategoryName').value = categoryName;
+      document.getElementById('editCategoryDescription').value = categoryDescription;
+      
+      // Show the popup
+      document.getElementById('editCategoryPopup').classList.add('active');
+      document.body.style.overflow = 'hidden'; // Prevent scrolling
+    }
+
+    function closeEditPopup() {
+      document.getElementById('editCategoryPopup').classList.remove('active');
+      document.body.style.overflow = 'auto'; // Restore scrolling
+      
+      // Clear form errors
+      clearEditErrorMessages();
+    }
+
+    // Open and Close Create Popup
+    function openCreatePopup() {
+      document.getElementById('createCategoryPopup').classList.add('active');
+      document.body.style.overflow = 'hidden'; 
+    }
+
+    function closeCreatePopup() {
+      document.getElementById('createCategoryPopup').classList.remove('active');
+      document.body.style.overflow = 'auto';
+      
+      // Clear form and errors
+      document.getElementById('createCategoryName').value = '';
+      document.getElementById('createCategoryDescription').value = '';
+      document.getElementById('create-name-error').innerText = '';
+      document.getElementById('create-description-error').innerText = '';
+    }
+
+    function clearEditErrorMessages() {
+      document.getElementById('edit-name-error').innerText = "";
+      document.getElementById('edit-name-error').style.display = "none";
+      document.getElementById('edit-description-error').innerText = "";
+      document.getElementById('edit-description-error').style.display = "none";
+    }
+
+    function validateEditForm() {
+      clearEditErrorMessages();
+      
+      const name = document.getElementById('editCategoryName').value.trim();
+      const description = document.getElementById('editCategoryDescription').value.trim();
+      let isValid = true;
+      
+      if (name === "") {
+        document.getElementById('edit-name-error').innerText = "Please enter a name";
+        document.getElementById('edit-name-error').style.display = "block";
+        isValid = false;
+      } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+        document.getElementById('edit-name-error').innerText = "Category name should contain only alphabetic characters";
+        document.getElementById('edit-name-error').style.display = "block";
+        isValid = false;
+      }
+      
+      if (description === "") {
+        document.getElementById('edit-description-error').innerText = "Please enter a description";
+        document.getElementById('edit-description-error').style.display = "block";
+        isValid = false;
+      }
+      
+      return isValid;
+    }
+
+    // Validate Create Form
+    function validateCreateForm() {
+      const name = document.getElementById('createCategoryName').value.trim();
+      const description = document.getElementById('createCategoryDescription').value.trim();
+      let isValid = true;
+      
+      // Clear previous errors
+      document.getElementById('create-name-error').innerText = "";
+      document.getElementById('create-description-error').innerText = "";
+      
+      if (name === "") {
+        document.getElementById('create-name-error').innerText = "Please enter a name";
+        document.getElementById('create-name-error').style.display = "block";
+        isValid = false;
+      } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+        document.getElementById('create-name-error').innerText = "Category name should contain only alphabetic characters";
+        document.getElementById('create-name-error').style.display = "block";
+        isValid = false;
+      }
+      
+      if (description === "") {
+        document.getElementById('create-description-error').innerText = "Please enter a description";
+        document.getElementById('create-description-error').style.display = "block";
+        isValid = false;
+      }
+      
+      return isValid;
+    }
+
+    // Handle Create Form Submit
+    async function handleCreateFormSubmit(event) {
+      event.preventDefault();
+      
+      if (!validateCreateForm()) {
+        return;
+      }
+      
+      const name = document.getElementById('createCategoryName').value.trim();
+      const description = document.getElementById('createCategoryDescription').value.trim();
+      
+      try {
+        const response = await fetch('/admin/addCategory', {
+          method: "POST",
+          headers: {
+            'Content-Type': "application/json"
+          },
+          body: JSON.stringify({ name, description })
+        });
+
+        let data = await response.json();
+
+        if (response.ok) {
+          Swal.fire({
+            title: "Success!",
+            text: "Category created successfully",
+            icon: "success",
+            confirmButtonText: "OK"
+          }).then(() => {
+            window.location.reload();
+          });
+        } else {
+          Swal.fire({
+            title: "Error!",
+            text: data.message || "Failed to create category",
+            icon: "error",
+            confirmButtonText: "OK"
+          });
+        }
+      } catch (error) {
+        console.error("Error creating category:", error);
+        Swal.fire({
+          title: "Error!",
+          text: "An unexpected error occurred",
+          icon: "error",
+          confirmButtonText: "OK"
+        });
+      }
+    }
+
+    async function handleEditFormSubmit(event) {
+      event.preventDefault();
+      
+      if (!validateEditForm()) {
+        return;
+      }
+      
+      const categoryId = document.getElementById('editCategoryId').value;
+      const categoryName = document.getElementById('editCategoryName').value.trim();
+      const categoryDescription = document.getElementById('editCategoryDescription').value.trim();
+      
+      try {
+        const response = await fetch('/admin/editCategory/' + categoryId, {
+          method: "POST",
+          headers: {
+            'Content-Type': "application/json"
+          },
+          body: JSON.stringify({ 
+            categoryName: categoryName, 
+            categoryDescription: categoryDescription 
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          Swal.fire({
+            title: "Success!",
+            text: "Category updated successfully",
+            icon: "success",
+            confirmButtonText: "OK"
+          }).then(() => {
+            window.location.reload();
+          });
+        } else {
+          Swal.fire({
+            title: "Error!",
+            text: data.message || "Failed to update category",
+            icon: "error",
+            confirmButtonText: "OK"
+          });
+        }
+      } catch (error) {
+        console.error("Error updating category:", error);
+        Swal.fire({
+          title: "Error!",
+          text: "An unexpected error occurred",
+          icon: "error",
+          confirmButtonText: "OK"
+        });
+      }
+    }
+
+    //Delete category function
+    async function confirmDelete(categoryId) {
+      const deleteCategory = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, delete it!"
+      });
+
+      if (deleteCategory.isConfirmed) {
+        try {
+          const response = await fetch(`/admin/deleteCategory/${categoryId}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json"
+            }
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            Swal.fire({
+              title: "Deleted!",
+              text: "Category has been deleted.",
+              icon: "success"
+            }).then(() => {
+              location.reload();
+            });
+          } else {
+            Swal.fire({
+              title: "Error!",
+              text: data.message || "Error while deleting.",
+              icon: "error"
+            });
+          }
+        } catch (error) {
+          console.error("Server error due to internal issue", error);
+          Swal.fire({
+            title: "Error!",
+            text: "An unexpected error occurred.",
+            icon: "error"
+          });
+        }
+      }
+    }
+
+    // Close popup if user clicks outside the popup container
+    document.getElementById('editCategoryPopup').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeEditPopup();
+      }
+    });
+
+    document.getElementById('createCategoryPopup').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeCreatePopup();
+      }
+    });
+  </script>
+</body>

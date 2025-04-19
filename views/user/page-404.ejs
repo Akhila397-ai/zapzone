@@ -5,58 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 - Page Not Found</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
         body {
+            margin: 0;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background-color: #f8f8f8;
-            text-align: center;
+            background-color: #fff;
+            font-family: Arial, sans-serif;
         }
         .container {
-            max-width: 600px;
-            padding: 20px;
+            text-align: center;
         }
-        .emoji {
-            font-size: 80px;
+        .sad-face {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
         }
-        h1 {
-            font-size: 60px;
+        .error-code {
+            font-size: 72px;
+            font-weight: bold;
             color: #333;
-            margin-top: 10px;
+            margin-bottom: 10px;
         }
-        p {
-            font-size: 18px;
-            color: #777;
-            margin-top: 10px;
+        .error-title {
+            font-size: 24px;
+            color: #666;
+            margin-bottom: 10px;
         }
-        a {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background: #007bff;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        a:hover {
-            background: #0056b3;
+        .error-message {
+            font-size: 16px;
+            color: #999;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="emoji">😟</div>
-        <h1>404</h1>
-        <p>Page Not Found</p>
-        <p>The page you're looking for doesn't exist or another error occurred.</p>
-        <a href="/">Go Home</a>
+        <div class="sad-face">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="45" fill="none" stroke="#333" stroke-width="5"/>
+                <circle cx="35" cy="35" r="5" fill="#333"/>
+                <circle cx="65" cy="35" r="5" fill="#333"/>
+                <path d="M35 70 Q50 50 65 70" fill="none" stroke="#333" stroke-width="5"/>
+            </svg>
+        </div>
+        <div class="error-code">404</div>
+        <div class="error-title">Page Not Found</div>
+        <div class="error-message">The page you're looking for doesn't exist or another error occurred</div>
     </div>
 </body>
 </html>

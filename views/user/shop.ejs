@@ -1,0 +1,546 @@
+<%- include("../partials/user/header") %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZAPZONE - Shop</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* Base Styles */
+        body {
+            background-color: #f5f5f5;
+            font-family: 'Nunito Sans', sans-serif;
+        }
+        
+        /* Breadcrumb Styles */
+        .zz-breadcrumb-area {
+            background-color: #fff;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 30px;
+        }
+        
+        .zz-breadcrumb {
+            margin-bottom: 0;
+            padding: 0;
+            background: none;
+        }
+        
+        .zz-breadcrumb-item a {
+            color: #555;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .zz-breadcrumb-item a:hover {
+            color: #e74c3c;
+        }
+        
+        .zz-breadcrumb-item.active {
+            color: #e74c3c;
+        }
+        
+        /* Filter Section Styles */
+        .zz-shop-container {
+            padding: 30px 0;
+        }
+        
+        .zz-filter-section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .zz-filter-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .zz-filter-group {
+            margin-bottom: 20px;
+        }
+        
+        .zz-filter-label {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #555;
+            display: block;
+        }
+        
+        .zz-form-select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+        
+        .zz-search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .zz-search-input {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .zz-search-cancel {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .zz-search-cancel:hover {
+            color: #333;
+        }
+        
+        .zz-filter-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            width: 100%;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .zz-filter-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .zz-reset-btn {
+            background-color: #f8f9fa;
+            color: #333;
+            border: 1px solid #ddd;
+            padding: 10px 20px;
+            border-radius: 5px;
+            width: 100%;
+            font-weight: 600;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-align: center;
+            display: block;
+            text-decoration: none;
+        }
+        
+        .zz-reset-btn:hover {
+            background-color: #e9ecef;
+            text-decoration: none;
+            color: #333;
+        }
+        
+        /* Category Filter Styles */
+        .filter-section {
+            margin-bottom: 20px;
+        }
+        
+        .filter-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        
+        .category-brand-container ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin-bottom: 0;
+        }
+        
+        .filter-item {
+            margin-bottom: 8px;
+        }
+        
+        .filter-item a {
+            color: #555;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .filter-item a:hover {
+            color: #e74c3c;
+        }
+        
+        .filter-item.active {
+            font-weight: bold;
+            color: #007bff;
+        }
+        
+        .filter-item.active a {
+            color: #007bff;
+        }
+        
+        /* Product Styles */
+        .product-item {
+            border: 1px solid #e5e5e5;
+            border-radius: 5px;
+            background-color: #fff;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .product-item:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+        }
+        
+        .product-img-wrap {
+            position: relative;
+            padding: 15px;
+            background-color: #f5f5f5;
+            text-align: center;
+        }
+        
+        .product-img-wrap img {
+            max-width: 100%;
+            height: auto;
+            max-height: 180px;
+            object-fit: contain;
+        }
+        
+        .wishlist-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1;
+        }
+        
+        .wishlist-btn a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            background-color: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+            color: #e74c3c;
+            transition: all 0.3s;
+        }
+        
+        .wishlist-btn a:hover {
+            color: #c0392b;
+            transform: scale(1.1);
+        }
+        
+        .product-details {
+            padding: 12px 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        
+        .product-details h6 {
+            font-size: 15px;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        
+        .price-box {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .cart-btn {
+            display: block;
+            width: 100%;
+            padding: 8px 0;
+            background-color: black;
+            color: white;
+            text-align: center;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            margin-top: auto;
+        }
+        
+        .cart-btn:hover {
+            background-color: #333;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .hero__text {
+            color: white;
+        }
+        
+        /* Pagination Styles */
+        .zz-pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .zz-page-item {
+            margin: 0 5px;
+        }
+        
+        .zz-page-link {
+            color: #333;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 8px 15px;
+            transition: all 0.3s;
+        }
+        
+        .zz-page-item.active .zz-page-link {
+            background-color: #e74c3c;
+            border-color: #e74c3c;
+            color: white;
+        }
+        
+        .zz-page-link:hover {
+            background-color: #e74c3c;
+            border-color: #e74c3c;
+            color: white;
+            text-decoration: none;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 767px) {
+            .zz-filter-section {
+                margin-bottom: 20px;
+            }
+            
+            .col-lg-3.col-md-4.col-sm-6.col-12 {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Breadcrumb Navigation -->
+    <div class="zz-breadcrumb-area">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb zz-breadcrumb">
+                    <li class="breadcrumb-item zz-breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item zz-breadcrumb-item active" aria-current="page">Shop</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Main Shop Container -->
+    <div class="zz-shop-container">
+        <div class="container">
+            <div class="row">
+                <!-- Filter Section -->
+                <div class="col-lg-3">
+                    <form action="/filter" method="GET" class="zz-filter-section" id="filterForm">
+                        <h4 class="zz-filter-title">Filter Products</h4>
+                        
+                        <!-- Search Box -->
+                        <div class="zz-search-box">
+                            <input type="text" name="search" class="zz-search-input" placeholder="Search products..." value="<%= typeof search !== 'undefined' ? search : '' %>" aria-label="Search products">
+                            <button type="button" class="zz-search-cancel" aria-label="Clear search">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Category Filter -->
+                        <div class="filter-section">
+                            <div class="filter-title">Category</div>
+                            <div class="category-brand-container">
+                                <ul>
+                                    <% if (category && category.length > 0) { %>
+                                        <% category.forEach(cat => { %>
+                                            <li class="filter-item <%= typeof selectedCategory !== 'undefined' && selectedCategory === cat._id.toString() ? 'active' : '' %>">
+                                                <a href="/filter?cat=<%= cat._id %>"><%= cat.name %></a>
+                                            </li>
+                                        <% }) %>
+                                    <% } else { %>
+                                        <li>No categories available</li>
+                                    <% } %>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Sort Options -->
+                        <div class="zz-filter-group">
+                            <label for="sortSelect" class="zz-filter-label">Sort By</label>
+                            <select id="sortSelect" name="sort" class="form-select zz-form-select zz-sort-select">
+                                <option value="newest" <%= typeof sort !== 'undefined' && sort === 'newest' ? 'selected' : '' %>>Newest First</option>
+                                <option value="price-low" <%= typeof sort !== 'undefined' && sort === 'price-low' ? 'selected' : '' %>>Price: Low to High</option>
+                                <option value="price-high" <%= typeof sort !== 'undefined' && sort === 'price-high' ? 'selected' : '' %>>Price: High to Low</option>
+                                <option value="a-z" <%= typeof sort !== 'undefined' && sort === 'a-z' ? 'selected' : '' %>>Name: A to Z</option>
+                                <option value="z-a" <%= typeof sort !== 'undefined' && sort === 'z-a' ? 'selected' : '' %>>Name: Z to A</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Price Range Filter -->
+                        <div class="zz-filter-group">
+                            <label class="zz-filter-label">Price Range</label>
+                            <div class="row">
+                                <div class="col-6">
+                                    <input type="number" name="minPrice" class="form-control" placeholder="Min" value="<%= typeof minPrice !== 'undefined' ? minPrice : '' %>" aria-label="Minimum price">
+                                </div>
+                                <div class="col-6">
+                                    <input type="number" name="maxPrice" class="form-control" placeholder="Max" value="<%= typeof maxPrice !== 'undefined' ? maxPrice : '' %>" aria-label="Maximum price">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Filter Buttons -->
+                        <button type="submit" class="zz-filter-btn">Apply Filters</button>
+                        <a href="/filter" class="zz-reset-btn">Reset Filters</a>
+                    </form>
+                </div>
+                
+                <!-- Products Section -->
+                <div class="col-lg-9">
+                    <div class="row product__filter" id="productsContainer">
+                        <% if (products && products.length > 0) { %>
+                            <% for(let i = 0; i < products.length; i++) { %>
+                                <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4" data-price="<%= products[i].salePrice %>" data-name="<%= products[i].productName %>">
+                                    <div class="product-item">
+                                        <div class="product-img-wrap">
+                                            <a href="productDetails?id=<%= products[i]._id %>">
+                                                <img src="/Uploads/product-images/<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>">
+                                            </a>
+                                            <div class="wishlist-btn">
+                                                <a href="/addToWishlist?id=<%= products[i]._id %>" aria-label="Add to wishlist">
+                                                    <i class="fa fa-heart"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="product-details">
+                                            <h6><a href="productDetails?id=<%= products[i]._id %>" class="text-dark text-decoration-none"><%= products[i].productName %></a></h6>
+                                            <div class="price-box">₹ <%= products[i].salePrice %></div>
+                                            <a href="/addToCart?id=<%= products[i]._id %>" class="cart-btn">ADD TO CART</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% } %>
+                        <% } else { %>
+                            <div class="col-12 text-center py-5">
+                                <h4>No products found</h4>
+                                <p>Try adjusting your filters or search criteria</p>
+                            </div>
+                        <% } %>
+                    </div>
+                    
+                    
+                    <!-- Pagination -->
+                   <!-- Pagination -->
+<!-- Pagination -->
+<% if (totalPages >= 1) { %>
+    <nav aria-label="Product navigation">
+        <ul class="pagination zz-pagination">
+            <!-- Previous Button -->
+            <li class="page-item zz-page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                <a class="page-link zz-page-link" href="/filter?page=<%= currentPage - 1 %><%= typeof search !== 'undefined' && search ? '&search=' + search : '' %><%= typeof selectedCategory !== 'undefined' && selectedCategory ? '&cat=' + selectedCategory : '' %><%= typeof sort !== 'undefined' && sort ? '&sort=' + sort : '' %><%= typeof minPrice !== 'undefined' && minPrice ? '&minPrice=' + minPrice : '' %><%= typeof maxPrice !== 'undefined' && maxPrice ? '&maxPrice=' + maxPrice : '' %>" aria-label="Previous">
+                    <span aria-hidden="true">«</span>
+                </a>
+            </li>
+            <!-- Page Numbers -->
+            <% for(let i = 1; i <= totalPages; i++) { %>
+                <li class="page-item zz-page-item <%= currentPage === i ? 'active' : '' %>">
+                    <a class="page-link zz-page-link" href="/filter?page=<%= i %><%= typeof search !== 'undefined' && search ? '&search=' + search : '' %><%= typeof selectedCategory !== 'undefined' && selectedCategory ? '&cat=' + selectedCategory : '' %><%= typeof sort !== 'undefined' && sort ? '&sort=' + sort : '' %><%= typeof minPrice !== 'undefined' && minPrice ? '&minPrice=' + minPrice : '' %><%= typeof maxPrice !== 'undefined' && maxPrice ? '&maxPrice=' + maxPrice : '' %>"><%= i %></a>
+                </li>
+            <% } %>
+            <!-- Next Button -->
+            <li class="page-item zz-page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                <a class="page-link zz-page-link" href="/filter?page=<%= currentPage + 1 %><%= typeof search !== 'undefined' && search ? '&search=' + search : '' %><%= typeof selectedCategory !== 'undefined' && selectedCategory ? '&cat=' + selectedCategory : '' %><%= typeof sort !== 'undefined' && sort ? '&sort=' + sort : '' %><%= typeof minPrice !== 'undefined' && minPrice ? '&minPrice=' + minPrice : '' %><%= typeof maxPrice !== 'undefined' && maxPrice ? '&maxPrice=' + maxPrice : '' %>" aria-label="Next">
+                    <span aria-hidden="true">»</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+<% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Partial -->
+    <%- include("../partials/user/footer") %>
+
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          //SEARCH
+            const searchCancelBtn = document.querySelector('.zz-search-cancel');
+            const searchInput = document.querySelector('.zz-search-input');
+            const filterForm = document.getElementById('filterForm');
+            
+            if (searchCancelBtn && searchInput && filterForm) {
+                searchCancelBtn.addEventListener('click', function() {
+                    searchInput.value = '';
+                    filterForm.submit();
+                });
+            }
+            
+            // SORTING
+            const sortSelect = document.querySelector('.zz-sort-select');
+            const productsContainer = document.getElementById('productsContainer');
+            
+            if (sortSelect && productsContainer) {
+                sortSelect.addEventListener('change', function() {
+                    const sortValue = this.value;
+                    const products = Array.from(productsContainer.querySelectorAll('.col-lg-3.col-md-4.col-sm-6.col-12'));
+                    
+                    if (products.length > 0) {
+                        products.sort((a, b) => {
+                            const priceA = parseFloat(a.dataset.price);
+                            const priceB = parseFloat(b.dataset.price);
+                            const titleA = a.dataset.name;
+                            const titleB = b.dataset.name;
+                            
+                            if (sortValue === 'price-low') {
+                                return priceA - priceB;
+                            } else if (sortValue === 'price-high') {
+                                return priceB - priceA;
+                            } else if (sortValue === 'a-z') {
+                                return titleA.localeCompare(titleB);
+                            } else if (sortValue === 'z-a') {
+                                return titleB.localeCompare(titleA);
+                            } else {
+                               
+                                return 0;
+                            }
+                        });
+                        
+                        
+                        products.forEach(product => {
+                            productsContainer.appendChild(product);
+                        });
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

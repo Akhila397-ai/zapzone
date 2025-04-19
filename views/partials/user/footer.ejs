@@ -1,24 +1,168 @@
  <!-- Footer Section Begin -->
+  <style>
+    .footer {
+    background-color: #121212;
+    color: #ffffff;
+    padding: 60px 0 30px;
+}
+
+.footer .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.footer__about {
+    margin-bottom: 30px;
+}
+
+.footer__logoo {
+    margin-bottom: 20px;
+}
+
+.footer__logoo a {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.footer__widget {
+    margin-bottom: 30px;
+}
+
+.footer__widget h6 {
+    color: #ffffff;
+    font-size: 16px;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.footer__widget ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer__widget ul li {
+    margin-bottom: 10px;
+}
+
+.footer__widget ul li a {
+    color: #a0a0a0;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer__widget ul li a:hover {
+    color: #ffffff;
+}
+
+.footer__newslatter {
+    margin-bottom: 20px;
+}
+
+.footer__newslatter p {
+    margin-bottom: 15px;
+    color: #a0a0a0;
+}
+
+.footer__newslatter form {
+    display: flex;
+}
+
+.footer__newslatter input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #333;
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+.footer__newslatter button {
+    background-color: #ffffff;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.footer__newslatter button:hover {
+    background-color: #f0f0f0;
+}
+
+.footer__copyright__text {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #333;
+    text-align: center;
+    color: #a0a0a0;
+}
+
+.footer__copyright__text a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .footer .row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    
+    .footer [class*='col-'] {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+@media (max-width: 576px) {
+    .footer [class*='col-'] {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+.footer__about .header__logoo {
+    margin-bottom: 15px; /* Adds space between logo and description */
+}
+
+.footer__about .header__logoo a {
+    display: block;
+    margin-bottom: 10px; /* Ensures additional spacing */
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+}
+
+.footer__about p {
+    color: #a0a0a0; /* Slightly muted color for description */
+    margin-top: 10px; /* Adds space above the description */
+    line-height: 1.6; /* Improves readability */
+}
+  </style>
+  
  <footer class="footer">
     <div class="container">
         <div class="row">
             <div class="col-lg-3 col-md-6 col-sm-6">
                 <div class="footer__about">
-                    <div class="footer__logo">
-                        <a href="#"><img src="img/footer-logo.png" alt=""></a>
+                    <div class="header__logoo">
+                        <a href="./index.html"><font color="white"><strong>ZAPZONE</strong></font></a>
                     </div>
                     <p>The customer is at the heart of our unique business model, which includes design.</p>
-                    <a href="#"><img src="img/payment.png" alt=""></a>
+                 
                 </div>
             </div>
             <div class="col-lg-2 offset-lg-1 col-md-3 col-sm-6">
                 <div class="footer__widget">
                     <h6>Shopping</h6>
                     <ul>
-                        <li><a href="#">Clothing Store</a></li>
-                        <li><a href="#">Trending Shoes</a></li>
+                        <li><a href="#">Gaming Laptops</a></li>
+                        <li><a href="#">Office Laptops</a></li>
                         <li><a href="#">Accessories</a></li>
-                        <li><a href="#">Sale</a></li>
+                        <li><a href="#">Students Laptops</a></li>
                     </ul>
                 </div>
             </div>
@@ -49,23 +193,22 @@
         <div class="row">
             <div class="col-lg-12 text-center">
                 <div class="footer__copyright__text">
-                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                 
                     <p>Copyright ©
                         <script>
                             document.write(new Date().getFullYear());
                         </script>2020
-                        All rights reserved | This template is made with <i class="fa fa-heart-o"
-                        aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+                        All rights reserved | zapzone@gmail.com<i class="fa fa-heart-o"
+                        aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank"></a>
                     </p>
-                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                  
                 </div>
             </div>
         </div>
     </div>
 </footer>
-<!-- Footer Section End -->
 
-<!-- Search Begin -->
+
 <div class="search-model">
     <div class="h-100 d-flex align-items-center justify-content-center">
         <div class="search-close-switch">+</div>
@@ -74,11 +217,8 @@
         </form>
     </div>
 </div>
-<!-- Search End -->
 
-<!-- Js Plugins -->
-<script src="js/jquery-3.3.1.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
+
 <script src="js/jquery.nice-select.min.js"></script>
 <script src="js/jquery.nicescroll.min.js"></script>
 <script src="js/jquery.magnific-popup.min.js"></script>
