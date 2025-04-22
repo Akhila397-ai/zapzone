@@ -15,7 +15,9 @@ const productDetails = async (req, res) => {
         const userData = userId ? await User.findById(userId) : null;
 
         // Fetch the main product
-        const product = await Product.findById(productId).populate('category');
+        const product = await Product.findById(productId).populate('category').populate('brand');
+
+        
         if (!product) {
             return res.status(404).send('Product not found');
         }

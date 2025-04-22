@@ -172,7 +172,7 @@
     }
     .form-select {
         width: 100%;
-        padding: 12px 15px;
+        padding: 16px 202px;
         border: 1px solid #ddd;
         border-radius: 6px;
         font-size: 14px;
@@ -435,6 +435,16 @@
                                         <% }); %>
                                     </select>
                                 </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Brand*</label>
+                                <select class="form-select" name="brand" >
+                                    <option value="" disabled>Select brand</option>
+                                    <% brand.forEach(brand => { %>
+                                        <option value="<%= brand._id %>" <%= product.brand && product.brand._id.toString() === brand._id.toString() ? 'selected' : '' %>><%= brand.name %></option>
+
+                                    <% }); %>
+                                </select>
                             </div>
                             <div class="form-col">
                                 <div class="form-group">

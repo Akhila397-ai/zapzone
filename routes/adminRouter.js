@@ -5,6 +5,7 @@ const {userAuth,adminAuth}=require('../middlewares/auth');
 const customerController=require('../controllers/admin/customerController');
 const categoryController=require('../controllers/admin/categoryController')
 const productController=require('../controllers/admin/productController');
+const brandController = require('../controllers/admin/brandController')
 const upload = require('../helpers/multer');
 router.get('/pagenotfound',adminController.pagenotfound)
 router.get('/login', adminController.loadLogin);  
@@ -32,5 +33,13 @@ router.post('/unblock-product',adminAuth,productController.unblockProduct)
 router.get('/editProduct',adminAuth,productController.getEditProduct);
 router.post('/editProduct/:id', adminAuth, upload.array('productImages', 4), productController.editProduct);
 router.patch('/deleteProduct/:id', adminAuth, productController.deleteProduct);
+//brand management
+router.get('/brands',adminAuth,brandController.getBrandpage);
+router.post('/addBrand',adminAuth,brandController.addBrand)
+router.get('/listbrand',adminAuth,brandController.getlistbrand);
+router.get('/unlistbrand',adminAuth,brandController.getunlistbrand);
+router.get('/editBrand',adminAuth,brandController.getEditBrand);
+router.post('/editBrand/:id', adminAuth,brandController.editBrand);
+router.patch('/deleteBrand/:id',adminAuth,brandController.deleteBrand);
 
 module.exports=router;

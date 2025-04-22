@@ -24,7 +24,7 @@
 .pagination {
     display: flex;
     list-style: none;
-    padding: 0;
+    padding: 25px;
     margin: 0;
 }
 
@@ -238,7 +238,7 @@
         }
 
         .content-main {
-            padding: 20px;
+            /* padding: 20px; */
             max-width: 1400px;
             margin: 0 auto;
         }
@@ -542,7 +542,7 @@
                             <tr>
                                 <th class="col-product-name">Product Name</th>
                                 <th class="col-image">Image</th>
-                                <!-- <th class="col-brand">Brand</th> -->
+                                <th class="col-brand">Brand</th>
                                 <th class="col-category">Category</th>
                                 <th class="col-price">Sale Price</th>
                                 <!-- <th class="col-offer-price">Offer Price</th>
@@ -565,19 +565,10 @@
                                                  onerror="this.src='/img/default-product.jpg';"
                                                  style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
                                         </td>
-                                        <td class="col-brand"><%= product.brand || 'N/A' %></td>
+                                        <td class="col-brand"><%= product.brand.name|| 'N/A' %></td>
                                         <td class="col-category"><%= product.category ? product.category.name : 'N/A' %></td>
                                         <td class="col-price"><%= product.salePrice.toFixed(2) %></td>
-                                        <td class="col-offer-price"><%= product.offerPrice ? product.offerPrice.toFixed(2) : 'N/A' %></td>
-                                        <td class="col-offer">
-                                            <div class="action-col">
-                                                <% if (product.hasOffer) { %>
-                                                    <a href="/admin/remove-offer/<%= escape(product._id) %>" class="action-btn btn-offer">Remove</a>
-                                                <% } else { %>
-                                                    <a href="/admin/add-offer/<%= escape(product._id) %>" class="action-btn btn-offer">Add Offer</a>
-                                                <% } %>
-                                            </div>
-                                        </td>
+                                       
                                         <td class="col-quantity"><%= product.quantity %></td>
                                         <td class="col-action">
                                             <div class="action-col">

@@ -13,10 +13,10 @@ const userSchema = new Schema({
     },
     phone:{
         type:String,
-        required:false,  //google ellam singup cheyumbool email and password kandaal may userinte phone number wenda athkondaan false kodukunath
+        required:false,  
         unique:true,
-        sparse:true, //single sinup cheyumbool phone number wenda
-        default:null
+        sparse:true, 
+        default:" "
     },
     googleId :{
         type:String,

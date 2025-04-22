@@ -12,13 +12,31 @@ const productSchema = new Schema(
       required: true,
     },
     brand: {
-      type: String,
+      type: Schema.Types.ObjectId,
       required: false,
+      ref:'Brand'
     },
     category: {
       type: Schema.Types.ObjectId,
       ref: "category",
       required: true,
+      
+    },
+    ram:{
+      type:Schema.Types.ObjectId,
+      ref:"ram",
+      required:true,
+      enum: ["4GB", "8GB", "16GB", "32GB", "64GB"]
+    },
+    storage:{
+      type:Schema.Types.ObjectId,
+      ref:"storage",
+      required:true
+    },
+    processor:{
+      type:Schema.Types.ObjectId,
+      ref:"processor",
+      required:true
     },
     regularPrice: {
       type: Number,
@@ -48,14 +66,15 @@ const productSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    status: {
-      type: String,
-      enum: ["Available", "Out of Stock", "Discontinued"],
-      required: true,
-      default: "Available", 
+    isDeleted:{
       type:Boolean,
       default:false
-  },
+    },
+    status: {
+      type: String,
+      enum: ['Available', 'Out of Stock'],
+      default: 'Available'
+    },
   },
   { timestamps: true }
 );

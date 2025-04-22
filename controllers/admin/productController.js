@@ -3,6 +3,7 @@
 const Product = require('../../models/productSchema');
 const Category = require('../../models/categorySchema');
 const User = require('../../models/userSchema')
+const Brand = require('../../models/brandSchema')
 const fs = require('fs').promises;
 const path = require('path');
 const sharp = require('sharp');
@@ -14,9 +15,12 @@ const getProductAddPage = async (req, res) => {
     try {
         console.log('from getProductAddPage');
         
-        const category = await Category.find({ });
+
+        const brand = await Brand.find({isListed:true});
+        const category = await Category.find({ isListed:true});
         res.render('add-product', {
             cat: category,
+            brand:brand,
             error: req.query.error || null
         });
     } catch (error) {
@@ -40,8 +44,8 @@ const getAllProducts = async (req, res) => {
     
         const regexSearch = escapeRegex(search);
         const searchQuery = {
-            isDeleted: false,
-            // isBlocked: false,
+            //isDeleted: false,
+            isBlocked: false,
             $or: [
                 { productName: { $regex: regexSearch, $options: 'i' } },
                 { 'category.name': { $regex: regexSearch, $options: 'i' } }
@@ -56,9 +60,13 @@ const getAllProducts = async (req, res) => {
         
         const productData = await Product.find(searchQuery)
             .populate('category')
+            .populate('brand')
             .limit(limit)
             .skip((page - 1) * limit)
             .exec();
+
+            console.log('productData============',productData);
+            
 
        
         const count = await Product.countDocuments(searchQuery);
@@ -82,98 +90,94 @@ const getAllProducts = async (req, res) => {
         res.redirect('/admin/pagenotfound');
     }
 };
-
-
 const addProducts = async (req, res) => {
     try {
-        console.log('Request Body:', req.body);
-        console.log('Request Files:', req.files);
-
-        const { productName, description, category, regularPrice, salePrice, quantity } = req.body;
-
-        if (!productName.trim() || !/^[a-zA-Z0-9\s,()\-.]+$/.test(productName.trim())) {
-            return res.redirect('/admin/add-product?error=Invalid product name');
+      console.log('Request Body:', req.body);
+      console.log('Request Files:', req.files);
+  
+      const {productName,description,category,regularPrice,salePrice,quantity,brand}=req.body;
+      
+       const regPrice = parseFloat(regularPrice);  
+       const salePriceValue = parseFloat(salePrice) || 0;
+       const qty = parseInt(quantity);
+      
+  
+      const productExists = await Product.findOne({ productName });
+  
+      
+      if (productExists) {
+        return res.redirect('/admin/add-product?error=Product already exists');
+      }
+  
+      const categoryId = await Category.findOne({ name: category });
+      if (!categoryId) {
+        return res.redirect('/admin/add-product?error=Invalid category');
+      }
+  
+      const images = [];
+      if (!req.files || req.files.length < 1) {
+        return res.redirect('/admin/add-product?error=Please upload at least one image');
+      }
+  
+  
+     
+      const permDir = path.join(__dirname, '..', '..', 'public', 'Uploads', 'product-images');
+      await fs.mkdir(permDir, { recursive: true });
+  
+      for (let i = 0; i < req.files.length; i++) {
+        const file = req.files[i];
+        const originalImagePath = file.path;
+        const filename = `${Date.now()}-${i}${path.extname(file.originalname)}`;
+        const resizedImagePath = path.join(permDir, filename);
+  
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        if (!allowedTypes.includes(file.mimetype)) {
+          await fs.unlink(originalImagePath).catch(err => console.warn(`Failed to delete ${originalImagePath}: ${err}`));
+          return res.redirect('/admin/add-product');
         }
-        if (!description.trim() || !/^[a-zA-Z0-9\s,()\-.]+$/.test(description.trim())) {
-            return res.redirect('/admin/add-product?error=Invalid product description');
-        }
-        if (!regularPrice || parseFloat(regularPrice) <= 0) {
-            return res.redirect('/admin/add-product?error=Regular price must be positive');
-        }
-        if (salePrice && parseFloat(salePrice) >= parseFloat(regularPrice)) {
-            return res.redirect('/admin/add-product?error=Sale price must be less than regular price');
-        }
-        if (!quantity || parseInt(quantity) < 0) {
-            return res.redirect('/admin/add-product?error=Quantity must be non-negative');
-        }
+  
+        await sharp(originalImagePath)
+          .resize({ width: 440, height: 440, fit: 'cover' })
+          .toFile(resizedImagePath);
+  
+        await new Promise(resolve => setTimeout(resolve, 300));
+  
+        await fs.unlink(originalImagePath).catch(err => console.warn(`Failed to delete temp file ${originalImagePath}: ${err}`));
+  
+        images.push(filename);
+      }
 
-        const productExists = await Product.findOne({ productName });
-        if (productExists) {
-            return res.redirect('/admin/add-product?error=Product already exists');
-        }
-
-        const categoryId = await Category.findOne({ name: category });
-        if (!categoryId) {
-            return res.redirect('/admin/add-product?error=Invalid category');
-        }
-
-        const images = [];
-        if (!req.files || req.files.length === 0) {
-            return res.redirect('/admin/add-product?error=Please upload at least one image');
-        }
-       
-
-        for (let i = 0; i < req.files.length; i++) {
-            const originalImagePath = req.files[i].path;
-            const filename = `${Date.now()}-${i}${path.extname(req.files[i].originalname)}`;
-            const resizedImagePath = path.join('public', 'Uploads', 'product-images', filename);
-
-            
-            await fs.mkdir(path.dirname(resizedImagePath), { recursive: true });
-            
-            if(images !=="image/jpeg", 'image/png', 'image/webp'){
-                console.log("can't upload the image");
-                res.redirect('admin/products')
-            }
-
-            
-            await sharp(originalImagePath)
-                .resize({ width: 440, height: 440, fit: 'cover' })
-                .toFile(resizedImagePath);
-
-            
-            await new Promise(resolve => setTimeout(resolve, 300));
-
-            
-            try {
-                await fs.unlink(originalImagePath);
-                console.log(`Deleted temp file: ${originalImagePath}`);
-            } catch (unlinkError) {
-                console.warn(`Failed to delete temp file ${originalImagePath}:`, unlinkError);
-            }
-
-            images.push(filename);
-        }
-
-        const newProduct = new Product({
-            productName,
-            description,
-            category: categoryId._id,
-            regularPrice: parseFloat(regularPrice),
-            salePrice: salePrice ? parseFloat(salePrice) : 0,
-            quantity: parseInt(quantity),
-            productImage: images,
-            createdAt: new Date(),
-            status: 'Available'
-        });
-
-        await newProduct.save();
-        res.redirect('/admin/products');
+      console.log('categoryId._id,=============',categoryId._id);
+      
+  
+      const newProduct = new Product({
+        productName,
+        description,
+        category: categoryId._id,
+        brand: brand,
+        regularPrice: regPrice,
+        salePrice: salePriceValue,
+        quantity: qty,
+        isDeleted:false,
+        productImage: images,
+        createdAt: new Date(),
+        status: 'Available'
+      });
+  
+      await newProduct.save();
+      res.redirect('/admin/products');
     } catch (error) {
-        console.error('Error in addProducts:', error);
-        res.redirect(`/admin/add-product?error=${encodeURIComponent(error.message)}`);
+      console.error('Error in addProducts:', error);
+  
+      if (req.files) {
+        await Promise.all(
+          req.files.map(file => fs.unlink(file.path).catch(err => console.warn(`Failed to delete ${file.path}: ${err}`)))
+        );
+      }
+  
+      res.redirect("/admin/add-product");
     }
-};
+  };
 
 const blockProduct = async (req, res) => {
     try {
@@ -202,12 +206,14 @@ const getEditProduct = async (req, res) => {
         const id = req.query.id;
       
         
-        const product = await Product.findOne({ _id: id }).populate('category');
+        const product = await Product.findOne({ _id: id }).populate('category').populate('brand')
         const categories = await Category.find({ isListed: true });
+        const brand = await Brand.find({isListed:true})
 
         res.render('editProduct', {
             product,
-            categories
+            categories,
+            brand:brand,
         });
     } catch (error) {
         console.error(error);
@@ -258,7 +264,6 @@ const editProduct = async (req, res) => {
             productImages = productImages.filter(img => img !== images);
         }
 
-        // Handle new images
         if (req.files && req.files.length > 0) {
             const newImages = req.files; 
             if (productImages.length + newImages.length > 4) {
