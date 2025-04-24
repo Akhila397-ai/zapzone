@@ -44,8 +44,8 @@ const getAllProducts = async (req, res) => {
     
         const regexSearch = escapeRegex(search);
         const searchQuery = {
-            //isDeleted: false,
-            isBlocked: false,
+            isDeleted: false,
+            // isBlocked: false,
             $or: [
                 { productName: { $regex: regexSearch, $options: 'i' } },
                 { 'category.name': { $regex: regexSearch, $options: 'i' } }
@@ -95,7 +95,7 @@ const addProducts = async (req, res) => {
       console.log('Request Body:', req.body);
       console.log('Request Files:', req.files);
   
-      const {productName,description,category,regularPrice,salePrice,quantity,brand}=req.body;
+      const {productName,description,category,regularPrice,salePrice,quantity,brand,ram,storage, processor,color}=req.body;
       
        const regPrice = parseFloat(regularPrice);  
        const salePriceValue = parseFloat(salePrice) || 0;
@@ -161,7 +161,11 @@ const addProducts = async (req, res) => {
         isDeleted:false,
         productImage: images,
         createdAt: new Date(),
-        status: 'Available'
+        status: 'Available',
+        ram,
+        storage,
+        processor,
+        color
       });
   
       await newProduct.save();
@@ -234,7 +238,11 @@ const editProduct = async (req, res) => {
             offerPrice,
             hasOffer,
             existingImages = [],
-            removedImages = []
+            removedImages = [],
+            ram,
+            storage,
+            processor,
+            color
         } = req.body;
 
         const product = await Product.findById(id);
@@ -314,7 +322,11 @@ const editProduct = async (req, res) => {
             salePrice: salePriceNum,
             offerPrice: offerPriceNum,
             hasOffer: hasOffer === 'on',
-            productImage: productImages
+            productImage: productImages,
+            ram,
+            storage,
+            processor,
+            color,
         };
 
         const updatedProduct = await Product.findByIdAndUpdate(
@@ -347,7 +359,7 @@ const deleteProduct = async (req, res) => {
   
       const product = await Product.findByIdAndUpdate(
         id,
-        { $set: { isDeleted: true } },
+        { $set: { isDeleted: true,isBlocked:false } },
         { new: true }
       );
   

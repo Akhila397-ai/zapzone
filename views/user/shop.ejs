@@ -159,7 +159,7 @@
         .filter-title {
             font-weight: 600;
             margin-bottom: 10px;
-            color: #555;
+            color:black;
         }
         
         .category-brand-container ul {
@@ -386,6 +386,23 @@
                                 </ul>
                             </div>
                         </div>
+                        <div class="filter-section">
+                            <div class="filter-title">Brand</div>
+                            <div class="category-brand-container">
+                                <ul>
+                                    <% if (brands && brands.length > 0) { %>
+                                        <% brands.forEach(brand => { %>
+                                            <li class="filter-item <%= typeof selectedBrand !== 'undefined' && selectedBrand === brand._id.toString() ? 'active' : '' %>">
+                                                <a href="/filter?brand=<%= brand._id %><%= typeof selectedCategory !== 'undefined' && selectedCategory ? '&cat=' + selectedCategory : '' %>"><%= brand.name %></a>
+                                            </li>
+                                        <% }) %>
+                                    <% } else { %>
+                                        <li>No brands available</li>
+                                    <% } %>
+                                </ul>
+                            </div>
+                        </div>
+                     
                         
                         <!-- Sort Options -->
                         <div class="zz-filter-group">
@@ -399,18 +416,18 @@
                             </select>
                         </div>
                         
-                        <!-- Price Range Filter -->
-                        <div class="zz-filter-group">
-                            <label class="zz-filter-label">Price Range</label>
-                            <div class="row">
-                                <div class="col-6">
-                                    <input type="number" name="minPrice" class="form-control" placeholder="Min" value="<%= typeof minPrice !== 'undefined' ? minPrice : '' %>" aria-label="Minimum price">
-                                </div>
-                                <div class="col-6">
-                                    <input type="number" name="maxPrice" class="form-control" placeholder="Max" value="<%= typeof maxPrice !== 'undefined' ? maxPrice : '' %>" aria-label="Maximum price">
-                                </div>
-                            </div>
-                        </div>
+                       <!-- Price Range Filter -->
+<div class="zz-filter-group">
+    <label class="zz-filter-label" for="priceRange">Price Range (INR)</label>
+    <select name="priceRange" id="priceRange" class="form-control" aria-label="Select price range">
+        <option value="" <%= typeof priceRange === 'undefined' || priceRange === '' ? 'selected' : '' %>>All Prices</option>
+        <option value="15000-40000" <%= typeof priceRange !== 'undefined' && priceRange === '15000-40000' ? 'selected' : '' %>>₹15,000 - ₹40,000</option>
+        <option value="40000-80000" <%= typeof priceRange !== 'undefined' && priceRange === '40000-80000' ? 'selected' : '' %>>₹40,000 - ₹80,000</option>
+        <option value="80000-150000" <%= typeof priceRange !== 'undefined' && priceRange === '80000-150000' ? 'selected' : '' %>>₹80,000 - ₹1,50,000</option>
+        <option value="150000-250000" <%= typeof priceRange !== 'undefined' && priceRange === '150000-250000' ? 'selected' : '' %>>₹1,50,000 - ₹2,50,000</option>
+        <option value="250000+" <%= typeof priceRange !== 'undefined' && priceRange === '250000+' ? 'selected' : '' %>>₹2,50,000+</option>
+    </select>
+</div>
                         
                         <!-- Filter Buttons -->
                         <button type="submit" class="zz-filter-btn">Apply Filters</button>

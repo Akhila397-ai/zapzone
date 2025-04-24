@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/user/userController");
 const productController = require('../controllers/user/productController');
+const profileController = require('../controllers/user/profileController')
 const passport = require("passport");
 const { userAuth } = require("../middlewares/auth");
 
@@ -34,6 +35,7 @@ router.get("/logout",userController.logout);
 
 //product management
 router.get('/productDetails',userAuth,productController.productDetails);
-
-
+//profile management
+// router.get('/forgot-password',profileController.getForgotPassword);
+// router.post('/forgot-email-valid',profileController.forgotEmailValid);
 module.exports = router

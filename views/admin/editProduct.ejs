@@ -1,4 +1,3 @@
-
 <%- include('../../views/partials/admin/header') %>
 
 <!DOCTYPE html>
@@ -17,7 +16,7 @@
 </head>
 
 <style>
-    /* Existing styles remain the same */
+    /* Existing styles remain unchanged */
     * {
         margin: 0;
         padding: 0;
@@ -83,43 +82,6 @@
         display: inline-flex;
         align-items: center;
     }
-    .image-item {
-    position: relative;
-    width: 100px;
-    height: 100px;
-    border-radius: 6px;
-    overflow: hidden;
-    border: 1px solid #ddd;
-    transition: opacity 0.3s ease;
-}
-.image-item.loading {
-    opacity: 0.5;
-}
-.image-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: opacity 0.3s ease;
-}
-.image-item .delete-btn {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background-color: rgba(220, 53, 69, 0.8);
-    color: white;
-    border: none;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 12px;
-}
-.image-item .delete-btn:hover {
-    background-color: rgba(220, 53, 69, 1);
-}
     .back-btn i {
         margin-right: 5px;
     }
@@ -172,7 +134,7 @@
     }
     .form-select {
         width: 100%;
-        padding: 16px 202px;
+        padding: 16px 15px;
         border: 1px solid #ddd;
         border-radius: 6px;
         font-size: 14px;
@@ -416,15 +378,6 @@
                                     <input type="text" class="form-control" name="productName" value="<%= product.productName %>" required>
                                 </div>
                             </div>
-                            <!-- <div class="form-col">
-                                <div class="form-group">
-                                    <label class="form-label">Brand*</label>
-                                    <input type="text" class="form-control" name="brand" value="<%= product.brand %>" required>
-                                </div>
-                            </div> -->
-                        </div>
-                        
-                        <div class="form-row">
                             <div class="form-col">
                                 <div class="form-group">
                                     <label class="form-label">Category*</label>
@@ -436,15 +389,19 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label class="form-label">Brand*</label>
-                                <select class="form-select" name="brand" >
-                                    <option value="" disabled>Select brand</option>
-                                    <% brand.forEach(brand => { %>
-                                        <option value="<%= brand._id %>" <%= product.brand && product.brand._id.toString() === brand._id.toString() ? 'selected' : '' %>><%= brand.name %></option>
-
-                                    <% }); %>
-                                </select>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label class="form-label">Brand*</label>
+                                    <select class="form-select" name="brand" required>
+                                        <option value="" disabled>Select brand</option>
+                                        <% brand.forEach(brand => { %>
+                                            <option value="<%= brand._id %>" <%= product.brand && product.brand._id.toString() === brand._id.toString() ? 'selected' : '' %>><%= brand.name %></option>
+                                        <% }); %>
+                                    </select>
+                                </div>
                             </div>
                             <div class="form-col">
                                 <div class="form-group">
@@ -469,6 +426,60 @@
                             </div>
                         </div>
                         
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label class="form-label">RAM*</label>
+                                    <select class="form-select" name="ram" required>
+                                        <option value="" disabled>Select RAM</option>
+                                        <option value="4GB" <%= product.ram === '4GB' ? 'selected' : '' %>>4GB</option>
+                                        <option value="8GB" <%= product.ram === '8GB' ? 'selected' : '' %>>8GB</option>
+                                        <option value="16GB" <%= product.ram === '16GB' ? 'selected' : '' %>>16GB</option>
+                                        <option value="32GB" <%= product.ram === '32GB' ? 'selected' : '' %>>32GB</option>
+                                        <option value="64GB" <%= product.ram === '64GB' ? 'selected' : '' %>>64GB</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label class="form-label">Storage*</label>
+                                    <select class="form-select" name="storage" required>
+                                        <option value="" disabled>Select Storage</option>
+                                        <option value="128GB SSD" <%= product.storage === '128GB SSD' ? 'selected' : '' %>>128GB SSD</option>
+                                        <option value="256GB SSD" <%= product.storage === '256GB SSD' ? 'selected' : '' %>>256GB SSD</option>
+                                        <option value="512GB SSD" <%= product.storage === '512GB SSD' ? 'selected' : '' %>>512GB SSD</option>
+                                        <option value="1TB SSD" <%= product.storage === '1TB SSD' ? 'selected' : '' %>>1TB SSD</option>
+                                        <option value="2TB SSD" <%= product.storage === '2TB SSD' ? 'selected' : '' %>>2TB SSD</option>
+                                        <option value="1TB HDD" <%= product.storage === '1TB HDD' ? 'selected' : '' %>>1TB HDD</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label class="form-label">Processor*</label>
+                                    <select class="form-select" name="processor" required>
+                                        <option value="" disabled>Select Processor</option>
+                                        <option value="Intel Core i3" <%= product.processor === 'Intel Core i3' ? 'selected' : '' %>>Intel Core i3</option>
+                                        <option value="Intel Core i5" <%= product.processor === 'Intel Core i5' ? 'selected' : '' %>>Intel Core i5</option>
+                                        <option value="Intel Core i7" <%= product.processor === 'Intel Core i7' ? 'selected' : '' %>>Intel Core i7</option>
+                                        <option value="Intel Core i9" <%= product.processor === 'Intel Core i9' ? 'selected' : '' %>>Intel Core i9</option>
+                                        <option value="AMD Ryzen 5" <%= product.processor === 'AMD Ryzen 5' ? 'selected' : '' %>>AMD Ryzen 5</option>
+                                        <option value="AMD Ryzen 7" <%= product.processor === 'AMD Ryzen 7' ? 'selected' : '' %>>AMD Ryzen 7</option>
+                                        <option value="AMD Ryzen 9" <%= product.processor === 'AMD Ryzen 9' ? 'selected' : '' %>>AMD Ryzen 9</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label class="form-label">Color*</label>
+                                    <input type="text" class="form-control" name="color" value="<%= product.color || '' %>" required pattern="[a-zA-Z\s]+" title="Color must contain only letters and spaces">
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="form-group">
                             <label class="form-label">Product Description*</label>
                             <textarea class="form-control description-editor" name="description" rows="6" required><%= product.description %></textarea>
@@ -480,7 +491,7 @@
                                 <% if (product.productImage && product.productImage.length > 0) { %>
                                     <% product.productImage.forEach((image, index) => { %>
                                         <div class="image-item" data-image="<%= image %>">
-                                            <img src="/uploads/product-images/<%= image %>" alt="Product Image <%= index + 1 %>">
+                                            <img src="/Uploads/product-images/<%= image %>" alt="Product Image <%= index + 1 %>">
                                             <button type="button" class="delete-btn" onclick="removeExistingImage(this, '<%= image %>')">
                                                 <i class="fas fa-times"></i>
                                             </button>
@@ -523,40 +534,32 @@
     </div>
 
     <script>
-      
         let removedImages = [];
 
-        
+        function removeExistingImage(button, imageName) {
+            if (removedImages.includes(imageName)) {
+                console.warn(`Image ${imageName} already marked for removal`);
+                return;
+            }
 
-function removeExistingImage(button, imageName) {
-    
-    if (removedImages.includes(imageName)) {
-        console.warn(`Image ${imageName} already marked for removal`);
-        return;
-    }
+            const imageItem = button.closest('.image-item');
+            removedImages.push(imageName);
+            imageItem.classList.add('loading');
 
-    const imageItem = button.closest('.image-item');
-    removedImages.push(imageName);
-    imageItem.classList.add('loading');
+            setTimeout(() => {
+                imageItem.remove();
 
-    setTimeout(() => {
-       
-        imageItem.remove();
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'removedImages[]';
+                hiddenInput.value = imageName;
+                document.getElementById('updateProductForm').appendChild(hiddenInput);
 
-        
-        const hiddenInput = document.createElement('input');
-        hiddenInput.type = 'hidden';
-        hiddenInput.name = 'removedImages[]';
-        hiddenInput.value = imageName;
-        document.getElementById('updateProductForm').appendChild(hiddenInput);
+                const existingInputs = document.querySelectorAll(`input[name="existingImages[]"][value="${imageName}"]`);
+                existingInputs.forEach(input => input.remove());
+            }, 300);
+        }
 
-        
-        const existingInputs = document.querySelectorAll(`input[name="existingImages[]"][value="${imageName}"]`);
-        existingInputs.forEach(input => input.remove());
-    }, 300);
-}
-
-        // Drag and drop functionality
         document.addEventListener('DOMContentLoaded', function() {
             const dropZone = document.getElementById('dropZone');
             const fileInput = document.getElementById('fileInput');
@@ -566,7 +569,6 @@ function removeExistingImage(button, imageName) {
             const productId = '<%= product._id %>';
             let files = [];
 
-            // Update layout based on screen size
             function updateLayout() {
                 if (window.innerWidth <= 992) {
                     mainContent.style.marginLeft = '0';
@@ -580,7 +582,6 @@ function removeExistingImage(button, imageName) {
             window.addEventListener('resize', updateLayout);
             updateLayout();
 
-            // Preview selected files
             function updatePreview() {
                 imagePreview.innerHTML = '';
                 files.forEach((file, index) => {
@@ -600,7 +601,6 @@ function removeExistingImage(button, imageName) {
                 });
             }
 
-            // Handle file selection
             fileInput.addEventListener('change', function() {
                 const currentFilesCount = files.length;
                 const existingImagesCount = currentImages.querySelectorAll('.image-item').length - removedImages.length;
@@ -616,10 +616,9 @@ function removeExistingImage(button, imageName) {
                     return;
                 }
 
-                // Validate file size and type
                 const validFiles = Array.from(this.files).filter(file => {
                     const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-                    const validSize = file.size <= 2 * 1024 * 1024; // 2MB
+                    const validSize = file.size <= 2 * 1024 * 1024;
 
                     if (!validTypes.includes(file.type)) {
                         Swal.fire({
@@ -702,20 +701,17 @@ function removeExistingImage(button, imageName) {
 
                 const formData = new FormData(this);
 
-                // Add files and removed images to FormData
                 if (files.length > 0) {
-                    formData.delete('productImages'); // Remove default entry
+                    formData.delete('productImages');
                     files.forEach(file => formData.append('productImages', file));
                 }
                 removedImages.forEach(image => formData.append('removedImages[]', image));
 
-                
                 console.log('FormData entries:');
                 for (let [key, value] of formData.entries()) {
                     console.log(`${key}:`, value instanceof File ? value.name : value);
                 }
 
-                // Submit the form with AJAX
                 fetch(`/admin/editProduct/${productId}`, {
                     method: 'POST',
                     body: formData
@@ -728,14 +724,13 @@ function removeExistingImage(button, imageName) {
                 })
                 .then(data => {
                     if (data.success) {
-                        // Update current images with new productImage from server
                         const currentImagesDiv = document.getElementById('currentImages');
-                        currentImagesDiv.innerHTML = ''; // Clear existing
+                        currentImagesDiv.innerHTML = '';
                         data.productImage.forEach((image, index) => {
                             const imageItem = document.createElement('div');
                             imageItem.className = 'image-item';
                             imageItem.innerHTML = `
-                                <img src="/uploads/product-images/${image}" alt="Product Image ${index + 1}">
+                                <img src="/Uploads/product-images/${image}" alt="Product Image ${index + 1}">
                                 <button type="button" class="delete-btn" onclick="removeExistingImage(this, '${image}')">
                                     <i class="fas fa-times"></i>
                                 </button>
@@ -744,7 +739,6 @@ function removeExistingImage(button, imageName) {
                             currentImagesDiv.appendChild(imageItem);
                         });
 
-                        
                         files = [];
                         imagePreview.innerHTML = '';
                         removedImages = [];

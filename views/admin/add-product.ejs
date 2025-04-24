@@ -517,6 +517,59 @@
                 </div>
             </div>
             
+            <!-- Specifications -->
+            <div class="form-section">
+                <h3 class="section-title">Specifications</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ram">RAM*</label>
+                        <select id="ram" name="ram">
+                            <option value="" disabled selected>Select RAM</option>
+                            <option value="4GB">4GB</option>
+                            <option value="8GB">8GB</option>
+                            <option value="16GB">16GB</option>
+                            <option value="32GB">32GB</option>
+                            <option value="64GB">64GB</option>
+                        </select>
+                        <span id="ram-error" class="error-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="storage">Storage*</label>
+                        <select id="storage" name="storage">
+                            <option value="" disabled selected>Select Storage</option>
+                            <option value="128GB SSD">128GB SSD</option>
+                            <option value="256GB SSD">256GB SSD</option>
+                            <option value="512GB SSD">512GB SSD</option>
+                            <option value="1TB SSD">1TB SSD</option>
+                            <option value="2TB SSD">2TB SSD</option>
+                            <option value="1TB HDD">1TB HDD</option>
+                        </select>
+                        <span id="storage-error" class="error-message"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="processor">Processor*</label>
+                        <select id="processor" name="processor">
+                            <option value="" disabled selected>Select Processor</option>
+                            <option value="Intel Core i3">Intel Core i3</option>
+                            <option value="Intel Core i5">Intel Core i5</option>
+                            <option value="Intel Core i7">Intel Core i7</option>
+                            <option value="Intel Core i9">Intel Core i9</option>
+                            <option value="AMD Ryzen 5">AMD Ryzen 5</option>
+                            <option value="AMD Ryzen 7">AMD Ryzen 7</option>
+                            <option value="AMD Ryzen 9">AMD Ryzen 9</option>
+                        </select>
+                        <span id="processor-error" class="error-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="color">Color*</label>
+                        <input type="text" id="color" name="color" placeholder="e.g., Silver">
+                        <span id="color-error" class="error-message"></span>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Pricing Information -->
             <div class="form-section">
                 <h3 class="section-title">Pricing Information</h3>
@@ -850,61 +903,96 @@
             });
 
             document.getElementById('add-product-form').addEventListener('submit', function(e) {
-                const errorSpan = document.getElementById('images-error');
-                if (croppedImages.length < 3) {
-                    e.preventDefault();
-                    errorSpan.style.display = 'block';
-                    errorSpan.textContent = 'Please select at least 3 images';
-                } else {
-                    const name = document.getElementById('product-name').value.trim();
-                    const description = document.getElementById('descriptionid').value.trim();
-                    const price = document.getElementById('regular-price').value;
-                    const salePrice = document.getElementById('sale-price').value || '0';
-                    const category = document.getElementById('category').value;
-                    const quantity = document.getElementById('stock').value;
-                    const brand = document.getElementById('brand').value;
+                let isValid = true;
+                
+                // Reset all error messages
+                document.querySelectorAll('.error-message').forEach(span => {
+                    span.style.display = 'none';
+                    span.textContent = '';
+                });
 
-                    if (name === "" || !/^[a-zA-Z0-9\s,()\-.]+$/.test(name)) {
-                        e.preventDefault();
-                        document.getElementById('productName-error').style.display = 'block';
-                        document.getElementById('productName-error').textContent = 'Please enter a valid product name';
-                    }
-                    if (description === "" || !/^[a-zA-Z0-9\s,()\-.]+$/.test(description)) {
-                        e.preventDefault();
-                        document.getElementById('description-error').style.display = 'block';
-                        document.getElementById('description-error').textContent = 'Please enter a valid product description';
-                    }
-                    if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
-                        e.preventDefault();
-                        document.getElementById('regularPrice-error').style.display = 'block';
-                        document.getElementById('regularPrice-error').textContent = 'Please enter a valid non-negative price';
-                    }
-                    if (salePrice && (!/^\d+(\.\d{1,2})?$/.test(salePrice) || parseFloat(salePrice) < 0)) {
-                        e.preventDefault();
-                        document.getElementById('salePrice-error').style.display = 'block';
-                        document.getElementById('salePrice-error').textContent = 'Please enter a valid non-negative price';
-                    }
-                    if (parseFloat(price) <= parseFloat(salePrice)) {
-                        e.preventDefault();
-                        document.getElementById('regularPrice-error').style.display = 'block';
-                        document.getElementById('regularPrice-error').textContent = 'Regular price must be greater than sale price';
-                    }
-                    if (!quantity || parseInt(quantity) < 0) {
-                        e.preventDefault();
-                        document.getElementById('quantity-error').style.display = 'block';
-                        document.getElementById('quantity-error').textContent = 'Please enter a valid non-negative quantity';
-                    }
-                    if (category === "") {
-                        e.preventDefault();
-                        document.getElementById('category-error').style.display = 'block';
-                        document.getElementById('category-error').textContent = 'Please select a category';
-                    }
-                    if (brand === "") {
-                        e.preventDefault();
-                        document.getElementById('brand-error').style.display = 'block';
-                        document.getElementById('brand-error').textContent = 'Please select a brand';
-                    }
-               }
+                // Validate fields
+                const name = document.getElementById('product-name').value.trim();
+                const description = document.getElementById('descriptionid').value.trim();
+                const price = document.getElementById('regular-price').value;
+                const salePrice = document.getElementById('sale-price').value || '0';
+                const category = document.getElementById('category').value;
+                const quantity = document.getElementById('stock').value;
+                const brand = document.getElementById('brand').value;
+                const ram = document.getElementById('ram').value;
+                const storage = document.getElementById('storage').value;
+                const processor = document.getElementById('processor').value;
+                const color = document.getElementById('color').value.trim();
+
+                if (name === "" || !/^[a-zA-Z0-9\s,()\-.]+$/.test(name)) {
+                    isValid = false;
+                    document.getElementById('productName-error').style.display = 'block';
+                    document.getElementById('productName-error').textContent = 'Please enter a valid product name';
+                }
+                if (description === "" || !/^[a-zA-Z0-9\s,()\-.]+$/.test(description)) {
+                    isValid = false;
+                    document.getElementById('description-error').style.display = 'block';
+                    document.getElementById('description-error').textContent = 'Please enter a valid product description';
+                }
+                if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
+                    isValid = false;
+                    document.getElementById('regularPrice-error').style.display = 'block';
+                    document.getElementById('regularPrice-error').textContent = 'Please enter a valid non-negative price';
+                }
+                if (salePrice && (!/^\d+(\.\d{1,2})?$/.test(salePrice) || parseFloat(salePrice) < 0)) {
+                    isValid = false;
+                    document.getElementById('salePrice-error').style.display = 'block';
+                    document.getElementById('salePrice-error').textContent = 'Please enter a valid non-negative price';
+                }
+                if (parseFloat(price) <= parseFloat(salePrice)) {
+                    isValid = false;
+                    document.getElementById('regularPrice-error').style.display = 'block';
+                    document.getElementById('regularPrice-error').textContent = 'Regular price must be greater than sale price';
+                }
+                if (!quantity || parseInt(quantity) < 0) {
+                    isValid = false;
+                    document.getElementById('quantity-error').style.display = 'block';
+                    document.getElementById('quantity-error').textContent = 'Please enter a valid non-negative quantity';
+                }
+                if (category === "") {
+                    isValid = false;
+                    document.getElementById('category-error').style.display = 'block';
+                    document.getElementById('category-error').textContent = 'Please select a category';
+                }
+                if (brand === "") {
+                    isValid = false;
+                    document.getElementById('brand-error').style.display = 'block';
+                    document.getElementById('brand-error').textContent = 'Please select a brand';
+                }
+                if (croppedImages.length < 3) {
+                    isValid = false;
+                    document.getElementById('images-error').style.display = 'block';
+                    document.getElementById('images-error').textContent = 'Please select at least 3 images';
+                }
+                if (!ram) {
+                    isValid = false;
+                    document.getElementById('ram-error').style.display = 'block';
+                    document.getElementById('ram-error').textContent = 'Please select RAM';
+                }
+                if (!storage) {
+                    isValid = false;
+                    document.getElementById('storage-error').style.display = 'block';
+                    document.getElementById('storage-error').textContent = 'Please select storage';
+                }
+                if (!processor) {
+                    isValid = false;
+                    document.getElementById('processor-error').style.display = 'block';
+                    document.getElementById('processor-error').textContent = 'Please select processor';
+                }
+                if (color === "" || !/^[a-zA-Z\s]+$/.test(color)) {
+                    isValid = false;
+                    document.getElementById('color-error').style.display = 'block';
+                    document.getElementById('color-error').textContent = 'Please enter a valid color (letters and spaces only)';
+                }
+
+                if (!isValid) {
+                    e.preventDefault();
+                }
             });
         });
     </script>

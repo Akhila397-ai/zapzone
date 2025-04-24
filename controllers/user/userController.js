@@ -1,6 +1,7 @@
 const User = require("../../models/userSchema");
-const Category = require('../../models/categorySchema');
+const Category = require("../../models/categorySchema")
 const Product = require('../../models/productSchema')
+const Brand =require('../../models/brandSchema')
 const nodemailer = require('nodemailer');
 const env = require('dotenv').config();
 const bcrypt = require('bcrypt');
@@ -303,22 +304,23 @@ console.log("OTP Sent",otp);
 const loadShoppingPage = async (req, res) => {
     try {
         const user = req.session.user;
-        const userData = await User.findOne({ _id: user });
+        const userData = await User.findById(user)
 
-        // Get listed categories
         const categories = await Category.find({ isListed: true });
 
-        // Extract ObjectIds of listed categories
         const categoryIds = categories.map(cat => cat._id);
+
+        const brand = await Brand.find({ isListed: true });
+        const brandIds = brand.map(brand => brand._id);
 
         const page = parseInt(req.query.page) || 1;
         const limit = 9;
         const skip = (page - 1) * limit;
 
-        // Fetch available products (all categories for now)
-        const products = await Product.find({
+          const products = await Product.find({
             isBlocked: false,
-            quantity: { $gt: 0 }
+            quantity: { $gt: 0 },
+            isDeleted:false,
         })
             .sort({ createdAt: -1 })
             .skip(skip)
@@ -337,13 +339,19 @@ const loadShoppingPage = async (req, res) => {
             _id: category._id,
             name: category.name
         }));
+        const brandsWithIds = brand.map(brand => ({
+            _id: brand._id,
+            name: brand.name
+        }));
 
         console.log(products, 'products list');
-
+        
+        
         res.render('shop', {
             user: userData,
             products,
             category: categoriesWithIds,
+            brands: brandsWithIds,
             totalProducts,
             currentPage: page,
             totalPages
@@ -359,31 +367,29 @@ const loadShoppingPage = async (req, res) => {
 
 const filterProduct = async (req, res) => {
     try {
-        const userId = req.user?._id; 
+        const userId = req.user?._id;
         const category = req.query.cat;
+        const brand =req.query.brand;
+        
         const search = req.query.search?.trim();
         const sort = req.query.sort || 'newest';
-        const minPrice = req.query.minPrice ? parseFloat(req.query.minPrice) : null;
-        const maxPrice = req.query.maxPrice ? parseFloat(req.query.maxPrice) : null;
+        const priceRange = req.query.priceRange; 
         const page = parseInt(req.query.page) || 1;
         const itemsPerPage = 6;
 
-        
         const query = {
             isBlocked: false,
             quantity: { $gt: 0 }
         };
 
-        
         let userData = null;
         if (userId) {
             userData = await User.findById(userId);
         }
 
-        
         const categories = await Category.find({ isListed: true });
+        const brands = await Brand.find({isListed:true})
 
-       
         if (category) {
             const findCategory = await Category.findById(category);
             if (!findCategory) {
@@ -395,16 +401,14 @@ const filterProduct = async (req, res) => {
                     currentPage: page,
                     selectedCategory: null,
                     sort,
-                    minPrice: minPrice || '',
-                    maxPrice: maxPrice || '',
+                    priceRange: priceRange || '', 
                     search: search || '',
                     req: req,
                     message: 'Invalid category selected'
                 });
             }
             query.category = findCategory._id;
-            
-            
+
             if (userData) {
                 userData.searchHistory.push({
                     category: findCategory._id,
@@ -413,15 +417,42 @@ const filterProduct = async (req, res) => {
                 await userData.save();
             }
         }
+        if(brand){
+            const findBrand = await Brand.findById(brand);
+            if(!findBrand){
+                res.status(400).render('shop',{
+                    user: userData,
+                    products: [],
+                    category: categories,
+                    totalPages: 0,
+                    brands,
+                    currentPage: page,
+                    selectedCategory: null,
+                    sort,
+                    priceRange: priceRange || '', 
+                    search: search || '',
+                    req: req,
+                    message: 'Invalid brand selected'
+                })
+            }
+            query.brand = findBrand._id;
+            if (userData) {
+                userData.searchHistory.push({
+                    brand: findBrand._id,
+                    searchedOn: new Date()
+                });
+                await userData.save();
+            }
 
-       
+        }
+
         if (search) {
             const matchingCategories = await Category.find({
                 name: { $regex: search, $options: 'i' }
             }).select('_id');
             const categoryIds = matchingCategories.map(cat => cat._id);
             query.$or = [
-                { productName: { $regex: search, $options: 'i' } }, 
+                { productName: { $regex: search, $options: 'i' } },
                 { description: { $regex: search, $options: 'i' } }
             ];
             if (categoryIds.length > 0) {
@@ -429,41 +460,38 @@ const filterProduct = async (req, res) => {
             }
         }
 
-        
-        if (minPrice !== null && maxPrice !== null) {
-            query.salePrice = { $gte: minPrice, $lte: maxPrice }; 
-        } else if (minPrice !== null) {
-            query.salePrice = { $gte: minPrice }; 
-        } else if (maxPrice !== null) {
-            query.salePrice = { $lte: maxPrice }; 
+        if (priceRange && priceRange !== '') {
+            if (priceRange === '250000+') {
+                query.salePrice = { $gte: 250000 };
+            } else {
+                const [minPrice, maxPrice] = priceRange.split('-').map(Number);
+                query.salePrice = { $gte: minPrice, $lte: maxPrice };
+            }
         }
 
-        
         let sortOptions = {};
         if (sort === 'price-low') {
-            sortOptions = { salePrice: 1 }; 
+            sortOptions = { salePrice: 1 };
         } else if (sort === 'price-high') {
-            sortOptions = { salePrice: -1 }; 
+            sortOptions = { salePrice: -1 };
         } else if (sort === 'a-z') {
-            sortOptions = { productName: 1 }; 
+            sortOptions = { productName: 1 };
         } else if (sort === 'z-a') {
-            sortOptions = { productName: -1 }; 
+            sortOptions = { productName: -1 };
         } else {
             sortOptions = { createdAt: -1 };
         }
 
-      
         const totalProducts = await Product.countDocuments(query);
         const totalPages = Math.ceil(totalProducts / itemsPerPage);
         const skip = (page - 1) * itemsPerPage;
-        
+
         const products = await Product.find(query)
             .sort(sortOptions)
             .skip(skip)
             .limit(itemsPerPage)
             .lean();
 
-        
         res.render('shop', {
             user: userData,
             products: products,
@@ -471,9 +499,9 @@ const filterProduct = async (req, res) => {
             totalPages,
             currentPage: page,
             selectedCategory: category || null,
+            brands,
             sort,
-            minPrice: minPrice || '',
-            maxPrice: maxPrice || '',
+            priceRange: priceRange || '', 
             search: search || '',
             req: req
         });

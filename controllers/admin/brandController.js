@@ -120,39 +120,46 @@ const getEditBrand=async(req,res)=>{
         
     }
 }
+
 const editBrand = async(req,res)=>{
-    try {
-        const id=req.params.id;
-        const {brandName,brandDescription}=req.body;
-        const existingBrand=await Brand.findOne({name:brandName});
-        console.log(existingBrand);
 
-        if(existingBrand){
-            return res.status(200).json({error:"This brand already exists"});
+        try {
+          const { id } = req.params;
+          const { brandName, brandDescription } = req.body;
+      
+    
+          // Validate input
+          if (!brandName || !brandDescription) {
+            return res.status(400).json({ success: false, error: 'Brand name and description are required' });
+          }
+      
+          // Check if the brand exists
+          const brand = await Brand.findById(id);
+          if (!brand) {
+            return res.status(404).json({ success: false, error: 'Brand not found' });
+          }
+      
+      
+          // Update brand
+          const updatedBrand = await Brand.findByIdAndUpdate(
+            id,
+            { $set: { name: brandName, description: brandDescription } },
+            { new: true, runValidators: true }
+          );
+      
+          // Debug: Log update result
+          console.log('Updated brand:', updatedBrand);
+      
+          return res.status(200).json({
+            success: true,
+            message: 'Brand updated successfully',
+            data: updatedBrand,
+          });
+        } catch (error) {
+          console.error('Error updating brand:', error);
+          return res.status(500).json({ success: false, error: 'Internal server error' });
         }
-        const updateBrand = await Brand.findByIdAndUpdate(
-            {_id:id},
-            {$set:{name:brandName,description:brandDescription}},
-            {new:true}
-        );
-        console.log(updateBrand);
-
-        if(updateBrand){
-            return res.status(200).json({success:true,message:"updated successfully"});
-        }else{
-            return res.status(400).json({error:"category not found"});
-        }
-        
-
-        
-           
-
-    } catch (error) {
-        console.log(error);
-        return res.status(400).json({error:"internal error"});
-        
-        
-    }
+    
 }
 const deleteBrand= async(req,res)=>{
     try {

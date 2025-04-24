@@ -612,23 +612,35 @@
                         <p><%= product.fullDescription || product.description %></p>
                     </div>
                     <div class="tab-pane zz-tab-pane fade" id="specs" role="tabpanel" aria-labelledby="specs-tab">
-                        <table class="table table-bordered">
-                            <tbody>
-                                <% if (product.specifications && product.specifications.length > 0) { %>
-                                    <% product.specifications.forEach(spec => { %>
-                                        <tr>
-                                            <td width="30%"><strong><%= spec.name %></strong></td>
-                                            <td><%= spec.value %></td>
-                                        </tr>
-                                    <% }) %>
-                                <% } else { %>
-                                    <tr>
-                                        <td colspan="2">No specifications available</td>
-                                    </tr>
-                                <% } %>
-                            </tbody>
-                        </table>
-                    </div>
+    <table class="table table-bordered">
+        <tbody>
+            <tr>
+                <td width="30%"><strong>RAM</strong></td>
+                <td><%= product.ram || 'N/A' %></td>
+            </tr>
+            <tr>
+                <td width="30%"><strong>Storage</strong></td>
+                <td><%= product.storage || 'N/A' %></td>
+            </tr>
+            <tr>
+                <td width="30%"><strong>Processor</strong></td>
+                <td><%= product.processor || 'N/A' %></td>
+            </tr>
+            <tr>
+                <td width="30%"><strong>Color</strong></td>
+                <td><%= product.color || 'N/A' %></td>
+            </tr>
+            <% if (product.specifications && product.specifications.length > 0) { %>
+                <% product.specifications.forEach(spec => { %>
+                    <tr>
+                        <td width="30%"><strong><%= spec.name %></strong></td>
+                        <td><%= spec.value %></td>
+                    </tr>
+                <% }) %>
+            <% } %>
+        </tbody>
+    </table>
+</div>
                     <div class="tab-pane zz-tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
                         <% if (product.reviews && product.reviews.length > 0) { %>
                             <% product.reviews.forEach(review => { %>

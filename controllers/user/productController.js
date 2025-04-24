@@ -4,17 +4,14 @@ const User = require('../../models/userSchema');
 
 const productDetails = async (req, res) => {
     try {
-        // Extract query parameters
         const userId = req.session.user;
         const productId = req.query.id;
-        const page = parseInt(req.query.page) || 1; // Pagination page
-        const search = req.query.search || ''; // Optional search for related products
-        const limit = 4; // Number of related products per page
+        const search =req.query.search;
+        const page = parseInt(req.query.page);
+        const limit=4;
 
-        // Fetch user data
         const userData = userId ? await User.findById(userId) : null;
 
-        // Fetch the main product
         const product = await Product.findById(productId).populate('category').populate('brand');
 
         
@@ -24,13 +21,13 @@ const productDetails = async (req, res) => {
 
         const findCategory = product.category;
 
-        // Build query for related products
         let relatedQuery = {
-            // category: findCategory._id,
-            _id: { $ne: productId } // Exclude the current product
+            category: findCategory._id, 
+            _id: { $ne: productId }
+        
+
         };
 
-        // Add search filter if provided
         if (search) {
             relatedQuery.productName = { $regex: '.*' + search + '.*', $options: 'i' };
         }

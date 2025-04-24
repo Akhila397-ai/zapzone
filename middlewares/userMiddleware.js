@@ -1,15 +1,15 @@
-const User = require("../models/userSchema");
+// const User = require("../models/userSchema");
 
-const adminAuth = async (req, res, next) => {
+// const adminAuth = async (req, res, next) => {
 
-  if (req.session.admin) {
-    next()
-  } else {
-    res.send("not auth") 
-  }
+//   if (req.session.admin) {
+//     next()
+//   } else {
+//     res.send("not auth") 
+//   }
 
-}
+// }
 
-module.exports ={
-  adminAuth
-} 
+// module.exports ={
+//   adminAuth
+// } 

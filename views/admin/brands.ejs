@@ -55,6 +55,8 @@
 
   .input-group .btn {
     padding: 8px 16px;
+    background-color: #6B6AE4;
+    
   }
 
   .btn-primary {
@@ -573,10 +575,10 @@
       <div class="card-header px-4 py-3">
         <div class="d-flex justify-content-between align-items-center">
           <!-- Search Bar -->
-          <form action="/admin/brand/" method="get" class="flex-grow-1 me-1">
+          <form action="/admin/brands/" method="get" class="flex-grow-1 me-1">
             <div class="div-sec">
               <div class="input-group input-group-sm shadow-sm">
-                <input type="text" class="form-control border-0 py-2" placeholder="Search brands" name="search"/>
+                <input type="text" class="form-control border-0 py-2" placeholder="Search brands" name="search">
                 <button class="btn btn-light border-start" type="submit">
                   <i class="bi bi-search"></i> Search
                 </button>
@@ -862,57 +864,62 @@
 
     // Handle Edit Form Submit
     async function handleEditFormSubmit(event) {
-      event.preventDefault();
-      
-      if (!validateForm('editBrandName', 'editBrandDescription', 'edit-name-error', 'edit-description-error')) {
-        return;
-      }
-      
-      const brandId = document.getElementById('editBrandId').value;
-      const brandName = document.getElementById('editBrandName').value.trim();
-      const brandDescription = document.getElementById('editBrandDescription').value.trim();
-      
-      try {
-        const response = await fetch('/admin/editBrand/' + brandId, {
-          method: "POST",
-          headers: {
-            'Content-Type': "application/json"
-          },
-          body: JSON.stringify({ 
-            brandName: brandName, 
-            brandDescription: brandDescription 
-          })
-        });
-        
-        const data = await response.json();
-        
-        if (response.ok) {
-          Swal.fire({
-            title: "Success!",
-            text: "Brand updated successfully",
-            icon: "success",
-            confirmButtonText: "OK"
-          }).then(() => {
-            window.location.reload();
-          });
-        } else {
-          Swal.fire({
-            title: "Error!",
-            text: data.message || "Failed to update brand",
-            icon: "error",
-            confirmButtonText: "OK"
-          });
-        }
-      } catch (error) {
-        console.error("Error updating brand:", error);
-        Swal.fire({
-          title: "Error!",
-          text: "An unexpected error occurred",
-          icon: "error",
-          confirmButtonText: "OK"
-        });
-      }
+  event.preventDefault();
+
+  if (!validateForm('editBrandName', 'editBrandDescription', 'edit-name-error', 'edit-description-error')) {
+    return;
+  }
+
+  const brandId = document.getElementById('editBrandId').value;
+  const brandName = document.getElementById('editBrandName').value.trim();
+  const brandDescription = document.getElementById('editBrandDescription').value.trim();
+
+  // Debug: Log the data being sent
+  console.log('Submitting:', { brandId, brandName, brandDescription });
+
+  try {
+    const response = await fetch('/admin/editBrand/' + brandId, {
+      method: "PATCH", // Changed from POST to PATCH
+      headers: {
+        'Content-Type': "application/json"
+      },
+      body: JSON.stringify({ 
+        brandName: brandName, 
+        brandDescription: brandDescription 
+      })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      Swal.fire({
+        title: "Success!",
+        text: "Brand updated successfully",
+        icon: "success",
+        confirmButtonText: "OK"
+      }).then(() => {
+        window.location.reload();
+      });
+    } else {
+      // Debug: Log error details
+      console.error('Error response:', data);
+      Swal.fire({
+        title: "Error!",
+        text: data.error || data.message || "Failed to update brand",
+        icon: "error",
+        confirmButtonText: "OK"
+      });
     }
+  } catch (error) {
+    console.error("Error updating brand:", error);
+    Swal.fire({
+      title: "Error!",
+      text: "An unexpected error occurred",
+      icon: "error",
+      confirmButtonText: "OK"
+    });
+  }
+}
 
     // Delete Brand Function
     async function confirmDelete(brandId) {

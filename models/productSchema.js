@@ -22,21 +22,25 @@ const productSchema = new Schema(
       required: true,
       
     },
-    ram:{
-      type:Schema.Types.ObjectId,
-      ref:"ram",
-      required:true,
-      enum: ["4GB", "8GB", "16GB", "32GB", "64GB"]
+    ram: { 
+      type: String, 
+      required: true, 
+      enum: ['4GB', '8GB', '16GB', '32GB', '64GB'] 
     },
-    storage:{
-      type:Schema.Types.ObjectId,
-      ref:"storage",
-      required:true
+    storage: { 
+      type: String, 
+      required: true, 
+      enum: ['128GB SSD', '256GB SSD', '512GB SSD', '1TB SSD', '2TB SSD', '1TB HDD'] 
     },
-    processor:{
-      type:Schema.Types.ObjectId,
-      ref:"processor",
-      required:true
+    processor: { 
+      type: String, 
+      required: true, 
+      enum: ['Intel Core i3', 'Intel Core i5', 'Intel Core i7', 'Intel Core i9', 'AMD Ryzen 5', 'AMD Ryzen 7', 'AMD Ryzen 9'] 
+    },
+    color: { 
+      type: String, 
+      required: true,
+      match: /^[a-zA-Z\s]+$/ // Enforce letters and spaces
     },
     regularPrice: {
       type: Number,
@@ -53,10 +57,6 @@ const productSchema = new Schema(
     quantity: {
       type: Number,
       default: 0, 
-    },
-    color: {
-      type: String,
-      required: false,
     },
     productImage: {
       type: [String],

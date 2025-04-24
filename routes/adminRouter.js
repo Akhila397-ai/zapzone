@@ -39,7 +39,7 @@ router.post('/addBrand',adminAuth,brandController.addBrand)
 router.get('/listbrand',adminAuth,brandController.getlistbrand);
 router.get('/unlistbrand',adminAuth,brandController.getunlistbrand);
 router.get('/editBrand',adminAuth,brandController.getEditBrand);
-router.post('/editBrand/:id', adminAuth,brandController.editBrand);
+router.patch('/editBrand/:id', adminAuth,brandController.editBrand);
 router.patch('/deleteBrand/:id',adminAuth,brandController.deleteBrand);
 
 module.exports=router;
