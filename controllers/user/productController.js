@@ -5,6 +5,7 @@ const User = require('../../models/userSchema');
 const productDetails = async (req, res) => {
     try {
         const userId = req.session.user;
+    
         const productId = req.query.id;
         const search =req.query.search;
         const page = parseInt(req.query.page);
@@ -15,7 +16,7 @@ const productDetails = async (req, res) => {
         const product = await Product.findById(productId).populate('category').populate('brand');
 
         
-        if (!product) {
+        if (!product ||  product.isBlocked) {
             return res.status(404).send('Product not found');
         }
 
@@ -46,13 +47,15 @@ const productDetails = async (req, res) => {
             relatedProducts,
             currentPage: page,
             totalPages,
-            searchQuery: search
+            searchQuery: search,
+            profilePicture: userData.profilePicture || null
         });
     } catch (error) {
         console.error('Error fetching product details:', error);
         res.status(500).send('Server Error');
     }
 };
+
 
 module.exports = {
     productDetails,

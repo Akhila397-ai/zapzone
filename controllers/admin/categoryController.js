@@ -120,37 +120,33 @@ const getEditCategory = async (req, res) => {
     }
 };
 
-const editCategory = async(req,res)=>{
-   try {
-    const id=req.params.id;
-    const {categoryName,categoryDescription}=req.body;
-    const existingCategory=await Category.findOne({name:categoryName})
-   console.log(categoryName);
-   console.log(categoryDescription);
-   
-   
-    if(existingCategory){
-        return res.status(400).json({error:"Category already exsts,please choose another one"})
-
-    }
+const editCategory = async (req, res) => {
+    try {
+      const id = req.params.id;
+      const { categoryName, categoryDescription } = req.body;
   
-    
-    const updateCategory = await Category.findOneAndUpdate(
-        {_id:id},
-        {$set:{name:categoryName,description:categoryDescription}},
-        {new:true}
-    );
-    console.log(updateCategory);
-    
-    if(updateCategory){
-        return res.status(200).json({success:true,message:"Updated"})
-    }else{
-        res.status(404).json({error:"Category not found"})
+      const existingCategory = await Category.findOne({ name: categoryName, _id: { $ne: id } });
+      if (existingCategory) {
+        return res.status(400).json({ success: false, message: "Category already exists, please choose another one" });
+      }
+  
+      const updateCategory = await Category.findOneAndUpdate(
+        { _id: id },
+        { $set: { name: categoryName, description: categoryDescription } },
+        { new: true }
+      );
+  
+      if (updateCategory) {
+        return res.status(200).json({ success: true, message: "Category updated successfully" });
+      } else {
+        return res.status(404).json({ success: false, message: "Category not found" });
+      }
+    } catch (error) {
+      console.error("Edit Category Error:", error);
+      return res.status(500).json({ success: false, message: "Internal server error" });
     }
-   } catch (error) {
-        res.status(500).json({error:"internal error"})
-   }
-}
+  };
+  
 const deleteCategory = async (req, res) => {
     try {
       const id = req.params.id;

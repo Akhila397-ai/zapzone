@@ -47,7 +47,7 @@ const getBrandpage=async(req,res)=>{
         }
         const existingBrand = await Brand.findOne({ name: { $regex: `^${name}$`, $options: 'i' } });
         if(existingBrand){
-            return res.status(400).json({error:"This brand already exists"});
+            return res.status(400).json({success:false,message:"This brand already exists"});
         }
         const newBrand = new Brand({name,description});
         await newBrand.save();
@@ -128,26 +128,22 @@ const editBrand = async(req,res)=>{
           const { brandName, brandDescription } = req.body;
       
     
-          // Validate input
           if (!brandName || !brandDescription) {
             return res.status(400).json({ success: false, error: 'Brand name and description are required' });
           }
-      
-          // Check if the brand exists
+      //find the bran
           const brand = await Brand.findById(id);
           if (!brand) {
             return res.status(404).json({ success: false, error: 'Brand not found' });
           }
       
       
-          // Update brand
           const updatedBrand = await Brand.findByIdAndUpdate(
             id,
             { $set: { name: brandName, description: brandDescription } },
             { new: true, runValidators: true }
           );
       
-          // Debug: Log update result
           console.log('Updated brand:', updatedBrand);
       
           return res.status(200).json({

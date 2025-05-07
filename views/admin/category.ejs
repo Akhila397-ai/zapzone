@@ -8,7 +8,7 @@
 .content-main {
   /* padding: 20px; */
   padding-left: 250px;
-  padding-right: 100px;
+  /* padding-right: 100px; */
 }
 
 .content-header {
@@ -44,6 +44,8 @@
   align-items: center;
   text-align: center;
   border-radius: 15px;
+  background-color: #6B6AE4;
+  height: 122px;
   
 }
 
@@ -355,6 +357,8 @@ textarea.form-control {
   padding: 8px 16px;
   font-weight: 500;
   border-radius: 7px;
+  margin-left: 966px;
+  margin-bottom: 10px;
 }
 
 .input-group.input-group-sm {
@@ -1178,10 +1182,14 @@ textarea.form-control {
         <h2 class="content-title card-title">Category</h2>
       </div>
     </div>
+    <button type="button" class="btn btn-primary btn-sm shadow-sm py-2 px-3" onclick="openCreatePopup()">
+      <i class="bi bi-plus-circle"></i> Create New Category+
+    </button>
     
     <div class="card">
       <div class="card-header px-4 py-3">
         <div class="d-flex justify-content-between align-items-center">
+         
           <!-- Search Bar -->
           <form action="/admin/category/" method="get" class="flex-grow-1 me-1">
             <div class="div-sec">
@@ -1192,9 +1200,7 @@ textarea.form-control {
                 </button>
               </div>
               
-              <button type="button" class="btn btn-primary btn-sm shadow-sm py-2 px-3" onclick="openCreatePopup()">
-                <i class="bi bi-plus-circle"></i> Create New Category
-              </button>
+             
             </div>
           </form>
         </div>
@@ -1442,77 +1448,6 @@ textarea.form-control {
       });
     }
 
-    // Category Offer Functions
-    // async function addOffer(categoryId) {
-    //   const { value: amount } = await Swal.fire({
-    //     title: "Offer in percentage",
-    //     input: "number",
-    //     inputLabel: "Percentage",
-    //     inputPlaceholder: "%",
-    //   });
-
-    //   if (amount) {
-    //     try {
-    //       const response = await fetch('/admin/addCategoryOffer', {
-    //         method: "POST",
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //         },
-    //         body: JSON.stringify({
-    //           percentage: amount,
-    //           categoryId: categoryId,
-    //         }),
-    //       });
-
-    //       const data = await response.json();
-    //       if (response.ok && data.status === true) {
-    //         Swal.fire("Offer added", "The offer has been added", "success").then(() => {
-    //           location.reload();
-    //         });
-    //       } else {
-    //         Swal.fire("Failed", data.message || "Adding offer failed", "error");
-    //       }
-    //     } catch (error) {
-    //       Swal.fire("Error", "An error occurred while adding the offer", "error");
-    //       console.error("Error adding offer", error);
-    //     }
-    //   }
-    // }
-
-    // async function removeOffer(categoryId) {
-    //   const confirmRemove = await Swal.fire({
-    //     title: "Are you sure?",
-    //     text: "This will remove the category offer.",
-    //     icon: "warning",
-    //     showCancelButton: true,
-    //     confirmButtonText: "Yes, remove it!",
-    //     cancelButtonText: "Cancel",
-    //   });
-
-    //   if (confirmRemove.isConfirmed) {
-    //     try {
-    //       const response = await fetch('/admin/removeCategoryOffer', {
-    //         method: "POST",
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //         },
-    //         body: JSON.stringify({ categoryId: categoryId }),
-    //       });
-
-    //       const data = await response.json();
-    //       if (response.ok && data.status === true) {
-    //         Swal.fire("Offer Removed", "The category offer has been removed", "success").then(() => {
-    //           location.reload();
-    //         });
-    //       } else {
-    //         Swal.fire("Failed", data.message || "Removing offer failed", "error");
-    //       }
-    //     } catch (error) {
-    //       Swal.fire("Error", "An error occurred while removing the offer", "error");
-    //       console.error("Error removing offer", error);
-    //     }
-    //   }
-    // }
 
     // Edit Category Popup Functions
     function openEditPopup(categoryId, categoryName, categoryDescription) {
@@ -1680,7 +1615,7 @@ textarea.form-control {
       
       try {
         const response = await fetch('/admin/editCategory/' + categoryId, {
-          method: "POST",
+          method: "PATCH",
           headers: {
             'Content-Type': "application/json"
           },

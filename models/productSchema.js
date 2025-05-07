@@ -40,7 +40,7 @@ const productSchema = new Schema(
     color: { 
       type: String, 
       required: true,
-      match: /^[a-zA-Z\s]+$/ // Enforce letters and spaces
+      match: /^[a-zA-Z\s]+$/ 
     },
     regularPrice: {
       type: Number,

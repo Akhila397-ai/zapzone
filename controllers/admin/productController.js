@@ -140,8 +140,6 @@ const addProducts = async (req, res) => {
           .resize({ width: 440, height: 440, fit: 'cover' })
           .toFile(resizedImagePath);
   
-        await new Promise(resolve => setTimeout(resolve, 300));
-  
         await fs.unlink(originalImagePath).catch(err => console.warn(`Failed to delete temp file ${originalImagePath}: ${err}`));
   
         images.push(filename);
@@ -235,7 +233,6 @@ const editProduct = async (req, res) => {
             category,
             quantity,
             salePrice,
-            offerPrice,
             hasOffer,
             existingImages = [],
             removedImages = [],
@@ -300,14 +297,10 @@ const editProduct = async (req, res) => {
         }
 
         const salePriceNum = parseFloat(salePrice);
-        const offerPriceNum = offerPrice ? parseFloat(offerPrice) : 0;
         const quantityNum = parseInt(quantity);
 
         if (isNaN(salePriceNum) || salePriceNum < 0) {
             return res.status(400).json({ success: false, message: "Invalid sale price" });
-        }
-        if (offerPrice && (isNaN(offerPriceNum) || offerPriceNum < 0)) {
-            return res.status(400).json({ success: false, message: "Invalid offer price" });
         }
         if (isNaN(quantityNum) || quantityNum < 0) {
             return res.status(400).json({ success: false, message: "Invalid quantity" });
@@ -320,7 +313,6 @@ const editProduct = async (req, res) => {
             category: categoryDoc._id,
             quantity: quantityNum,
             salePrice: salePriceNum,
-            offerPrice: offerPriceNum,
             hasOffer: hasOffer === 'on',
             productImage: productImages,
             ram,

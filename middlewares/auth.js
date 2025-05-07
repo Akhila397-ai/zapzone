@@ -9,20 +9,21 @@ const userAuth = (req, res, next) => {
             User.findById(req.session.user)
                 .then(user => {
                     if (user && !user.isBlocked) {
+                        req.user = user; 
                         next(); 
                     } else {
                         req.session.destroy(err => {
                             if (err) {
-                                console.error("Error destroying session:", err);
+                                console.error("Failed to clear session:", err);
                                 return res.status(500).json({ error: "Internal server error" });
                             }
-                            console.log("Session forcefully destroyed successfully");
+                            console.log("User session terminated due to block or invalid status.");
                             res.redirect('/login');
                         });
                     }
                 })
                 .catch(error => {
-                    console.error("Error in user auth middleware:", error);
+                    console.error("Authentication middleware encountered an error:", error);
                     res.status(500).json({ error: "Internal server error" });
                 });
         } else {
@@ -37,16 +38,16 @@ const userAuth = (req, res, next) => {
                     } else {
                         req.session.destroy(err => {
                             if (err) {
-                                console.error("Error destroying session:", err);
+                                console.error("Session termination error:", err);
                                 return res.status(500).json({ error: "Internal server error" });
                             }
-                            console.log("Session forcefully destroyed successfully");
+                            console.log("Access denied: User session removed.");
                             res.redirect('/login');
                         });
                     }
                 })
                 .catch(error => {
-                    console.error("Error in user auth middleware:", error);
+                    console.error("Middleware error while verifying user:", error);
                     res.status(500).json({ error: "Internal server error" });
                 });
         } else {
@@ -54,6 +55,7 @@ const userAuth = (req, res, next) => {
         }
     }
 };
+
 
 const adminAuth = (req, res, next) => {
     if (req.session.admin) {

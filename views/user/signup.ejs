@@ -3,164 +3,530 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signup - Laptop & Accessories Store</title>
-    <link rel="stylesheet" href="/css/signup.css">
-   
+    <title>Signup - Zapzon | Laptop & Accessories Store</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4bb543;
+            --error: #f44336;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f5f7fb;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        .container {
+            display: flex;
+            width: 95%;
+            max-width: 1000px;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            height: 90vh;
+            max-height: 850px; /* Increased to fit all content */
+        }
+        
+        .image-side {
+            flex: 1.2;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(67, 97, 238, 0.3);
+            z-index: 1;
+        }
+        
+        .image-side img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .brand-overlay {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            z-index: 2;
+        }
+        
+        .brand-name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .brand-tagline {
+            color: white;
+            font-size: 1rem;
+            margin-top: 5px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .signup-side {
+            flex: 0.8;
+            padding: 20px; /* Reduced from 30px */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: hidden; /* No scrolling */
+        }
+        
+        .signup-header {
+            margin-bottom: 10px; /* Reduced from 15px */
+        }
+        
+        .signup-header h2 {
+            color: var(--dark);
+            font-size: 22px; /* Slightly reduced */
+            font-weight: 600;
+            margin-bottom: 3px; /* Reduced from 5px */
+        }
+        
+        .signup-header p {
+            color: #6c757d;
+            font-size: 12px; /* Slightly reduced */
+        }
+        
+        .form-group {
+            margin-bottom: 8px; /* Reduced from 10px */
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 3px; /* Reduced from 5px */
+            color: #495057;
+            font-size: 12px; /* Slightly reduced */
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 8px 12px; /* Reduced padding */
+            border: 1px solid #ced4da;
+            border-radius: 6px; /* Slightly reduced */
+            font-size: 13px; /* Slightly reduced */
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+        }
+        
+        .error-message {
+            color: var(--error);
+            font-size: 11px; /* Slightly reduced */
+            margin-top: 3px; /* Reduced from 5px */
+            display: none;
+        }
+        
+        .signup-btn {
+            width: 100%;
+            padding: 8px; /* Reduced from 10px */
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px; /* Slightly reduced */
+            font-size: 14px; /* Slightly reduced */
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 6px; /* Reduced from 8px */
+        }
+        
+        .signup-btn:hover {
+            background-color: var(--secondary);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 6px 0; /* Reduced from 8px */
+            color: #6c757d;
+            font-size: 12px; /* Slightly reduced */
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background-color: #dee2e6;
+        }
+        
+        .divider span {
+            padding: 0 10px; /* Reduced from 15px */
+        }
+        
+        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            background-color: white;
+            color: #5f6368;
+            border: 1px solid #dee2e6;
+            border-radius: 6px; /* Slightly reduced */
+            padding: 6px; /* Reduced from 8px */
+            font-size: 12px; /* Slightly reduced */
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            margin-bottom: 8px; /* Reduced from 10px */
+        }
+        
+        .google-btn:hover {
+            background-color: #f8f9fa;
+            border-color: #ced4da;
+        }
+        
+        .google-icon {
+            width: 16px; /* Reduced from 18px */
+            height: 16px; /* Reduced from 18px */
+            margin-right: 8px; /* Reduced from 10px */
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 3px; /* Reduced from 5px */
+            font-size: 12px; /* Slightly reduced */
+            color: #6c757d;
+        }
+        
+        .login-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Responsive breakpoints */
+        @media (max-width: 992px) {
+            .container {
+                max-width: 90%;
+            }
+            
+            .brand-name {
+                font-size: 2rem;
+            }
+            
+            .brand-tagline {
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                width: 95%;
+                height: auto; /* Allow the container to grow */
+                min-height: 80vh; /* Ensure a minimum height */
+                max-height: none; /* Remove max-height constraint */
+            }
+            
+            .image-side {
+                height: 120px; /* Reduced from 140px */
+                flex: none;
+            }
+            
+            .signup-side {
+                padding: 15px; /* Reduced from 20px */
+                flex: 1;
+                overflow-y: hidden; /* No scrolling */
+            }
+            
+            .brand-overlay {
+                top: 15px;
+                left: 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                width: 100%;
+                border-radius: 10px;
+                height: auto; /* Allow the container to grow */
+                min-height: 95vh; /* Ensure a minimum height */
+            }
+            
+            .image-side {
+                height: 100px; /* Reduced from 120px */
+            }
+            
+            .signup-side {
+                padding: 12px; /* Reduced from 15px */
+                overflow-y: hidden; /* No scrolling */
+            }
+            
+            .brand-name {
+                font-size: 1.6rem;
+            }
+            
+            .brand-tagline {
+                font-size: 0.8rem;
+            }
+            
+            .signup-header h2 {
+                font-size: 18px; /* Reduced from 20px */
+            }
+            
+            .form-group {
+                margin-bottom: 6px; /* Reduced from 8px */
+            }
+            
+            .form-group input {
+                padding: 6px 10px; /* Further reduced */
+                font-size: 12px; /* Further reduced */
+            }
+            
+            .signup-btn {
+                padding: 6px; /* Further reduced */
+                font-size: 13px; /* Further reduced */
+            }
+        }
+        
+        @media (max-width: 320px) {
+            .container {
+                height: auto; /* Allow the container to grow */
+                min-height: 100vh; /* Ensure a minimum height */
+                border-radius: 0;
+            }
+            
+            .image-side {
+                height: 80px; /* Reduced from 100px */
+            }
+            
+            .signup-side {
+                padding: 10px; /* Reduced from 12px */
+                overflow-y: hidden; /* No scrolling */
+            }
+            
+            .form-group input {
+                padding: 5px 8px; /* Further reduced */
+                font-size: 11px; /* Further reduced */
+            }
+            
+            .signup-btn {
+                padding: 5px; /* Further reduced */
+                font-size: 12px; /* Further reduced */
+            }
+            
+            .brand-name {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
+        <div class="image-side">
+            <div class="image-overlay"></div>
+            <!-- <img src="/api/placeholder/600/400" alt="Laptop Image"> -->
+            <div class="brand-overlay">
+                <div class="brand-name">Zapzon</div>
+                <div class="brand-tagline">Premium Laptops <br> "Smart. Sleek. Superior."</div>
+            </div>
+        </div>
         <div class="signup-side">
-            <h2>Create an Account</h2>
+            <div class="signup-header">
+                <h2>Create an Account</h2>
+                <p>Sign up to start shopping with Zapzon</p>
+            </div>
             <form id="signform" method="post" action="/signup">
                 <div class="form-group">
                     <label for="fullName">Full Name</label>
-                    <input type="text" id="name" name="name" >
-                    <div id="error1" class="error-massage"></div>
+                    <input type="text" id="name" name="name" placeholder="Enter your full name">
+                    <div id="error1" class="error-message"></div>
                 </div>
                 <div class="form-group">
                     <label for="email">Email Address</label>
-                    <input type="email" id="email" name="email" >
-                    <div id="error2" class="error-massage"></div>
+                    <input type="email" id="email" name="email" placeholder="your.email@example.com">
+                    <div id="error2" class="error-message"></div>
                 </div>
                 <div class="form-group">
                     <label for="phone">Phone Number</label>
-                    <input type="tel" id="phone" name="phone" >
-                    <div id="error3" class="error-massage"></div>
+                    <input type="tel" id="phone" name="phone" placeholder="Enter your phone number">
+                    <div id="error3" class="error-message"></div>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" >
-                    <div id="error4" class="error-massage"></div>
+                    <input type="password" id="password" name="password" placeholder="Enter your password">
+                    <div id="error4" class="error-message"></div>
                 </div>
                 <div class="form-group">
                     <label for="confirmPassword">Confirm Password</label>
-                    <input type="password" id="confirmPassword" name="confirmPassword" >
-                    <div id="error5" class="error-massage"></div>
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password">
+                    <div id="error5" class="error-message"></div>
                 </div>
                 <%if(locals.message && message.length>0){%>
                     <div class="alert alert-danger text-center">
                        <%=message%>
                     </div>
                 <%}%>
-                <button type="submit">Sign Up</button>
+                <button type="submit" class="signup-btn">Sign Up</button>
+                
+                <div class="divider">
+                    <span>or</span>
+                </div>
+                
                 <a href="/auth/google" class="google-btn">
-                    <img src="https://www.google.com/favicon.ico" alt="Google" class="google-icon">
+                    <svg viewBox="0 0 24 24" width="16" height="16" class="google-icon">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
                     Sign up with Google
                 </a>
+                
                 <div class="login-link">
                     Already have an account? <a href="/login">Sign in</a>
                 </div>
             </form>
         </div>
-        <div class="image-side"></div>
-        <script>
-            const nameid = document.getElementById("name");
-            const emailid = document.getElementById("email");
-            const phoneid = document.getElementById("phone");
-            const passid = document.getElementById("password");
-            const cpassid = document.getElementById("confirmPassword");
-            const error1 = document.getElementById("error1");
-            const error2 = document.getElementById("error2");
-            const error3 = document.getElementById("error3");
-            const error4 = document.getElementById("error4");
-            const error5 = document.getElementById("error5");
-            const signform = document.getElementById("signform");
-        
-            function nameValidateChecking() {
-                const nameval = nameid.value.trim();
-                const namepattern = /^[A-Za-z\s]+$/;
-        
-                if (nameval === "") {
-                    error1.style.display = "block";
-                    error1.innerHTML = "Please enter a valid name";
-                    return false;
-                } else if (!namepattern.test(nameval)) {
-                    error1.style.display = "block";
-                    error1.innerHTML = "Name can only contain alphabets and spaces";
-                    return false;
-                } else {
-                    error1.style.display = "none";
-                    error1.innerHTML = "";
-                    return true;
-                }
-            }
-        
-            function emailValidateChecking() {
-                const emailval = emailid.value.trim();
-                const emailpattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        
-                if (!emailpattern.test(emailval)) {
-                    error2.style.display = "block";
-                    error2.innerHTML = "Invalid email format";
-                    return false;
-                } else {
-                    error2.style.display = "none";
-                    error2.innerHTML = "";
-                    return true;
-                }
-            }
-        
-            function phoneValidateChecking() {
-                const phoneval = phoneid.value.trim();
-                if (phoneval === "") {
-                    error3.style.display = "block";
-                    error3.innerHTML = "Enter a valid phone number";
-                    return false;
-                } else if (phoneval.length !== 10 || !/^\d+$/.test(phoneval)) {
-                    error3.style.display = "block";
-                    error3.innerHTML = "Phone number must be 10 digits and contain only numbers";
-                    return false;
-                } else {
-                    error3.style.display = "none";
-                    error3.innerHTML = "";
-                    return true;
-                }
-            }
-        
-            function passValidateChecking() {
-                const passval = passid.value.trim();
-                const cpassval = cpassid.value.trim();
-                const alpha = /[a-zA-Z]/;
-                const digit = /\d/;
-        
-                if (passval.length < 8) {
-                    error4.style.display = "block";
-                    error4.innerHTML = "Password must contain at least 8 characters";
-                    return false;
-                } else if (!alpha.test(passval) || !digit.test(passval)) {
-                    error4.style.display = "block";
-                    error4.innerHTML = "Password must contain both letters and numbers";
-                    return false;
-                } else {
-                    error4.style.display = "none";
-                    error4.innerHTML = "";
-                }
-        
-                if (passval !== cpassval) {
-                    error5.style.display = "block";
-                    error5.innerHTML = "Passwords do not match";
-                    return false;
-                } else {
-                    error5.style.display = "none";
-                    error5.innerHTML = "";
-                    return true;
-                }
-            }
-        
-            document.addEventListener("DOMContentLoaded", function () {
-                signform.addEventListener("submit", function (e) {
-                    const isNameValid = nameValidateChecking();
-                    const isEmailValid = emailValidateChecking();
-                    const isPhoneValid = phoneValidateChecking();
-                    const isPasswordValid = passValidateChecking();
-        
-                    if (!isNameValid || !isEmailValid || !isPhoneValid || !isPasswordValid) {
-                        e.preventDefault(); 
-                    }
-                });
-            });
-        </script>
-        
     </div>
+
+    <script>
+        const nameid = document.getElementById("name");
+        const emailid = document.getElementById("email");
+        const phoneid = document.getElementById("phone");
+        const passid = document.getElementById("password");
+        const cpassid = document.getElementById("confirmPassword");
+        const error1 = document.getElementById("error1");
+        const error2 = document.getElementById("error2");
+        const error3 = document.getElementById("error3");
+        const error4 = document.getElementById("error4");
+        const error5 = document.getElementById("error5");
+        const signform = document.getElementById("signform");
+
+        function nameValidateChecking() {
+            const nameval = nameid.value.trim();
+            const namepattern = /^[A-Za-z\s]+$/;
+
+            if (nameval === "") {
+                error1.style.display = "block";
+                error1.innerHTML = "Please enter a valid name";
+                return false;
+            } else if (!namepattern.test(nameval)) {
+                error1.style.display = "block";
+                error1.innerHTML = "Name can only contain alphabets and spaces";
+                return false;
+            } else {
+                error1.style.display = "none";
+                error1.innerHTML = "";
+                return true;
+            }
+        }
+
+        function emailValidateChecking() {
+            const emailval = emailid.value.trim();
+            const emailpattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+            if (!emailpattern.test(emailval)) {
+                error2.style.display = "block";
+                error2.innerHTML = "Invalid email format";
+                return false;
+            } else {
+                error2.style.display = "none";
+                error2.innerHTML = "";
+                return true;
+            }
+        }
+
+        function phoneValidateChecking() {
+            const phoneval = phoneid.value.trim();
+            if (phoneval === "") {
+                error3.style.display = "block";
+                error3.innerHTML = "Enter a valid phone number";
+                return false;
+            } else if (phoneval.length !== 10 || !/^\d+$/.test(phoneval)) {
+                error3.style.display = "block";
+                error3.innerHTML = "Phone number must be 10 digits and contain only numbers";
+                return false;
+            } else {
+                error3.style.display = "none";
+                error3.innerHTML = "";
+                return true;
+            }
+        }
+
+        function passValidateChecking() {
+            const passval = passid.value.trim();
+            const cpassval = cpassid.value.trim();
+            const alpha = /[a-zA-Z]/;
+            const digit = /\d/;
+
+            if (passval.length < 8) {
+                error4.style.display = "block";
+                error4.innerHTML = "Password must contain at least 8 characters";
+                return false;
+            } else if (!alpha.test(passval) || !digit.test(passval)) {
+                error4.style.display = "block";
+                error4.innerHTML = "Password must contain both letters and numbers";
+                return false;
+            } else {
+                error4.style.display = "none";
+                error4.innerHTML = "";
+            }
+
+            if (passval !== cpassval) {
+                error5.style.display = "block";
+                error5.innerHTML = "Passwords do not match";
+                return false;
+            } else {
+                error5.style.display = "none";
+                error5.innerHTML = "";
+                return true;
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            signform.addEventListener("submit", function (e) {
+                const isNameValid = nameValidateChecking();
+                const isEmailValid = emailValidateChecking();
+                const isPhoneValid = phoneValidateChecking();
+                const isPasswordValid = passValidateChecking();
+
+                if (!isNameValid || !isEmailValid || !isPhoneValid || !isPasswordValid) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
 </body>
 </html>

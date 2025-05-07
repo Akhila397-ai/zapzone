@@ -74,7 +74,7 @@ h6 {
 }
 
 p {
-	font-size: 15px;
+	font-size: 10px;
 	font-family: "Nunito Sans", sans-serif;
 	color: #3d3d3d;
 	font-weight: 400;
@@ -83,7 +83,7 @@ p {
 }
 
 img {
-	max-width: 100%;
+	max-width: 14%;
 }
 
 input:focus,
@@ -104,6 +104,7 @@ ul,
 ol {
 	padding: 0;
 	margin: 0;
+	margin-right: 150px;
 }
 
 /*---------------------

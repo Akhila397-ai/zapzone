@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="ZAPZONE Email Verification">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Email Verification - ZAPZONE</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="css/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <style>
+        .otp-input {
+            width: 100%;
+            padding: 10px;
+            font-size: 18px;
+            text-align: center;
+            border-radius: 4px;
+            border: 1px solid #ced4da;
+            transition: all 0.3s;
+        }
+
+        .otp-input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        .otp-timer, .resend-btn {
+            display: inline-block;
+            font-size: 14px;
+            color: #555;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <%- include("../../views/partials/user/header") %>
+    
+    <section class="content-main mt-80 mb-80">
+        <div class="card mx-auto card-login col-4">
+            <div class="card-body">
+                <h4 class="card-title mb-4">Email Verification</h4>
+                <form action="/verify-email-otp" method="post">
+                    <div class="mb-3">
+                        <label for="otp">Enter OTP:</label>
+                        <input type="text" id="otp" name="otp" class="otp-input form-control" required>
+                    </div>
+                    <div class="mb-4">
+                        <button type="submit" class="btn btn-primary w-100">Verify OTP</button>
+                    </div>
+                    <div class="otp-timer">
+                        <span id="otpTimer">OTP Expires in: 1:00</span>
+                    </div>
+                    <div class="mb-3">
+                        <button type="button" class="resend-btn btn btn-link" id="resendBtn">Resend OTP</button>
+                    </div>
+                    <% if (locals.message && message.length > 0) { %>
+                        <div class="alert alert-danger mt-3">
+                            <%= message %>
+                        </div>
+                    <% } %>
+                </form>
+            </div>
+        </div>
+    </section>
+    
+    <%- include("../../views/partials/user/footer") %>
+
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/main.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            let timerInterval;
+            
+            function startOTPTimer(durationInSeconds) {
+                clearInterval(timerInterval);
+                let timer = durationInSeconds;
+                const timerElement = document.getElementById('otpTimer');
+                
+                timerInterval = setInterval(function() {
+                    const minutes = Math.floor(timer / 60);
+                    const seconds = timer % 60;
+
+                    timerElement.textContent = `OTP Expires in: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+                    if (--timer < 0) {
+                        clearInterval(timerInterval);
+                        timerElement.textContent = 'OTP Expired';
+                    }
+                }, 1000);
+            }
+
+            $('#resendBtn').on('click', function() {
+                $.ajax({
+                    type: 'POST',
+                    url: '/resend-otp',
+                    success: function(response) {
+                        if (response.success) {
+                            startOTPTimer(60);
+                        } else {
+                            alert('Failed to resend OTP. Please try again.');
+                        }
+                    },
+                    error: function() {
+                        alert('Error occurred while resending OTP. Please try again.');
+                    }
+                });
+            });
+
+            // Start the timer when page loads
+            startOTPTimer(60);
+        });
+    </script>
+</body>
+</html>

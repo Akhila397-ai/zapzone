@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="ZAPZONE Edit Address">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Edit Address - ZAPZONE</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="css/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="css/magnific-popup.css" type="text/css">
+    <link rel="stylesheet" href="css/nice-select.css" type="text/css">
+    <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Nunito Sans', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+        }
+        
+        .profile-container {
+            display: flex;
+            max-width: 1200px;
+            margin: 30px auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+        
+        .content {
+            flex: 1;
+            padding: 30px;
+            background-color: white;
+        }
+        
+        .greeting {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 12px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        
+        .back-btn:hover {
+            background-color: #f9f9f9;
+        }
+        
+        hr {
+            border: 0;
+            border-top: 1px solid #eee;
+            margin: 20px 0;
+        }
+        
+        .form-section {
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .section-icon {
+            color: #a52a2a;
+            font-size: 18px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .form-column {
+            flex: 1;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .required:after {
+            content: " *";
+            color: #a52a2a;
+        }
+        
+        input[type="text"],
+        input[type="tel"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .help-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        
+        .btn-save {
+            background-color: #a52a2a;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 20px;
+            display: block;
+            text-align: center;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .btn-save:hover {
+            background-color: #8b0000;
+        }
+        
+        .error-message {
+            color: #f44336;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .profile-container {
+                flex-direction: column;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include("../partials/user/header") %>
+    
+    <div class="profile-container">
+        <%- include("../partials/user/sidebar", {active: 'addresses'}) %>
+        
+        <div class="content">
+            <div class="greeting">EDIT ADDRESS</div>
+            
+            <a href="/addresses" class="back-btn">
+                ← Back to Addresses
+            </a>
+            
+            <hr>
+            
+            <form id="edit-address-form" action="/update-address" method="POST">
+                <input type="hidden" name="addressId" value="<%= address._id %>">
+                
+                <div class="form-section">
+                    <div class="section-title">
+                        <span class="section-icon">📍</span>
+                        <h4>Address Type</h4>
+                    </div>
+                    
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="addressType" value="Home" <%= address.addressType === 'Home' ? 'checked' : '' %>> Home
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="addressType" value="Work" <%= address.addressType === 'Work' ? 'checked' : '' %>> Work
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="addressType" value="Other" <%= address.addressType === 'Other' ? 'checked' : '' %>> Other
+                        </label>
+                    </div>
+                    <div class="error-message" id="addressType-error"></div>
+                </div>
+                
+                <div class="form-section">
+                    <div class="section-title">
+                        <span class="section-icon">👤</span>
+                        <h4>Personal Information</h4>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-column">
+                            <label for="name" class="required">Full Name</label>
+                            <input type="text" id="name" name="name" value="<%= address.name %>" >
+                            <div class="error-message" id="name-error"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-column">
+                            <label for="phone" class="required">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" value="<%= address.phone %>" >
+                            <div class="help-text">We'll use this as the primary contact number</div>
+                            <div class="error-message" id="phone-error"></div>
+                        </div>
+                        <div class="form-column">
+                            <label for="altPhone" class="required">Alternative Phone</label>
+                            <input type="tel" id="altPhone" name="altPhone" value="<%= address.altPhone %>" >
+                            <div class="error-message" id="altPhone-error"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <div class="section-title">
+                        <span class="section-icon">🏠</span>
+                        <h4>Address Details</h4>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-column">
+                            <label for="city" class="required">City</label>
+                            <input type="text" id="city" name="city" value="<%= address.city %>" >
+                            <div class="error-message" id="city-error"></div>
+                        </div>
+                        <div class="form-column">
+                            <label for="state" class="required">State</label>
+                            <input type="text" id="state" name="state" value="<%= address.state %>" >
+                            <div class="error-message" id="state-error"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-column">
+                            <label for="landMark" class="required">Landmark</label>
+                            <input type="text" id="landMark" name="landMark" value="<%= address.landMark %>" >
+                            <div class="help-text">Nearby recognizable location (e.g., mall, school, etc.)</div>
+                            <div class="error-message" id="landMark-error"></div>
+                        </div>
+                        <div class="form-column">
+                            <label for="pincode" class="required">Pincode</label>
+                            <input type="text" id="pincode" name="pincode" value="<%= address.pincode %>" >
+                            <div class="error-message" id="pincode-error"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="checkbox-option">
+                    <input type="checkbox" id="isDefault" name="isDefault" <%= address.isDefault ? 'checked' : '' %>>
+                    <label for="isDefault">Set as default address for delivery</label>
+                </div>
+                
+                <button type="submit" class="btn-save">
+                    ✔ Update Address
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <%- include("../partials/user/footer") %>
+
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.nice-select.min.js"></script>
+    <script src="js/jquery.nicescroll.min.js"></script>
+    <script src="js/jquery.magnific-popup.min.js"></script>
+    <script src="js/jquery.countdown.min.js"></script>
+    <script src="js/jquery.slicknav.js"></script>
+    <script src="js/mixitup.min.js"></script>
+    <script src="js/owl.carousel.min.js"></script>
+    <script src="js/main.js"></script>
+
+    <script>
+        const addressForm = document.getElementById("edit-address-form");
+        const nameInput = document.getElementById("name");
+        const phoneInput = document.getElementById("phone");
+        const altPhoneInput = document.getElementById("altPhone");
+        const cityInput = document.getElementById("city");
+        const stateInput = document.getElementById("state");
+        const landMarkInput = document.getElementById("landMark");
+        const pincodeInput = document.getElementById("pincode");
+        const addressTypeInputs = document.getElementsByName("addressType");
+
+        const nameError = document.getElementById("name-error");
+        const phoneError = document.getElementById("phone-error");
+        const altPhoneError = document.getElementById("altPhone-error");
+        const cityError = document.getElementById("city-error");
+        const stateError = document.getElementById("state-error");
+        const landMarkError = document.getElementById("landMark-error");
+        const pincodeError = document.getElementById("pincode-error");
+        const addressTypeError = document.getElementById("addressType-error");
+
+        function nameValidateChecking() {
+            const nameVal = nameInput.value.trim();
+            const namePattern = /^[A-Za-z\s]+$/;
+
+            if (nameVal === "") {
+                nameError.style.display = "block";
+                nameError.innerHTML = "Please enter a valid name";
+                return false;
+            } else if (!namePattern.test(nameVal)) {
+                nameError.style.display = "block";
+                nameError.innerHTML = "Name can only contain alphabets and spaces";
+                return false;
+            } else {
+                nameError.style.display = "none";
+                nameError.innerHTML = "";
+                return true;
+            }
+        }
+
+        function phoneValidateChecking() {
+            const phoneVal = phoneInput.value.trim();
+            if (phoneVal === "") {
+                phoneError.style.display = "block";
+                phoneError.innerHTML = "Enter a valid phone number";
+                return false;
+            } else if (phoneVal.length !== 10 || !/^\d+$/.test(phoneVal)) {
+                phoneError.style.display = "block";
+                phoneError.innerHTML = "Phone number must be 10 digits and contain only numbers";
+                return false;
+            } else {
+                phoneError.style.display = "none";
+                phoneError.innerHTML = "";
+                return true;
+            }
+        }
+
+        function altPhoneValidateChecking() {
+            const altPhoneVal = altPhoneInput.value.trim();
+            if (altPhoneVal === "") {
+                altPhoneError.style.display = "block";
+                altPhoneError.innerHTML = "Enter a valid alternative phone number";
+                return false;
+            } else if (altPhoneVal.length !== 10 || !/^\d+$/.test(altPhoneVal)) {
+                altPhoneError.style.display = "block";
+                altPhoneError.innerHTML = "Alternative phone number must be 10 digits and contain only numbers";
+                return false;
+            } else {
+                altPhoneError.style.display = "none";
+                altPhoneError.innerHTML = "";
+                return true;
+            }
+        }
+
+        function cityValidateChecking() {
+            const cityVal = cityInput.value.trim();
+            const cityPattern = /^[A-Za-z\s]+$/;
+
+            if (cityVal === "") {
+                cityError.style.display = "block";
+                cityError.innerHTML = "Please enter a valid city name";
+                return false;
+            } else if (!cityPattern.test(cityVal)) {
+                cityError.style.display = "block";
+                cityError.innerHTML = "City name can only contain alphabets and spaces";
+                return false;
+            } else {
+                cityError.style.display = "none";
+                cityError.innerHTML = "";
+                return true;
+            }
+        }
+
+        function stateValidateChecking() {
+            const stateVal = stateInput.value.trim();
+            const statePattern = /^[A-Za-z\s]+$/;
+
+            if (stateVal === "") {
+                stateError.style.display = "block";
+                stateError.innerHTML = "Please enter a valid state name";
+                return false;
+            } else if (!statePattern.test(stateVal)) {
+                stateError.style.display = "block";
+                stateError.innerHTML = "State name can only contain alphabets and spaces";
+                return false;
+            } else {
+                stateError.style.display = "none";
+                stateError.innerHTML = "";
+                return true;
+            }
+        }
+
+        function landMarkValidateChecking() {
+            const landMarkVal = landMarkInput.value.trim();
+            if (landMarkVal === "") {
+                landMarkError.style.display = "block";
+                landMarkError.innerHTML = "Please enter a valid landmark";
+                return false;
+            } else if (landMarkVal.length < 2) {
+                landMarkError.style.display = "block";
+                landMarkError.innerHTML = "Landmark must be at least 2 characters long";
+                return false;
+            } else {
+                landMarkError.style.display = "none";
+                landMarkError.innerHTML = "";
+                return true;
+            }
+        }
+
+        function pincodeValidateChecking() {
+            const pincodeVal = pincodeInput.value.trim();
+            if (pincodeVal === "") {
+                pincodeError.style.display = "block";
+                pincodeError.innerHTML = "Enter a valid pincode";
+                return false;
+            } else if (pincodeVal.length !== 6 || !/^\d+$/.test(pincodeVal)) {
+                pincodeError.style.display = "block";
+                pincodeError.innerHTML = "Pincode must be 6 digits and contain only numbers";
+                return false;
+            } else {
+                pincodeError.style.display = "none";
+                pincodeError.innerHTML = "";
+                return true;
+            }
+        }
+
+        function addressTypeValidateChecking() {
+            let isChecked = false;
+            for (const input of addressTypeInputs) {
+                if (input.checked) {
+                    isChecked = true;
+                    break;
+                }
+            }
+            if (!isChecked) {
+                addressTypeError.style.display = "block";
+                addressTypeError.innerHTML = "Please select an address type";
+                return false;
+            } else {
+                addressTypeError.style.display = "none";
+                addressTypeError.innerHTML = "";
+                return true;
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            addressForm.addEventListener("submit", function (e) {
+                const isNameValid = nameValidateChecking();
+                const isPhoneValid = phoneValidateChecking();
+                const isAltPhoneValid = altPhoneValidateChecking();
+                const isCityValid = cityValidateChecking();
+                const isStateValid = stateValidateChecking();
+                const isLandMarkValid = landMarkValidateChecking();
+                const isPincodeValid = pincodeValidateChecking();
+                const isAddressTypeValid = addressTypeValidateChecking();
+
+                if (!isNameValid || !isPhoneValid || !isAltPhoneValid || !isCityValid || !isStateValid || !isLandMarkValid || !isPincodeValid || !isAddressTypeValid) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

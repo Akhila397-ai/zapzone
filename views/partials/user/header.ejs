@@ -1,250 +1,6 @@
- <!-- Header Section Begin -->
-  <style>
-    .header {
-	background: #ffffff;
-}
-.shopping-cart {
-    width: 24px;
-    height: 34px;
-    stroke: black;
-    stroke-width: 1px;
-    fill: none;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-}
-.shopping-cart:hover {
-	transform: scale(1.1);
-}
-
-.header__top {
-	background: #111111;
-	padding: 10px 0;
-}
-
-.header__top__left p {
-	color: #ffffff;
-	margin-bottom: 0;
-}
-
-.header__top__right {
-	text-align: right;
-}
-
-.header__top__links {
-	display: inline-block;
-	margin-left: 350px;
-}
-
-.header__top__links a {
-	color: #ffffff;
-	font-size: 13px;
-	text-transform: uppercase;
-	letter-spacing: 2px;
-	margin-right: 28px;
-	display: inline-block;
-}
-
-.header__top__links a:last-child {
-	margin-right: 0;
-}
-
-.header__top__hover {
-	display: inline-block;
-	position: relative;
-}
-
-.header__top__hover:hover ul {
-	top: 24px;
-	opacity: 1;
-	visibility: visible;
-}
-
-.header__top__hover span {
-	color: #ffffff;
-	font-size: 13px;
-	text-transform: uppercase;
-	letter-spacing: 2px;
-	display: inline-block;
-	cursor: pointer;
-}
-
-.header__top__hover span i {
-	font-size: 20px;
-	position: relative;
-	top: 3px;
-	right: 2px;
-}
-
-.header__top__hover ul {
-	background: #ffffff;
-	display: inline-block;
-	padding: 2px 0;
-	position: absolute;
-	left: 0;
-	top: 44px;
-	opacity: 0;
-	visibility: hidden;
-	z-index: 3;
-	-webkit-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-	box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-	-webkit-transition: all, 0.3s;
-	-o-transition: all, 0.3s;
-	transition: all, 0.3s;
-}
-
-.header__top__hover ul li {
-	list-style: none;
-	font-size: 13px;
-	color: #111111;
-	padding: 2px 15px;
-	cursor: pointer;
-}
-
-.header__logo {
-	padding: 30px 0;
-}
-
-.header__logo a {
-	display: inline-block;
-}
-
-.header__menu {
-	text-align: center;
-	padding: 26px 0 25px;
-}
-
-.header__menu ul li {
-	list-style: none;
-	display: inline-block;
-	margin-right: 45px;
-	position: relative;
-}
-
-.header__menu ul li.active a:after {
-	-webkit-transform: scale(1);
-	-ms-transform: scale(1);
-	transform: scale(1);
-}
-
-.header__menu ul li:hover a:after {
-	-webkit-transform: scale(1);
-	-ms-transform: scale(1);
-	transform: scale(1);
-}
-
-.header__menu ul li:hover .dropdown {
-	top: 32px;
-	opacity: 1;
-	visibility: visible;
-}
-
-.header__menu ul li:last-child {
-	margin-right: 0;
-}
-
-.header__menu ul li .dropdown {
-	position: absolute;
-	left: 0;
-	top: 56px;
-	width: 150px;
-	background: #111111;
-	text-align: left;
-	padding: 5px 0;
-	z-index: 9;
-	opacity: 0;
-	visibility: hidden;
-	-webkit-transition: all, 0.3s;
-	-o-transition: all, 0.3s;
-	transition: all, 0.3s;
-}
-
-.header__menu ul li .dropdown li {
-	display: block;
-	margin-right: 0;
-}
-
-.header__menu ul li .dropdown li a {
-	font-size: 14px;
-	color: #ffffff;
-	font-weight: 400;
-	padding: 5px 20px;
-	text-transform: capitalize;
-}
-
-.header__menu ul li .dropdown li a:after {
-	display: none;
-}
-
-.header__menu ul li a {
-	font-size: 18px;
-	color: #111111;
-	display: block;
-	font-weight: 600;
-	position: relative;
-	padding: 3px 0;
-}
-
-.header__menu ul li a:after {
-	position: absolute;
-	left: 0;
-	bottom: 0;
-	width: 100%;
-	height: 2px;
-	background: #e53637;
-	content: "";
-	-webkit-transition: all, 0.5s;
-	-o-transition: all, 0.5s;
-	transition: all, 0.5s;
-	-webkit-transform: scale(0);
-	-ms-transform: scale(0);
-	transform: scale(0);
-}
-
-.header__nav__option {
-	text-align: right;
-	padding: 30px 0;
-}
-
-.header__nav__option a {
-	display: inline-block;
-	margin-right: 26px;
-	position: relative;
-}
-
-.header__nav__option a span {
-	color: #0d0d0d;
-	font-size: 11px;
-	position: absolute;
-	left: 5px;
-	top: 8px;
-}
-
-.header__nav__option a:last-child {
-	margin-right: 0;
-}
-
-.header__nav__option .price {
-	font-size: 15px;
-	color: #111111;
-	font-weight: 700;
-	display: inline-block;
-	margin-left: -20px;
-	position: relative;
-	top: 3px;
-}
-
-.offcanvas-menu-wrapper {
-	display: none;
-}
-
-.canvas__open {
-	display: none;
-}
-.header__logoo{
-	top:140px;
-}
-
-  </style>
+<!-- Header partial (save as ../partials/user/header.ejs) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <header class="header">
     <div class="header__top">
         <div class="container">
@@ -254,11 +10,11 @@
                         <p>Free shipping, 30-day return or refund guarantee.</p>
                     </div>
                 </div>
-               
                 <div class="header__top__links">
-                    <% if (locals.user) { %>
+                    <% if (user) { %>
                         <div class="header__top__hover">
-                            <span> <%= locals.user.name %> <i class="arrow_carrot-down"></i></span>
+                            <img class="header__profile-img" src= "<%= profilePicture %>" || '/img/default-profile.png">
+                            <span> <%= user.name %> <i class="arrow_carrot-down"></i></span>
                             <ul>
                                 <li><a href="/profile">My Profile</a></li>
                                 <li><a href="/orders">Orders</a></li>
@@ -271,41 +27,310 @@
                         <a href="/login">Sign In</a>
                         <a href="/signup">Sign Up</a>
                     <% } %>
-                    <a href="#">FAQs</a>
+                   
                 </div>
-                
             </div>
         </div>
     </div>
     <div class="container">
         <div class="row">
             <div class="col-lg-3 col-md-3">
-               <div class="header__logo">
-        <a ><font color="black"><strong>ZAPZONE</strong></font></a>
-               </div>
+                <div class="header__logo">
+                    <a><font color="black"><strong>ZAPZONE</strong></font></a>
+                </div>
             </div>
             <div class="col-lg-6 col-md-6">
                 <nav class="header__menu mobile-menu">
                     <ul>
-                        <li class="active"><a href="/">Home</a></li>
-                        <li ><a href="/shop">Shop</a></li>
-                       
+                        <li class=""><a href="/">Home</a></li>
+                        <li><a href="/shop">Shop</a></li>
                     </ul>
                 </nav>
             </div>
             <div class="col-lg-3 col-md-3">
                 <div class="header__nav__option">
-                    <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a>
+                    <div class="header__search">
+                        <form action="" method="GET">
+                            <input type="text" name="query" placeholder="Search products..." required>
+                            <button type="submit">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 0 0 1.48-4.23 6.5 6.5 0 1 0-6.5 6.5 6.5 6.5 0 0 0 4.23-1.48l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z"/>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
                     <a href="#"><img src="img/icon/heart.png" alt=""></a>
-                    <svg class="shopping-cart" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M9 22a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
-                        <path d="M20 22a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
-                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-                    </svg>
-                    
+
+                    <a href="/cart">
+                        <svg class="shopping-cart" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M9 22a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
+                            <path d="M20 22a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                        </svg>
+                    </a>
                 </div>
             </div>
         </div>
         <div class="canvas__open"><i class="fa fa-bars"></i></div>
     </div>
 </header>
+
+<!-- Add the header styling -->
+<style>
+    .header__profile-img {
+    width: 54px;
+    height: 25px;
+    border-radius: 50%;
+    object-fit: cover;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+    .header {
+        background: #ffffff;
+    }
+    .shopping-cart {
+        width: 24px;
+        height: 34px;
+        stroke: black;
+        stroke-width: 1px;
+        fill: none;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+    .shopping-cart:hover {
+        transform: scale(1.1);
+    }
+    .header__top {
+        background: #212936;
+        padding: 10px 0;
+    }
+    .header__top__left p {
+        color: #ffffff;
+        margin-bottom: 0;
+    }
+    .header__top__right {
+        text-align: right;
+    }
+    .header__top__links {
+        display: inline-block;
+        margin-left: 350px;
+    }
+    .header__top__links a {
+        color: #ffffff;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-right: 28px;
+        display: inline-block;
+    }
+    .header__top__links a:last-child {
+        margin-right: 0;
+    }
+    .header__top__hover {
+        display: inline-block;
+        position: relative;
+    }
+    .header__top__hover:hover ul {
+        top: 24px;
+        opacity: 1;
+        visibility: visible;
+    }
+    .header__top__hover span {
+        color: #ffffff;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        display: inline-block;
+        cursor: pointer;
+       
+    }
+    .header__top__hover span i {
+        font-size: 20px;
+        position: relative;
+        top: 3px;
+        right: 2px;
+    }
+    .header__top__hover ul {
+        background: #ffffff;
+        display: inline-block;
+        padding: 2px 0;
+        position: absolute;
+        left: 0;
+        top: 44px;
+        opacity: 0;
+        visibility: hidden;
+        z-index: 3;
+        -webkit-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        -webkit-transition: all, 0.3s;
+        -o-transition: all, 0.3s;
+        transition: all, 0.3s;
+    }
+    .header__top__hover ul li {
+        list-style: none;
+        font-size: 13px;
+        color: #111111;
+        padding: 2px 15px;
+        cursor: pointer;
+    }
+    .header__logo {
+        padding: 30px 0;
+    }
+    .header__logo a {
+        display: inline-block;
+    }
+    .header__menu {
+        text-align: center;
+        padding: 26px 0 25px;
+		margin-right: 24px;
+    }
+    .header__menu ul li {
+        list-style: none;
+        display: inline-block;
+        margin-right: 45px;
+        position: relative;
+    }
+    .header__menu ul li.active a:after {
+        -webkit-transform: scale(1);
+        -ms-transform: scale(1);
+        transform: scale(1);
+    }
+    .header__menu ul li:hover a:after {
+        -webkit-transform: scale(1);
+        -ms-transform: scale(1);
+        transform: scale(1);
+    }
+    .header__menu ul li:hover .dropdown {
+        top: 32px;
+        opacity: 1;
+        visibility: visible;
+    }
+    .header__menu ul li:last-child {
+        margin-right: 0;
+    }
+    .header__menu ul li .dropdown {
+        position: absolute;
+        left: 0;
+        top: 56px;
+        width: 150px;
+        background: #111111;
+        text-align: left;
+        padding: 5px 0;
+        z-index: 9;
+        opacity: 0;
+        visibility: hidden;
+        -webkit-transition: all, 0.3s;
+        -o-transition: all, 0.3s;
+        transition: all, 0.3s;
+    }
+    .header__menu ul li .dropdown li {
+        display: block;
+        margin-right: 0;
+    }
+    .header__menu ul li .dropdown li a {
+        font-size: 14px;
+        color: #ffffff;
+        font-weight: 400;
+        padding: 5px 20px;
+        text-transform: capitalize;
+    }
+    .header__menu ul li .dropdown li a:after {
+        display: none;
+    }
+    .header__menu ul li a {
+        font-size: 18px;
+        color: #111111;
+        display: block;
+        font-weight: 600;
+        position: relative;
+        padding: 3px 0;
+    }
+    .header__menu ul li a:after {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 2px;
+        background: #e53637;
+        content: "";
+        -webkit-transition: all, 0.5s;
+        -o-transition: all, 0.5s;
+        transition: all, 0.5s;
+        -webkit-transform: scale(0);
+        -ms-transform: scale(0);
+        transform: scale(0);
+    }
+    .header__nav__option {
+        text-align: right;
+        padding: 30px 0;
+    }
+    .header__nav__option a {
+        display: inline-block;
+        margin-right: 26px;
+        position: relative;
+    }
+    .header__nav__option a span {
+        color: #0d0d0d;
+        font-size: 11px;
+        position: absolute;
+        left: 5px;
+        top: 8px;
+    }
+    .header__nav__option a:last-child {
+        margin-right: 0;
+    }
+    .header__nav__option .price {
+        font-size: 15px;
+        color: #111111;
+        font-weight: 700;
+        display: inline-block;
+        margin-left: -20px;
+        position: relative;
+        top: 3px;
+    }
+    .offcanvas-menu-wrapper {
+        display: none;
+    }
+    .canvas__open {
+        display: none;
+    }
+    .header__logoo {
+        top: 140px;
+    }
+    .header__search {
+        display: inline-block;
+        position: relative;
+        margin-right: 26px;
+    }
+    .header__search input {
+        border: 1px solid #e1e1e1;
+        border-radius: 20px;
+        padding: 8px 40px 8px 15px;
+        font-size: 14px;
+        color: #111111;
+        width: 120px;
+        outline: none;
+        transition: all, 0.3s;
+		margin-left: -150px
+    }
+    .header__search input:focus {
+        border-color: #e53637;
+        width: 180px;
+    }
+    .header__search button {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+    }
+    .header__search button svg {
+        width: 20px;
+        height: 12px;
+        fill: #111111;
+		margin-bottom: 3px
+    }
+</style>

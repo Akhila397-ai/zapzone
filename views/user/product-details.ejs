@@ -12,6 +12,37 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         /* Base Styles */
+        .product-unavailable {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          min-height: 60vh;
+          text-align: center;
+          background-color: #f8f9fa;
+          padding: 40px 20px;
+          border-radius: 12px;
+          box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+        }
+
+        .product-unavailable h2 {
+          font-size: 2rem;
+          color: #dc3545; /* Bootstrap red */
+          margin-bottom: 10px;
+        }    
+
+        .product-unavailable p {
+         font-size: 1.1rem;
+         color: #555;
+         margin-bottom: 20px;
+        }
+
+        .product-unavailable .btn {
+         padding: 10px 20px;
+         font-size: 1rem;
+         border-radius: 8px;
+        }
+
         body {
             background-color: #f5f5f5;
             font-family: 'Nunito Sans', sans-serif;
@@ -231,6 +262,12 @@
             background-color: #e9ecef;
         }
         
+        .zz-quantity-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            color: #666;
+        }
+        
         .zz-quantity-input {
             width: 50px;
             height: 35px;
@@ -238,6 +275,12 @@
             border: none;
             border-left: 1px solid #ddd;
             border-right: 1px solid #ddd;
+        }
+        
+        .zz-quantity-input:disabled {
+            background-color: #f0f0f0;
+            cursor: not-allowed;
+            color: #666;
         }
         
         /* Action Buttons */
@@ -266,6 +309,13 @@
             background-color: #333;
             color: white;
             text-decoration: none;
+        }
+        
+        .zz-add-to-cart.disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            pointer-events: none;
+            color: #666;
         }
         
         .zz-add-to-wishlist {
@@ -497,216 +547,224 @@
     </style>
 </head>
 <body>
-    <!-- Breadcrumb Navigation -->
-    <div class="zz-breadcrumb-area">
+    <% if (product.isBlocked) { %>
+        <!-- Product Blocked Message -->
         <div class="container">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb zz-breadcrumb">
-                    <li class="breadcrumb-item zz-breadcrumb-item"><a href="/">Home</a></li>
-                    <li class="breadcrumb-item zz-breadcrumb-item"><a href="/shop">Shop</a></li>
-                    <li class="breadcrumb-item zz-breadcrumb-item active" aria-current="page"><%= product.productName %></li>
-                </ol>
-            </nav>
+            <div class="product-unavailable">
+                <h2>Product Not Available</h2>
+                <p>This product has been blocked by the administrator.</p>
+                <a href="/shop" class="btn btn-primary">Back to Shop</a>
+            </div>
         </div>
-    </div>
-
-    <!-- Product Detail Container -->
-    <div class="container">
-        <div class="zz-product-detail">
-            <div class="row">
-                <!-- Product Gallery -->
-                <div class="col-lg-6">
-                    <div class="zz-product-gallery">
-                        <div class="zz-main-image zoom-container">
-                            <img id="mainImage" class="zoom-image" src="/Uploads/product-images/<%= product.productImage[0] %>" alt="<%= product.productName %>">
-                            <div class="zoom-lens"></div>
+    <% } else { %>
+    
+        <!-- Breadcrumb Navigation -->
+        <div class="zz-breadcrumb-area">
+            <div class="container">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb zz-breadcrumb">
+                        <li class="breadcrumb-item zz-breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item zz-breadcrumb-item"><a href="/shop">Shop</a></li>
+                        <li class="breadcrumb-item zz-breadcrumb-item active" aria-current="page"><%= product.productName %></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    
+        <!-- Product Detail Container -->
+        <div class="container">
+            <div class="zz-product-detail">
+                <div class="row">
+                    <!-- Product Gallery -->
+                    <div class="col-lg-6">
+                        <div class="zz-product-gallery">
+                            <div class="zz-main-image zoom-container">
+                                <img id="mainImage" class="zoom-image" src="/Uploads/product-images/<%= product.productImage[0] %>" alt="<%= product.productName %>">
+                                <div class="zoom-lens"></div>
+                            </div>
+                            <div class="zz-thumbnails">
+                                <% if (product.productImage && product.productImage.length > 0) { %>
+                                    <% product.productImage.forEach((image, index) => { %>
+                                        <div class="zz-thumbnail <%= index === 0 ? 'active' : '' %>" data-image="/Uploads/product-images/<%= image %>">
+                                            <img src="/Uploads/product-images/<%= image %>" alt="<%= product.productName %> thumbnail <%= index + 1 %>">
+                                        </div>
+                                    <% }) %>
+                                <% } %>
+                            </div>
                         </div>
-                        <div class="zz-thumbnails">
-                            <% if (product.productImage && product.productImage.length > 0) { %>
-                                <% product.productImage.forEach((image, index) => { %>
-                                    <div class="zz-thumbnail <%= index === 0 ? 'active' : '' %>" data-image="/Uploads/product-images/<%= image %>">
-                                        <img src="/Uploads/product-images/<%= image %>" alt="<%= product.productName %> thumbnail <%= index + 1 %>">
+                    </div>
+    
+                    <!-- Product Info -->
+                    <div class="col-lg-6">
+                        <div class="zz-product-info">
+                            <h1><%= product.productName %></h1>
+                            <div class="zz-product-price">
+                                ₹ <%= product.salePrice %>
+                                <% if (product.regularPrice && product.regularPrice > product.salePrice) { %>
+                                    <span class="zz-original-price">₹ <%= product.regularPrice %></span>
+                                    <% const discount = Math.round(((product.regularPrice - product.salePrice) / product.regularPrice) * 100) %>
+                                    <span class="zz-discount-badge"><%= discount %>% OFF</span>
+                                <% } %>
+                            </div>
+    
+                            <div class="zz-product-desc">
+                                <%= product.description %>
+                            </div>
+    
+                            <div class="zz-product-meta">
+                                <div class="zz-meta-item">
+                                    <span class="zz-meta-label">Category:</span>
+                                    <span class="zz-meta-value"><%= product.category ? product.category.name : 'N/A' %></span>
+                                </div>
+                                <div class="zz-meta-item">
+                                    <span class="zz-meta-label">Brand:</span>
+                                    <span class="zz-meta-value"><%= product.brand ? product.brand.name : 'N/A' %></span>
+                                </div>
+                                <div class="zz-meta-item">
+                                    <span class="zz-meta-label">SKU:</span>
+                                    <span class="zz-meta-value"><%= product.sku || 'N/A' %></span>
+                                </div>
+                                <div class="zz-meta-item">
+                                    <span class="zz-meta-label">Availability:</span>
+                                    <span class="zz-meta-value" style="color: <%= product.quantity > 0 ? 'green' : 'red' %>; font-weight: 900;">
+                                      <%= product.quantity > 0 ? 'In Stock' : 'Out of Stock' %>
+                                    </span>
+                                </div>
+                            </div>
+    
+                            <!-- Quantity Selector -->
+                            <div class="zz-quantity-wrapper">
+                                <span class="zz-quantity-label">Quantity:</span>
+                                <div class="zz-quantity-selector">
+                                    <button type="button" class="zz-quantity-btn" id="decreaseQty" <%= product.quantity === 0 ? 'disabled' : '' %>>
+                                        <i class="fa fa-minus"></i>
+                                    </button>
+                                    <input type="number" id="quantityInput" class="zz-quantity-input" 
+                                           value="<%= product.quantity === 0 ? 0 : 1 %>" 
+                                           min="1" 
+                                           max="<%= product.quantity || 10 %>" 
+                                           <%= product.quantity === 0 ? 'disabled' : '' %>>
+                                    <button type="button" class="zz-quantity-btn" id="increaseQty" <%= product.quantity === 0 ? 'disabled' : '' %>>
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+    
+                            <!-- Action Buttons -->
+                            <div class="zz-action-buttons">
+                                <button id="addToCartBtn" class="zz-add-to-cart <%= product.quantity === 0 ? 'disabled' : '' %>" 
+                                        data-product-id="<%= product._id %>" 
+                                        <%= product.quantity === 0 ? 'disabled' : '' %>>
+                                    <%= product.quantity > 0 ? 'ADD TO CART' : 'OUT OF STOCK' %>
+                                </button>
+                                <a href="/addToWishlist?id=<%= product._id %>" class="zz-add-to-wishlist">
+                                    <i class="fa fa-heart"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- Product Details Tabs -->
+                <div class="zz-product-tabs">
+                    <ul class="nav zz-nav-tabs" id="productTabs" role="tablist">
+                        <li class="nav-item zz-nav-item">
+                            <a class="nav-link zz-nav-link active" id="description-tab" data-toggle="tab" href="#description" role="tab" aria-controls="description" aria-selected="true">Description</a>
+                        </li>
+                        <li class="nav-item zz-nav-item">
+                            <a class="nav-link zz-nav-link" id="specs-tab" data-toggle="tab" href="#specs" role="tab" aria-controls="specs" aria-selected="false">Specifications</a>
+                        </li>
+                        <li class="nav-item zz-nav-item">
+                            <a class="nav-link zz-nav-link" id="reviews-tab" data-toggle="tab" href="#reviews" role="tab" aria-controls="reviews" aria-selected="false">Reviews</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content zz-tab-content" id="productTabContent">
+                        <div class="tab-pane zz-tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
+                            <p><%= product.fullDescription || product.description %></p>
+                        </div>
+                        <div class="tab-pane zz-tab-pane fade" id="specs" role="tabpanel" aria-labelledby="specs-tab">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr><td width="30%"><strong>RAM</strong></td><td><%= product.ram || 'N/A' %></td></tr>
+                                    <tr><td width="30%"><strong>Storage</strong></td><td><%= product.storage || 'N/A' %></td></tr>
+                                    <tr><td width="30%"><strong>Processor</strong></td><td><%= product.processor || 'N/A' %></td></tr>
+                                    <tr><td width="30%"><strong>Color</strong></td><td><%= product.color || 'N/A' %></td></tr>
+                                    <% if (product.specifications && product.specifications.length > 0) { %>
+                                        <% product.specifications.forEach(spec => { %>
+                                            <tr><td><strong><%= spec.name %></strong></td><td><%= spec.value %></td></tr>
+                                        <% }) %>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane zz-tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+                            <% if (product.reviews && product.reviews.length > 0) { %>
+                                <% product.reviews.forEach(review => { %>
+                                    <div class="review-item mb-4 pb-4 border-bottom">
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <h5 class="mb-0"><%= review.userName %></h5>
+                                            <div class="review-rating">
+                                                <% for(let i = 1; i <= 5; i++) { %>
+                                                    <i class="fa fa-star <%= i <= review.rating ? 'text-warning' : 'text-muted' %>"></i>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                        <p class="text-muted small"><%= new Date(review.date).toLocaleDateString() %></p>
+                                        <p><%= review.comment %></p>
                                     </div>
                                 <% }) %>
+                            <% } else { %>
+                                <p>No reviews yet. Be the first to review this product!</p>
                             <% } %>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Product Info -->
-                <div class="col-lg-6">
-                    <div class="zz-product-info">
-                        <h1><%= product.productName %></h1>
-                        <div class="zz-product-price">
-                            ₹ <%= product.salePrice %>
-                            <% if (product.regularPrice && product.regularPrice > product.salePrice) { %>
-                                <span class="zz-original-price">₹ <%= product.regularPrice %></span>
-                                <% const discount = Math.round(((product.regularPrice - product.salePrice) / product.regularPrice) * 100) %>
-                                <span class="zz-discount-badge"><%= discount %>% OFF</span>
-                            <% } %>
-                        </div>
-                        
-                        <div class="zz-product-desc">
-                            <%= product.description %>
-                        </div>
-                        
-                        <div class="zz-product-meta">
-                            <div class="zz-meta-item">
-                                <span class="zz-meta-label">Category:</span>
-                                <span class="zz-meta-value"><%= product.category ? product.category.name : 'N/A' %></span>
-                            </div>
-                            <div class="zz-meta-item">
-                                <span class="zz-meta-label">Brand:</span>
-                                <span class="zz-meta-value"><%= product.brand ? product.brand.name : 'N/A' %></span>
-                            </div>
-                            <div class="zz-meta-item">
-                                <span class="zz-meta-label">SKU:</span>
-                                <span class="zz-meta-value"><%= product.sku || 'N/A' %></span>
-                            </div>
-                            <div class="zz-meta-item">
-                                <span class="zz-meta-label">Availability:</span>
-                                <span class="zz-meta-value"><%= product.inStock ? 'In Stock' : 'Out of Stock' %></span>
-                            </div>
-                        </div>
-                        
-                        <!-- Quantity Selector -->
-                        <div class="zz-quantity-wrapper">
-                            <span class="zz-quantity-label">Quantity:</span>
-                            <div class="zz-quantity-selector">
-                                <button type="button" class="zz-quantity-btn" id="decreaseQty">
-                                    <i class="fa fa-minus"></i>
-                                </button>
-                                <input type="number" id="quantityInput" class="zz-quantity-input" value="1" min="1" max="<%= product.stock || 10 %>">
-                                <button type="button" class="zz-quantity-btn" id="increaseQty">
-                                    <i class="fa fa-plus"></i>
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Action Buttons -->
-                        <div class="zz-action-buttons">
-                            <a href="/addToCart?id=<%= product._id %>&qty=" id="addToCartBtn" class="zz-add-to-cart">ADD TO CART</a>
-                            <a href="/addToWishlist?id=<%= product._id %>" class="zz-add-to-wishlist">
-                                <i class="fa fa-heart"></i>
-                            </a>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <!-- Product Details Tabs -->
-            <div class="zz-product-tabs">
-                <ul class="nav zz-nav-tabs" id="productTabs" role="tablist">
-                    <li class="nav-item zz-nav-item">
-                        <a class="nav-link zz-nav-link active" id="description-tab" data-toggle="tab" href="#description" role="tab" aria-controls="description" aria-selected="true">Description</a>
-                    </li>
-                    <li class="nav-item zz-nav-item">
-                        <a class="nav-link zz-nav-link" id="specs-tab" data-toggle="tab" href="#specs" role="tab" aria-controls="specs" aria-selected="false">Specifications</a>
-                    </li>
-                    <li class="nav-item zz-nav-item">
-                        <a class="nav-link zz-nav-link" id="reviews-tab" data-toggle="tab" href="#reviews" role="tab" aria-controls="reviews" aria-selected="false">Reviews</a>
-                    </li>
-                </ul>
-                <div class="tab-content zz-tab-content" id="productTabContent">
-                    <div class="tab-pane zz-tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
-                        <p><%= product.fullDescription || product.description %></p>
-                    </div>
-                    <div class="tab-pane zz-tab-pane fade" id="specs" role="tabpanel" aria-labelledby="specs-tab">
-    <table class="table table-bordered">
-        <tbody>
-            <tr>
-                <td width="30%"><strong>RAM</strong></td>
-                <td><%= product.ram || 'N/A' %></td>
-            </tr>
-            <tr>
-                <td width="30%"><strong>Storage</strong></td>
-                <td><%= product.storage || 'N/A' %></td>
-            </tr>
-            <tr>
-                <td width="30%"><strong>Processor</strong></td>
-                <td><%= product.processor || 'N/A' %></td>
-            </tr>
-            <tr>
-                <td width="30%"><strong>Color</strong></td>
-                <td><%= product.color || 'N/A' %></td>
-            </tr>
-            <% if (product.specifications && product.specifications.length > 0) { %>
-                <% product.specifications.forEach(spec => { %>
-                    <tr>
-                        <td width="30%"><strong><%= spec.name %></strong></td>
-                        <td><%= spec.value %></td>
-                    </tr>
-                <% }) %>
-            <% } %>
-        </tbody>
-    </table>
-</div>
-                    <div class="tab-pane zz-tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
-                        <% if (product.reviews && product.reviews.length > 0) { %>
-                            <% product.reviews.forEach(review => { %>
-                                <div class="review-item mb-4 pb-4 border-bottom">
-                                    <div class="d-flex justify-content-between mb-2">
-                                        <h5 class="mb-0"><%= review.userName %></h5>
-                                        <div class="review-rating">
-                                            <% for(let i = 1; i <= 5; i++) { %>
-                                                <i class="fa fa-star <%= i <= review.rating ? 'text-warning' : 'text-muted' %>"></i>
-                                            <% } %>
+    
+            <!-- Related Products -->
+            <div class="zz-related-products">
+                <h2 class="zz-section-title">Related Products</h2>
+                <div class="row">
+                    <% if (relatedProducts && relatedProducts.length > 0) { %>
+                        <% relatedProducts.forEach(relatedProduct => { %>
+                            <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+                                <div class="product-item">
+                                    <div class="product-img-wrap">
+                                        <a href="productDetails?id=<%= relatedProduct._id %>">
+                                            <img src="/Uploads/product-images/<%= relatedProduct.productImage[0] %>" alt="<%= relatedProduct.productName %>">
+                                        </a>
+                                        <div class="wishlist-btn">
+                                            <a href="/addToWishlist?id=<%= relatedProduct._id %>" aria-label="Add to wishlist">
+                                                <i class="fa fa-heart"></i>
+                                            </a>
                                         </div>
                                     </div>
-                                    <p class="text-muted small"><%= new Date(review.date).toLocaleDateString() %></p>
-                                    <p><%= review.comment %></p>
+                                    <div class="product-details">
+                                        <h6><a href="productDetails?id=<%= relatedProduct._id %>" class="text-dark text-decoration-none"><%= relatedProduct.productName %></a></h6>
+                                        <div class="price-box">₹ <%= relatedProduct.salePrice %></div>
+                                        <a href="/addToCart?id=<%= relatedProduct._id %>" class="cart-btn">ADD TO CART</a>
+                                    </div>
                                 </div>
-                            <% }) %>
-                        <% } else { %>
-                            <p>No reviews yet. Be the first to review this product!</p>
-                        <% } %>
-                    </div>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <div class="col-12 text-center py-3">
+                            <p>No related products found</p>
+                        </div>
+                    <% } %>
                 </div>
             </div>
         </div>
-        
-        <!-- Related Products -->
-        <div class="zz-related-products">
-            <h2 class="zz-section-title">Related Products</h2>
-            <div class="row">
-                <% if (relatedProducts && relatedProducts.length > 0) { %>
-                    <% relatedProducts.forEach(relatedProduct => { %>
-                        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-                            <div class="product-item">
-                                <div class="product-img-wrap">
-                                    <a href="productDetails?id=<%= relatedProduct._id %>">
-                                        <img src="/Uploads/product-images/<%= relatedProduct.productImage[0] %>" alt="<%= relatedProduct.productName %>">
-                                    </a>
-                                    <div class="wishlist-btn">
-                                        <a href="/addToWishlist?id=<%= relatedProduct._id %>" aria-label="Add to wishlist">
-                                            <i class="fa fa-heart"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="product-details">
-                                    <h6><a href="productDetails?id=<%= relatedProduct._id %>" class="text-dark text-decoration-none"><%= relatedProduct.productName %></a></h6>
-                                    <div class="price-box">₹ <%= relatedProduct.salePrice %></div>
-                                    <a href="/addToCart?id=<%= relatedProduct._id %>" class="cart-btn">ADD TO CART</a>
-                                </div>
-                            </div>
-                        </div>
-                    <% }) %>
-                <% } else { %>
-                    <div class="col-12 text-center py-3">
-                        <p>No related products found</p>
-                    </div>
-                <% } %>
-            </div>
-        </div>
-    </div>
-
-    <%- include("../partials/user/footer") %>
-
+    
+        <%- include("../partials/user/footer") %>
+    
+    <% } %>
+    
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-          
             const mainImage = document.getElementById('mainImage');
             const thumbnails = document.querySelectorAll('.zz-thumbnail');
             
@@ -723,45 +781,79 @@
             const increaseBtn = document.getElementById('increaseQty');
             const quantityInput = document.getElementById('quantityInput');
             const addToCartBtn = document.getElementById('addToCartBtn');
+            const isOutOfStock = `<%= product.quantity === 0 %>`;
             
-            decreaseBtn.addEventListener('click', function() {
-                const currentValue = parseInt(quantityInput.value);
-                if (currentValue > 1) {
-                    quantityInput.value = currentValue - 1;
-                    updateAddToCartUrl();
-                }
-            });
-            
-            increaseBtn.addEventListener('click', function() {
-                const currentValue = parseInt(quantityInput.value);
-                const maxValue = parseInt(quantityInput.getAttribute('max'));
-                if (currentValue < maxValue) {
-                    quantityInput.value = currentValue + 1;
-                    updateAddToCartUrl();
-                }
-            });
-            
-            quantityInput.addEventListener('change', function() {
-                const value = parseInt(this.value);
-                const min = parseInt(this.getAttribute('min'));
-                const max = parseInt(this.getAttribute('max'));
+            if (!isOutOfStock) {
+                decreaseBtn.addEventListener('click', function() {
+                    const currentValue = parseInt(quantityInput.value);
+                    if (currentValue > 1) {
+                        quantityInput.value = currentValue - 1;
+                    }
+                });
                 
-                if (value < min) {
-                    this.value = min;
-                } else if (value > max) {
-                    this.value = max;
-                }
+                increaseBtn.addEventListener('click', function() {
+                    const currentValue = parseInt(quantityInput.value);
+                    const maxValue = parseInt(quantityInput.getAttribute('max'));
+                    if (currentValue < maxValue) {
+                        quantityInput.value = currentValue + 1;
+                    }
+                });
                 
-                updateAddToCartUrl();
-            });
-            
-            function updateAddToCartUrl() {
-                const baseUrl = addToCartBtn.href.split('&qty=')[0];
-                addToCartBtn.href = baseUrl + '&qty=' + quantityInput.value;
+                quantityInput.addEventListener('change', function() {
+                    const value = parseInt(this.value);
+                    const min = parseInt(this.getAttribute('min'));
+                    const max = parseInt(this.getAttribute('max'));
+                    
+                    if (value < min) {
+                        this.value = min;
+                    } else if (value > max) {
+                        this.value = max;
+                    }
+                });
             }
             
-           
-            updateAddToCartUrl();
+            // AJAX Add to Cart
+            if (addToCartBtn && !addToCartBtn.classList.contains('disabled')) {
+                addToCartBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const productId = this.getAttribute('data-product-id');
+                    const quantity = parseInt(quantityInput.value);
+                    
+                    $.ajax({
+                        url: '/addToCart',
+                        type: 'POST',
+                        data: {
+                            id: productId,
+                            qty: quantity
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Added to Cart',
+                                    text: 'Product successfully added to your cart!',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Add Failed',
+                                    text: 'Could not add the product. Please try again.',
+                                });
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Something went wrong!',
+                            });
+                            console.error('AJAX Error:', status, error);
+                        }
+                    });
+                });
+            }
             
             const tabLinks = document.querySelectorAll('.zz-nav-link');
             const tabContents = document.querySelectorAll('.zz-tab-pane');
@@ -782,7 +874,7 @@
                 });
             });
 
-            
+            // Zoom functionality
             document.querySelectorAll('.zoom-container').forEach(container => {
                 const img = container.querySelector('.zoom-image');
                 const lens = container.querySelector('.zoom-lens');
@@ -793,7 +885,6 @@
                     const posX = e.clientX - left;
                     const posY = e.clientY - top;
 
-                   
                     const lensX = Math.max(0, Math.min(posX - (lens.offsetWidth / 2), width - lens.offsetWidth));
                     const lensY = Math.max(0, Math.min(posY - (lens.offsetHeight / 2), height - lens.offsetHeight));
 
@@ -806,12 +897,10 @@
                     lens.style.backgroundPosition = `-${posX * 2}px -${posY * 2}px`;
                 });
 
-               
                 container.addEventListener('mouseleave', () => {
                     lens.style.opacity = '0';
                 });
 
-               
                 container.addEventListener('mouseenter', () => {
                     lens.style.opacity = '1';
                 });

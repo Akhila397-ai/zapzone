@@ -3,161 +3,406 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Laptop & Accessories Store</title>
+    <title>Login - Zapzon | Laptop & Accessories Store</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4bb543;
+            --error: #f44336;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f5f5f5;
+            background-color: #f5f7fb;
             margin: 0;
-        }
-        .container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            max-width: 900px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 0;
             overflow: hidden;
         }
-        .image-side {
-            flex: 1;
-            padding: 20px;
-            background-color: #f9f9f9;
+        
+        .container {
+            display: flex;
+            width: 95%;
+            max-width: 1000px;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            height: 90vh;
+            max-height: 700px;
         }
+        
+        .image-side {
+            flex: 1.2;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(67, 97, 238, 0.3);
+            z-index: 1;
+        }
+        
         .image-side img {
             width: 100%;
-            height: auto;
-            max-width: 400px;
+            height: 100%;
+            object-fit: cover;
             display: block;
-            margin: 0 auto;
         }
+        
+        .brand-overlay {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            z-index: 2;
+        }
+        
+        .brand-name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .brand-tagline {
+            color: white;
+            font-size: 1rem;
+            margin-top: 5px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
         .login-side {
-            flex: 1;
-            padding: 40px;
+            flex: 0.8;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow: hidden;
         }
-        .login-side h2 {
-            text-align: center;
+        
+        .login-header {
             margin-bottom: 20px;
-            color: #333;
-            font-size: 24px;
         }
+        
+        .login-header h2 {
+            color: var(--dark);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .login-header p {
+            color: #6c757d;
+            font-size: 13px;
+        }
+        
         .form-group {
             margin-bottom: 15px;
+            position: relative;
         }
+        
         .form-group label {
             display: block;
             margin-bottom: 5px;
-            color: #555;
-            font-size: 14px;
+            color: #495057;
+            font-size: 13px;
+            font-weight: 500;
         }
+        
         .form-group input {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            padding: 10px 15px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
             font-size: 14px;
+            transition: all 0.3s ease;
         }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+        }
+        
         .error-message {
-            color: red;
+            color: var(--error);
             font-size: 12px;
             margin-top: 5px;
             display: none;
         }
-        button {
+        
+        .forgot-password-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 12px;
+        }
+        
+        .forgot-password-link {
+            font-size: 13px;
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .forgot-password-link:hover {
+            color: var(--secondary);
+            text-decoration: underline;
+        }
+        
+        .login-btn {
             width: 100%;
             padding: 10px;
-            background-color: #007bff;
+            background-color: var(--primary);
             color: white;
             border: none;
-            border-radius: 4px;
-            font-size: 16px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
             cursor: pointer;
-            margin-top: 10px;
+            transition: all 0.2s ease;
+            margin-bottom: 12px;
         }
-        button:hover {
-            background-color: #0056b3;
+        
+        .login-btn:hover {
+            background-color: var(--secondary);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 12px 0;
+            color: #6c757d;
+            font-size: 13px;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background-color: #dee2e6;
+        }
+        
+        .divider span {
+            padding: 0 15px;
+        }
+        
         .google-btn {
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #4285f4;
-            color: white;
+            width: 100%;
+            background-color: white;
+            color: #5f6368;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 8px;
+            font-size: 13px;
+            font-weight: 500;
             text-decoration: none;
-            padding: 10px;
-            border-radius: 4px;
-            margin-top: 10px;
+            transition: all 0.2s ease;
+            margin-bottom: 10px;
         }
+        
         .google-btn:hover {
-            background-color: #3267d6;
+            background-color: #f8f9fa;
+            border-color: #ced4da;
         }
+        
         .google-icon {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             margin-right: 10px;
         }
+        
         .signup-link {
             text-align: center;
-            margin-top: 15px;
-            font-size: 14px;
+            margin-top: 5px;
+            font-size: 13px;
+            color: #6c757d;
         }
+        
         .signup-link a {
-            color: #007bff;
+            color: var(--primary);
             text-decoration: none;
+            font-weight: 500;
         }
+        
         .signup-link a:hover {
             text-decoration: underline;
         }
-        .forgot-password-link{
-            font: size 0.875em;
-            color: #007bff;
-            text-decoration: none;
-
-        }
-        .forgot-password-link:hover{
-            color: #0056b3;
-            text-decoration: underline;
+        
+        /* Responsive breakpoints */
+        @media (max-width: 992px) {
+            .container {
+                max-width: 90%;
+            }
+            
+            .brand-name {
+                font-size: 2rem;
+            }
+            
+            .brand-tagline {
+                font-size: 0.9rem;
+            }
         }
         
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                width: 95%;
+                height: 80vh;
+                max-height: 600px;
+            }
+            
+            .image-side {
+                height: 140px;
+                flex: none;
+            }
+            
+            .login-side {
+                padding: 20px;
+                flex: 1;
+            }
+            
+            .brand-overlay {
+                top: 15px;
+                left: 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                width: 100%;
+                border-radius: 10px;
+                height: 95vh;
+            }
+            
+            .image-side {
+                height: 120px;
+            }
+            
+            .login-side {
+                padding: 15px;
+            }
+            
+            .brand-name {
+                font-size: 1.6rem;
+            }
+            
+            .brand-tagline {
+                font-size: 0.8rem;
+            }
+            
+            .login-header h2 {
+                font-size: 20px;
+            }
+            
+            .form-group {
+                margin-bottom: 10px;
+            }
+        }
+        
+        /* For very small screens */
+        @media (max-width: 320px) {
+            .container {
+                height: 100vh;
+                border-radius: 0;
+            }
+            
+            .image-side {
+                height: 100px;
+            }
+            
+            .login-side {
+                padding: 12px;
+            }
+            
+            .form-group input {
+                padding: 8px;
+            }
+            
+            .login-btn {
+                padding: 8px;
+            }
+            
+            .brand-name {
+                font-size: 1.4rem;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="image-side">
-            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=1926&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Laptop Image">
+            <div class="image-overlay"></div>
+            <!-- <img src="/api/placeholder/600/400" alt="Laptop Image"> -->
+            <div class="brand-overlay">
+                <div class="brand-name">Zapzon</div>
+                <div class="brand-tagline">Premium Laptops <br> "Smart. Sleek. Superior."</div>
+            </div>
         </div>
         <div class="login-side">
-            <h2>Log In</h2>
+            <div class="login-header">
+                <h2>Welcome Back</h2>
+                <p>Log in to access your Zapzon account</p>
+                <% if (message) { %>
+                    <div class="error-message" style="display: block; color: var(--error);">
+                        <%= message %>
+                    </div>
+                <% } %>
+            </div>
             <form id="loginform" method="post" action="/login">
                 <div class="form-group">
                     <label for="email">Email Address</label>
-                    <input type="email" id="email" name="email" required>
+                    <input type="email" id="email" name="email" placeholder="your.email@example.com">
                     <div id="error1" class="error-message"></div>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
+                    <input type="password" id="password" name="password" placeholder="Enter your password">
                     <div id="error2" class="error-message"></div>
                 </div>
-                <div class="form-group d-flex justify-content-end ">
-                <a href="/forgot-password" class="forgot-password-link ms-auto"  >  Forgot Password??</a>
+                <div class="forgot-password-container">
+                    <a href="/forgot-password" class="forgot-password-link">Forgot Password?</a>
                 </div>
-                <%if(locals.message && message.length>0){%>
-                    <div class="alert alert-danger text-center">
-                       <%=message%>
-                    </div>
-                <%}%>
-                <button type="submit">Log In</button>
+                <button type="submit" class="login-btn">Log In</button>
+                
+                <div class="divider">
+                    <span>or</span>
+                </div>
+                
                 <a href="/auth/google" class="google-btn">
-                    <img src="https://www.google.com/favicon.ico" alt="Google" class="google-icon">
-                    Login with Google
+                    <svg viewBox="0 0 24 24" width="18" height="18" class="google-icon">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Continue with Google
                 </a>
+                
                 <div class="signup-link">
                     Don't have an account? <a href="/signup">Sign up</a>
                 </div>

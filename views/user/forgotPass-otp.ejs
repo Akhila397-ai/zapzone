@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Verification</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    .otp-input {
+      letter-spacing: 0.3rem;
+      text-align: center;
+      font-size: 1.25rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    .otp-input:focus {
+      transform: scale(1.02);
+    }
+    .otp-timer {
+      transition: all 0.3s ease;
+    }
+    .otp-timer.expired {
+      background-color: #dc2626;
+      color: white;
+    }
+    .btn-primary {
+      transition: transform 0.2s ease;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+    }
+    .resend-btn:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body class="bg-white flex items-center justify-center min-h-screen">
+  <div class="w-full max-w-sm p-8 bg-white rounded-xl shadow-lg">
+    <div class="text-center">
+      <h3 class="text-xl font-bold text-gray-900 mb-4">Verify Your Email</h3>
+    </div>
+    <div class="space-y-4">
+      <div class="otp-container">
+        <div class="space-y-3">
+          <div class="text-center">
+            <label for="otp" class="block text-sm font-medium text-gray-700">Enter 6-Digit OTP</label>
+            <input
+              type="text"
+              id="otp"
+              name="otp"
+              class="otp-input mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              maxlength="6"
+              required
+              placeholder="••••••"
+            >
+          </div>
+          <div class="text-center">
+            <button
+              id="verifyBtn"
+              class="btn-primary w-full px-4 py-2 bg-[#4B8DF8] text-white font-semibold rounded-md hover:bg-[#3B7DE8] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              Verify OTP
+            </button>
+          </div>
+        </div>
+        <div class="flex justify-center mt-3">
+          <div
+            id="otpTimer"
+            class="otp-timer w-12 h-12 flex items-center justify-center rounded-full bg-gray-100 text-gray-800 font-semibold text-xs"
+          >
+            00:30
+          </div>
+        </div>
+        <div class="text-center mt-3">
+          <button
+            id="resendBtn"
+            class="resend-btn text-blue-600 hover:text-blue-700 font-medium disabled:text-gray-400 disabled:cursor-not-allowed text-sm"
+            onclick="resendOtp()"
+          >
+            Resend OTP
+          </button>
+        </div>
+        <div id="alertMessage" class="hidden mt-2 text-center text-xs text-red-600"></div>
+      </div>
+      <div class="text-center text-xs text-gray-600">
+        Already verified? <a href="/login" class="text-blue-600 hover:text-blue-700 hover:underline">Login now</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+        let timeLeft = 30;
+        let timerId;
+    
+        function startTimer() {
+            timerId = setInterval(function () {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                $('#otpTimer').text(
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+                );
+    
+                if (timeLeft <= 0) {
+                    clearInterval(timerId);
+                    $('#otpTimer').addClass('expired').text('00:00');
+                    $('#resendBtn').prop('disabled', false);
+                }
+            }, 1000);
+        }
+    
+        startTimer();
+    
+        $('#verifyBtn').on('click', function (e) {
+            e.preventDefault();
+            const otp = $('#otp').val().trim();
+    
+            if (otp.length !== 6 || !/^\d+$/.test(otp)) {
+                $('#alertMessage')
+                    .removeClass('hidden')
+                    .text('Please enter a valid 6-digit OTP.');
+                return;
+            }
+    
+            $.ajax({
+                url: '/verify-passForgot-otp',
+                method: 'POST',
+                data: { otp },
+                success: function (response) {
+                    if(response.success){
+                        Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'OTP verified successfully!',
+                        timer: 2000,
+                        showConfirmButton: false,
+                    }).then(() => {
+                        window.location.href = '/reset-password';
+                    });
+                    }else{
+                        Swal.fire({
+                        icon: 'error',
+                        title: 'Failed',
+                        text: response.message || 'Invalid OTP!',
+                        timer: 2000,
+                        showConfirmButton: false,
+                        })
+                    }
+
+                },
+                error: function () {
+                    $('#alertMessage')
+                        .removeClass('hidden')
+                        .text('Invalid OTP. Please try again.');
+                },
+            });
+        });
+    
+        $('#resendBtn').on('click', function () {
+            $.ajax({
+                url: '/resend-forgot-otp',
+                method: 'POST',
+                success: function () {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'OTP Sent',
+                        text: 'A new OTP has been sent to your email.',
+                        timer: 2000,
+                        showConfirmButton: false,
+                    });
+                    timeLeft = 30;
+                    $('#otpTimer').removeClass('expired').text('00:30');
+                    $('#resendBtn').prop('disabled', true);
+                    $('#alertMessage').addClass('hidden').text('');
+                    startTimer();
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to resend OTP. Please try again.',
+                    });
+                },
+            });
+        });
+    
+        $('#otp').on('input', function () {
+            $('#alertMessage').addClass('hidden').text('');
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+    });
+    </script>
+
+</body>
+</html>
