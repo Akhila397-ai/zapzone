@@ -6,6 +6,7 @@ const customerController=require('../controllers/admin/customerController');
 const categoryController=require('../controllers/admin/categoryController')
 const productController=require('../controllers/admin/productController');
 const brandController = require('../controllers/admin/brandController')
+const orderController =require('../controllers/admin/orderController')
 const {upload} = require('../helpers/multer');
 router.get('/pagenotfound',adminController.pagenotfound)
 router.get('/login', adminController.loadLogin);  
@@ -41,5 +42,14 @@ router.get('/unlistbrand',adminAuth,brandController.getunlistbrand);
 router.get('/editBrand',adminAuth,brandController.getEditBrand);
 router.patch('/editBrand/:id', adminAuth,brandController.editBrand);
 router.patch('/deleteBrand/:id',adminAuth,brandController.deleteBrand);
+
+//order Management
+
+router.get('/order',adminAuth,orderController.getOrders);
+router.get('/viewOrder/:id',adminAuth,orderController.getOrderDetail);
+router.patch('/orderStatus/:id',adminAuth,orderController.updateOrderStatus);
+router.post("/orders/:id/approve-return", adminAuth,orderController.approveReturn);
+router.post("/orders/:id/reject-return", adminAuth,orderController.rejectReturn);
+
 
 module.exports=router;

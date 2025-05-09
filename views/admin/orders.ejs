@@ -1,0 +1,392 @@
+<%- include('../partials/admin/header') %>
+<link rel="stylesheet" href="/css/admin/orders.css"/>
+<style>
+  /* Admin Orders Page Styles */
+  .content-main {
+    padding-left: 250px;
+    transition: padding-left 0.3s ease;
+  }
+
+  .content-header {
+    margin-bottom: 24px;
+  }
+
+  .content-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #1a1a1a;
+    letter-spacing: -0.02em;
+  }
+
+  /* Card Styles */
+  .card {
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+    background-color: #fff;
+    border: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  .card-header {
+    background-color: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    padding: 16px 24px;
+  }
+
+  /* Search and Create Button Section */
+  .div-sec {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #6B6AE4 0%, #5b58c8 100%);
+    height: 130px;
+    padding: 0 24px;
+    box-shadow: 0 4px 12px rgba(107, 106, 228, 0.3);
+  }
+
+  .input-group {
+    border-radius: 8px;
+    overflow: hidden;
+    max-width: 520px;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .input-group input {
+    height: 44px;
+    font-size: 15px;
+    width: 400px;
+    border: none;
+    padding: 0 16px;
+  }
+
+  .input-group .btn {
+    padding: 10px 20px;
+    background-color: #6B6AE4;
+    color: white;
+    border: none;
+    transition: background-color 0.2s ease;
+  }
+
+  .input-group .btn:hover {
+    background-color: #5b58c8;
+  }
+
+  /* Button Styles */
+  .btn-primary {
+    background: linear-gradient(90deg, #3b7ddd 0%, #2f64b1 100%);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 500;
+    font-size: 14px;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(59, 125, 221, 0.3);
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(90deg, #326abc 0%, #2a589e 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 125, 221, 0.4);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(59, 125, 221, 0.2);
+  }
+
+  .btn-info {
+    background: linear-gradient(90deg, #17a2b8 0%, #138496 100%);
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #fff;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(23, 162, 184, 0.3);
+  }
+
+  .btn-info:hover {
+    background: linear-gradient(90deg, #138496 0%, #0f6f7d 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(23, 162, 184, 0.4);
+  }
+
+  /* Table Styles */
+  .table {
+    margin-bottom: 0;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  .table thead th {
+    background-color: #f9fafb;
+    font-weight: 600;
+    color: #374151;
+    font-size: 14px;
+    padding: 14px 12px;
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 2px solid #e5e7eb;
+  }
+
+  .table tbody td {
+    vertical-align: middle;
+    padding: 14px 12px;
+    font-size: 14px;
+    color: #1a1a1a;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .table-hover tbody tr {
+    transition: background-color 0.2s ease;
+  }
+
+  .table-hover tbody tr:hover {
+    background-color: rgba(107, 106, 228, 0.08);
+  }
+
+  /* Badge Styles */
+  .badge {
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    transition: transform 0.2s ease;
+  }
+
+  .badge:hover {
+    transform: scale(1.05);
+  }
+
+  /* Pagination Styles */
+  .pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+    gap: 8px;
+  }
+
+  .pagination-container a, .pagination-container span {
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .pagination-container a {
+    background-color: #f9fafb;
+    color: #6B6AE4;
+    border: 1px solid #d1d5db;
+  }
+
+  .pagination-container a:hover {
+    background-color: #e5e7eb;
+    border-color: #6B6AE4;
+    color: #5b58c8;
+  }
+
+  .pagination-container .current-page {
+    background: linear-gradient(90deg, #6B6AE4 0%, #5b58c8 100%);
+    color: white;
+    border: none;
+    box-shadow: 0 2px 8px rgba(107, 106, 228, 0.3);
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 900px) {
+    .div-sec {
+      flex-direction: column;
+      align-items: stretch;
+      padding: 16px;
+      height: auto;
+    }
+
+    .div-sec .input-group {
+      margin-bottom: 16px;
+      max-width: 100%;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .content-main {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    .card-body .row {
+      flex-direction: column;
+    }
+
+    .col-md-3, .col-md-8 {
+      width: 100%;
+    }
+
+    .col-md-3 {
+      margin-bottom: 24px;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    .table thead th, .table tbody td {
+      padding: 12px 8px;
+    }
+  }
+
+  /* No orders message */
+  .no-orders-message {
+    text-align: center;
+    padding: 48px 0;
+    color: #6b7280;
+    font-size: 16px;
+    font-weight: 500;
+    background-color: #f9fafb;
+    border-radius: 8px;
+  }
+</style>
+
+<body>
+  <section class="content-main">
+    <!-- Content Header -->
+    <div class="content-header">
+      <div>
+        <h2 class="content-title card-title">Orders</h2>
+      </div>
+    </div>
+    
+    
+    
+    <div class="card">
+      <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <!-- Search Bar -->
+        <form action="/admin/order/" method="get" class="flex-grow-1 me-1">
+  <div class="div-sec">
+    <div class="input-group input-group-sm shadow-sm">
+      <input type="text" class="form-control border-0" placeholder="Search for Orders (Order ID, Customer)" name="search" value="<%= search %>">
+      <input type="hidden" name="status" value="<%= status %>">
+      <input type="hidden" name="page" value="<%= currentPage %>">
+      <button class="btn btn-light" type="submit">
+        <i class="bi bi-search"></i> Search
+      </button>
+    </div>
+  </div>
+</form>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th width="15%">Order ID</th>
+                    <th width="25%">Customer Name</th>
+                    <th width="20%">Order Date</th>
+                    <th width="15%">Total Amount</th>
+                    <th width="15%">Status</th>
+                    <th width="10%">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if (typeof orders !== 'undefined' && orders && orders.length > 0) { %>
+                    <% orders.forEach((order) => { %>
+                      <tr>
+                       <td><%= order.orderId %></td>
+                        <td><%= order.user ? order.user.name : 'Unknown User' %></td>
+
+                        <td><%= order.createdOn.toLocaleDateString() %></td>
+
+                        <td>₹<%= order.totalPrice %></td>
+                        <td>
+                          <% if (order.status === 'completed') { %>
+                            <span class="badge bg-success">Completed</span>
+                          <% } else if (order.status === 'pending') { %>
+                            <span class="badge bg-warning">Pending</span>
+                          <% } else if (order.status === 'cancelled') { %>
+                            <span class="badge bg-danger">Cancelled</span>
+                          <% } else { %>
+                            <span class="badge bg-secondary"><%= order.status %></span>
+                          <% } %>
+                        </td>
+                        <td>
+                          <button class="btn btn-info text-white" onclick="viewOrderDetails('<%= order.orderId %>')">View</button>
+                        </td>
+                      </tr>
+                    <% }); %>
+                  <% } else { %>
+                    <tr>
+                      <td colspan="6">
+                        <div class="no-orders-message">
+                          No orders in the DATABASE
+                        </div>
+                      </td>
+                    </tr>
+                  <% } %>
+                </tbody>
+              </table>
+              
+              <!-- Pagination Section -->
+              <div class="pagination-container">
+                <% if (typeof currentPage !== 'undefined' && typeof totalPages !== 'undefined') { %>
+                  <% if (currentPage > 1) { %>
+                    <a href="?page=<%= currentPage - 1 %>">← Previous</a>
+                  <% } %>
+              
+                  <% for (let i = 1; i <= totalPages; i++) { %>
+                    <% if (i === currentPage) { %>
+                      <span class="current-page"><%= i %></span>
+                    <% } else { %>
+                      <a href="?page=<%= i %>"><%= i %></a>
+                    <% } %>
+                  <% } %>
+              
+                  <% if (currentPage < totalPages) { %>
+                    <a href="?page=<%= currentPage + 1 %>">Next →</a>
+                  <% } %>
+                <% } else { %>
+                  <a href="#" class="disabled">← Previous</a>
+                  <span class="current-page">1</span>
+                  <a href="#" class="disabled">Next →</a>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  
+  <script>
+   function viewOrderDetails(orderId) {
+    window.location.href = `/admin/viewOrder/${orderId}`;
+  }
+    
+    
+  </script>
+</body>

@@ -1,3 +1,4 @@
+const { status } = require('init');
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const { v4: uuidv4 } = require('uuid');
@@ -17,7 +18,8 @@ const orderSchema = new Schema({
     product: {
       type: Schema.Types.ObjectId,
       ref: "Product",
-      required: true
+      required: true,
+  
     },
     quantity: {
       type: Number,
@@ -26,6 +28,10 @@ const orderSchema = new Schema({
     price: {
       type: Number,
       default: 0
+    },
+    status: {
+      type: String,
+      enum: ["Cancelled", "Return Requested", "Returned","Return Rejected"]
     }
   }],
   totalPrice: {
@@ -45,13 +51,19 @@ const orderSchema = new Schema({
     ref: "Address", 
     required: true
   },
+  reason:{
+    type:String
+  },
+  returnReason:{
+    type:String
+  },
   invoiceDate: {
     type: Date
   },
   status: {
     type: String,
     required: true,
-    enum: ["pending", "processing", "Shipped", "Delivered", "Cancelled", "Return Request", "Returned"]
+    enum: ["pending", "processing","Shipped", "Delivered", "Cancelled", "Return Requested", "Returned","Return Rejected"]
   },
   createdOn: {
     type: Date,

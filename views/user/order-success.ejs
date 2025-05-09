@@ -159,6 +159,146 @@
         .btn i {
             margin-right: 5px;
         }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            font-size: 14px;
+        }
+
+        .close-btn {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            cursor: pointer;
+            font-size: 20px;
+            color: #666;
+        }
+
+        .invoice-header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .invoice-meta {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .billed-to {
+            margin-bottom: 20px;
+        }
+
+        .billed-to h4 {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .billed-to p {
+            margin: 2px 0;
+            font-size: 12px;
+            color: #333;
+        }
+
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .invoice-table th,
+        .invoice-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .invoice-table th {
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .invoice-table td {
+            font-size: 12px;
+        }
+
+        .invoice-table .amount {
+            text-align: right;
+        }
+
+        .invoice-summary {
+            margin: 20px 0;
+            font-size: 12px;
+        }
+
+        .invoice-summary div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .invoice-summary .total {
+            font-weight: bold;
+            font-size: 14px;
+            border-top: 1px solid #e0e0e0;
+            padding-top: 5px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .download-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .print-btn {
+            background-color: transparent;
+            color: #666;
+            border: 1px solid #666;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .footer-note {
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -264,7 +404,7 @@
             </div>
             <div class="action-buttons">
                 <!-- Download Invoice -->
-                <a href="javascript:void(0)" onclick="downloadInvoice()" class="btn btn-primary">
+                <a href="javascript:void(0)" onclick="showInvoiceModal()" class="btn btn-primary">
                     <i>⬇️</i> Download Invoice
                 </a>
             
@@ -280,6 +420,73 @@
             </div>
         </div>
     </div>
+
+    <!-- Invoice Modal -->
+    <div id="invoiceModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeInvoiceModal()">×</span>
+            <div class="invoice-header">INVOICE</div>
+            <div class="invoice-meta">
+                <div>Order ID: <%= order.orderId %></div>
+                <div>Date: <%= order.createdOn ? new Date(order.createdOn).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A' %></div>
+            </div>
+            <div class="billed-to">
+                <h4>BILLED TO</h4>
+                <p><%= userName %></p>
+                <% if (deliveryAddress) { %>
+                  <p><%= deliveryAddress.addressType ? deliveryAddress.addressType + ': ' : '' %><%= deliveryAddress.city %>, <%= deliveryAddress.state %> <%= deliveryAddress.pincode %></p>
+                  <p><%= deliveryAddress.landMark || 'No landmark provided' %></p>
+                  <p>Email: <%= order.user.email || 'customer@example.com' %></p>
+                <% } else { %>
+                  <p>Address not available (deliveryAddress is <%= deliveryAddress %>)</p>
+                  <p>Email:"><%= order.user.email || 'customer@example.com' %></p>
+                <% } %>
+              </div>
+            <table class="invoice-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Unit Price</th>
+                        <th class="amount">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (order.orderedItems && order.orderedItems.length > 0) { %>
+                        <% order.orderedItems.forEach(item => { %>
+                            <tr>
+                                <td><%= item.product.productName %></td>
+                                <td><%= item.quantity %></td>
+                                <td>₹<%= item.price.toFixed(2) %></td>
+                                <td class="amount">₹<%= (item.price * item.quantity).toFixed(2) %></td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="4">No items found in this order.</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+            <div class="invoice-summary">
+                <div><span>Subtotal</span><span>₹<%= order.totalPrice ? order.totalPrice.toFixed(2) : '0.00' %></span></div>
+                <div><span>Tax</span><span>₹<%= order.couponApplied && order.discount ? order.discount.toFixed(2) : '0.00' %></span></div>
+                <div><span>Shipping</span><span>₹50.00</span></div>
+                <div class="total"><span>TOTAL</span><span>₹<%= order.finalAmount ? (order.finalAmount + 50).toFixed(2) : '50.00' %></span></div>
+            </div>
+            <div class="modal-buttons">
+                <button class="download-btn" onclick="downloadInvoice()">
+                    <span>⬇️</span> Download Invoice
+                </button>
+                <button class="print-btn" onclick="printInvoice()">Print</button>
+            </div>
+            <div class="footer-note">
+                <p>Thank you for your business!</p>
+                <p>IF YOU HAVE ANY QUESTIONS ABOUT THIS INVOICE, PLEASE CONTACT OUR CUSTOMER SUPPORT.</p>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
@@ -294,12 +501,23 @@
             });
         });
 
+        function showInvoiceModal() {
+            document.getElementById('invoiceModal').style.display = 'flex';
+        }
+
+        function closeInvoiceModal() {
+            document.getElementById('invoiceModal').style.display = 'none';
+        }
+
         function downloadInvoice() {
+            closeInvoiceModal();
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
             // Parse order data from JSON
             const order = JSON.parse('<%- JSON.stringify(order) %>');
+            const userName = '<%= userName %>';
+           const deliveryAddress = <%- JSON.stringify(deliveryAddress) || 'null' %>;
 
             // Default values to prevent undefined errors
             const defaults = {
@@ -312,7 +530,8 @@
                 couponApplied: false,
                 discount: 0.00,
                 finalAmount: 0.00,
-                orderedItems: []
+                orderedItems: [],
+                user: { email: 'customer@example.com' }
             };
             const safeOrder = { ...defaults, ...order };
 
@@ -344,9 +563,23 @@
             doc.text(`Payment Method: ${safeOrder.paymentMethod}`, 20, 80);
             doc.text(`Order Type: ${safeOrder.orderType}`, 20, 90);
 
+            // Billed To
+            doc.setFontSize(14);
+            doc.text('Billed To', 20, 110);
+            doc.setFontSize(10);
+            doc.text(userName, 20, 120);
+            if (deliveryAddress) {
+                doc.text(`${deliveryAddress.addressType ? deliveryAddress.addressType + ': ' : ''}${deliveryAddress.city}, ${deliveryAddress.state} ${deliveryAddress.pincode}`, 20, 130);
+                doc.text(deliveryAddress.landMark || '', 20, 140);
+                doc.text(`Email: ${safeOrder.user.email || 'customer@example.com'}`, 20, 150);
+            } else {
+                doc.text('Address not available', 20, 130);
+                doc.text(`Email: ${safeOrder.user.email || 'customer@example.com'}`, 20, 140);
+            }
+
             // Order Items Table
             doc.setFontSize(14);
-            doc.text('Order Items', 20, 110);
+            doc.text('Order Items', 20, 170);
             doc.setFontSize(10);
 
             // Table headers
@@ -354,12 +587,12 @@
             const colWidths = [100, 30, 30, 30];
             let x = 20;
             headers.forEach((header, i) => {
-                doc.text(header, x, 120, { align: i > 0 ? 'right' : 'left' });
+                doc.text(header, x, 180, { align: i > 0 ? 'right' : 'left' });
                 x += colWidths[i];
             });
 
             // Table rows
-            let y = 130;
+            let y = 190;
             if (safeOrder.orderedItems && safeOrder.orderedItems.length > 0) {
                 safeOrder.orderedItems.forEach(item => {
                     const productName = item.product && item.product.productName ? item.product.productName : 'Unknown';
@@ -380,13 +613,10 @@
                 doc.text('Subtotal:', 140, y, { align: 'right' });
                 doc.text(`₹${parseFloat(safeOrder.totalPrice).toFixed(2)}`, 180, y, { align: 'right' });
                 y += 10;
-                doc.text('Coupon Discount:', 140, y, { align: 'right' });
+                doc.text('Tax:', 140, y, { align: 'right' });
                 doc.text(`₹${safeOrder.couponApplied && safeOrder.discount ? parseFloat(safeOrder.discount).toFixed(2) : '0.00'}`, 180, y, { align: 'right' });
                 y += 10;
-                doc.text('Offer Discount:', 140, y, { align: 'right' });
-                doc.text(`₹${!safeOrder.couponApplied && safeOrder.discount ? parseFloat(safeOrder.discount).toFixed(2) : '0.00'}`, 180, y, { align: 'right' });
-                y += 10;
-                doc.text('Shipping Charge:', 140, y, { align: 'right' });
+                doc.text('Shipping:', 140, y, { align: 'right' });
                 doc.text('₹50.00', 180, y, { align: 'right' });
                 y += 10;
                 doc.setFont('helvetica', 'bold');
@@ -400,10 +630,140 @@
             doc.setFont('helvetica', 'normal');
             doc.setTextColor(0, 123, 255);
             doc.setFontSize(10);
-            doc.text('Thank you for your purchase!', 105, y + 20, { align: 'center' });
+            doc.text('Thank you for your business!', 105, y + 20, { align: 'center' });
+            doc.text('If you have any questions about this invoice, please contact our customer support.', 105, y + 30, { align: 'center' });
 
             // Save the PDF
             doc.save(`invoice_${safeOrder.orderId}.pdf`);
+        }
+
+        function printInvoice() {
+            closeInvoiceModal();
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Parse order data from JSON
+            const order = JSON.parse('<%- JSON.stringify(order) %>');
+            const userName = '<%= userName %>';
+            const deliveryAddress = <%- JSON.stringify(deliveryAddress) || 'null' %>;
+
+            // Default values to prevent undefined errors
+            const defaults = {
+                orderId: 'N/A',
+                createdOn: 'N/A',
+                status: 'Pending',
+                paymentMethod: 'Cash on Delivery',
+                orderType: 'COD',
+                totalPrice: 0.00,
+                couponApplied: false,
+                discount: 0.00,
+                finalAmount: 0.00,
+                orderedItems: [],
+                user: { email: 'customer@example.com' }
+            };
+            const safeOrder = { ...defaults, ...order };
+
+            // Format order date
+            const orderDate = safeOrder.createdOn
+                ? new Date(safeOrder.createdOn).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                  })
+                : 'N/A';
+
+            // Header
+            doc.setFillColor(0, 123, 255);
+            doc.rect(0, 0, 210, 40, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(20);
+            doc.text('Invoice', 105, 20, { align: 'center' });
+            doc.setFontSize(12);
+            doc.text(`Order ID: ${safeOrder.orderId}`, 105, 30, { align: 'center' });
+
+            // Order Details
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(14);
+            doc.text('Order Details', 20, 50);
+            doc.setFontSize(10);
+            doc.text(`Order Date: ${orderDate}`, 20, 60);
+            doc.text(`Status: ${safeOrder.status}`, 20, 70);
+            doc.text(`Payment Method: ${safeOrder.paymentMethod}`, 20, 80);
+            doc.text(`Order Type: ${safeOrder.orderType}`, 20, 90);
+
+            // Billed To
+            doc.setFontSize(14);
+            doc.text('Billed To', 20, 110);
+            doc.setFontSize(10);
+            doc.text(userName, 20, 120);
+            if (deliveryAddress) {
+                doc.text(`${deliveryAddress.addressType ? deliveryAddress.addressType + ': ' : ''}${deliveryAddress.city}, ${deliveryAddress.state} ${deliveryAddress.pincode}`, 20, 130);
+                doc.text(deliveryAddress.landMark || '', 20, 140);
+                doc.text(`Email: ${safeOrder.user.email || 'customer@example.com'}`, 20, 150);
+            } else {
+                doc.text('Address not available', 20, 130);
+                doc.text(`Email: ${safeOrder.user.email || 'customer@example.com'}`, 20, 140);
+            }
+
+            // Order Items Table
+            doc.setFontSize(14);
+            doc.text('Order Items', 20, 170);
+            doc.setFontSize(10);
+
+            // Table headers
+            const headers = ['Product', 'Quantity', 'Price', 'Total'];
+            const colWidths = [100, 30, 30, 30];
+            let x = 20;
+            headers.forEach((header, i) => {
+                doc.text(header, x, 180, { align: i > 0 ? 'right' : 'left' });
+                x += colWidths[i];
+            });
+
+            // Table rows
+            let y = 190;
+            if (safeOrder.orderedItems && safeOrder.orderedItems.length > 0) {
+                safeOrder.orderedItems.forEach(item => {
+                    const productName = item.product && item.product.productName ? item.product.productName : 'Unknown';
+                    const quantity = item.quantity || 0;
+                    const price = item.price ? parseFloat(item.price).toFixed(2) : '0.00';
+                    const total = (parseFloat(item.price || 0) * (item.quantity || 0)).toFixed(2);
+
+                    x = 20;
+                    doc.text(productName, x, y, { width: colWidths[0] });
+                    doc.text(quantity.toString(), x + colWidths[0], y, { align: 'right' });
+                    doc.text(`₹${price}`, x + colWidths[0] + colWidths[1], y, { align: 'right' });
+                    doc.text(`₹${total}`, x + colWidths[0] + colWidths[1] + colWidths[2], y, { align: 'right' });
+                    y += 10;
+                });
+
+                // Summary
+                y += 10;
+                doc.text('Subtotal:', 140, y, { align: 'right' });
+                doc.text(`₹${parseFloat(safeOrder.totalPrice).toFixed(2)}`, 180, y, { align: 'right' });
+                y += 10;
+                doc.text('Tax:', 140, y, { align: 'right' });
+                doc.text(`₹${safeOrder.couponApplied && safeOrder.discount ? parseFloat(safeOrder.discount).toFixed(2) : '0.00'}`, 180, y, { align: 'right' });
+                y += 10;
+                doc.text('Shipping:', 140, y, { align: 'right' });
+                doc.text('₹50.00', 180, y, { align: 'right' });
+                y += 10;
+                doc.setFont('helvetica', 'bold');
+                doc.text('Total:', 140, y, { align: 'right' });
+                doc.text(`₹${parseFloat(safeOrder.finalAmount + 50).toFixed(2)}`, 180, y, { align: 'right' });
+            } else {
+                doc.text('No items found in this order.', 20, y);
+            }
+
+            // Footer
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(0, 123, 255);
+            doc.setFontSize(10);
+            doc.text('Thank you for your business!', 105, y + 20, { align: 'center' });
+            doc.text('If you have any questions about this invoice, please contact our customer support.', 105, y + 30, { align: 'center' });
+
+            // Print the PDF
+            doc.autoPrint();
+            window.open(doc.output('bloburl'), '_blank');
         }
     </script>
 </body>

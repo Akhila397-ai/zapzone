@@ -79,4 +79,10 @@ router.get('/checkout',userAuth,checkoutContoller.getCheckoutPage);
 router.post('/place-order',userAuth,checkoutContoller.placeOrder);
 router.get('/order-success',userAuth,checkoutContoller.loadOrderSuccessPage)
 router.get('/orders', userAuth,checkoutContoller.loadOrders);
+router.get('/orderdetails',userAuth,checkoutContoller.loadOrderDetails)
+router.post('/cancelOrder',userAuth,checkoutContoller.cancelOrder);
+router.post('/cancel-product', userAuth,checkoutContoller.cancelProduct);
+router.post('/request-return',userAuth,checkoutContoller.requestReturn);
+
+
 module.exports = router

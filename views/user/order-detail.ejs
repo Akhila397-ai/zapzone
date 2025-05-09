@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ZAPZONE Order Details">
+    <title>ZAPZONE - Order Details</title>
+
+    <!-- Include external CSS dependencies -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="/css/magnific-popup.css" type="text/css">
+    <link rel="stylesheet" href="/css/nice-select.css" type="text/css">
+    <link rel="stylesheet" href="/css/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/slicknav.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+    <!-- Add SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        .order-details-page {
+            font-family: 'Nunito Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #2d3748;
+            line-height: 1.6;
+            background-color: #f7fafc;
+        }
+
+        .profile-container {
+            display: flex;
+            max-width: 1200px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .content {
+            flex: 1;
+            padding: 40px;
+        }
+
+        .order-details-header {
+            padding: 20px 0;
+            border-bottom: 2px solid #edf2f7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .order-details-header h1 {
+            color: #1a202c;
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-cancel {
+            background-color: #e53e3e;
+            color: #fff;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-cancel:hover {
+            background-color: #c53030;
+        }
+
+        .btn-invoice {
+            background-color: #38b2ac;
+            color: #fff;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-invoice:hover {
+            background-color: #319795;
+        }
+
+        .order-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .status-badge {
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .status-pending { background-color: #fed7e2; color: #9b2c2c; }
+        .status-processing { background-color: #bee3f8; color: #2b6cb0; }
+        .status-shipped { background-color: #c6f6d5; color: #276749; }
+        .status-delivered { background-color: #b2f5ea; color: #234e52; }
+        .status-cancelled { background-color: #fed7e2; color: #9b2c2c; }
+        .status-return-request { background-color: #feebc8; color: #7b341e; }
+        .status-returned { background-color: #e2e8f0; color: #4a5568; }
+
+        .order-date {
+            font-size: 16px;
+            font-weight: 600;
+            color: #38b2ac;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            color: #1a202c;
+        }
+
+        .section-title i {
+            margin-right: 12px;
+            color: #38b2ac;
+            font-size: 24px;
+        }
+
+        .shipping-address {
+            background-color: #f7fafc;
+            padding: 24px;
+            border-radius: 8px;
+            margin-bottom: 40px;
+            border: 1px solid #edf2f7;
+        }
+
+        .address-name {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #2d3748;
+        }
+
+        .address-details {
+            font-size: 14px;
+            color: #718096;
+            line-height: 1.8;
+        }
+
+        .order-items {
+            margin-bottom: 40px;
+        }
+
+        .item-card {
+            display: flex;
+            align-items: center;
+            padding: 24px;
+            border: 1px solid #edf2f7;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            transition: box-shadow 0.2s ease;
+        }
+
+        .item-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .item-image {
+            width: 100px;
+            min-width: 100px;
+            height: 100px;
+            margin-right: 24px;
+        }
+
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .item-details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .item-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #2d3748;
+        }
+
+        .item-price {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #4a5568;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-return {
+            background-color: #ed8936;
+            color: #fff;
+        }
+
+        .btn-return:hover {
+            background-color: #dd6b20;
+        }
+
+        .btn-cancel-product {
+            background-color: #e53e3e;
+            color: #fff;
+        }
+
+        .btn-cancel-product:hover {
+            background-color: #c53030;
+        }
+
+        .order-summary {
+            background-color: #f7fafc;
+            padding: 24px;
+            border-radius: 8px;
+            border: 1px solid #edf2f7;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 16px;
+            color: #4a5568;
+        }
+
+        .summary-row.total {
+            border-top: 2px solid #edf2f7;
+            padding-top: 12px;
+            margin-top: 12px;
+            font-weight: 700;
+            font-size: 18px;
+            color: #2d3748;
+        }
+
+        .back-button {
+            color: #3182ce;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            margin-left: 734px;
+            margin-bottom: 24px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: color 0.2s ease;
+        }
+
+        .back-button:hover {
+            color: #2b6cb0;
+        }
+
+        .back-button i {
+            margin-right: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .profile-container {
+                flex-direction: column;
+                margin: 20px;
+            }
+
+            .content {
+                padding: 24px;
+            }
+
+            .order-details-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header-actions {
+                margin-top: 16px;
+                flex-wrap: wrap;
+            }
+
+            .item-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .item-image {
+                margin-bottom: 16px;
+                margin-right: 0;
+                width: 80px;
+                height: 80px;
+            }
+
+            .item-actions {
+                margin-top: 16px;
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .order-details-header h1 {
+                font-size: 22px;
+            }
+
+            .section-title {
+                font-size: 18px;
+            }
+
+            .item-name {
+                font-size: 16px;
+            }
+
+            .item-price {
+                font-size: 14px;
+            }
+        }
+
+        /* Styles for custom cancellation popup */
+        .cancel-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .cancel-popup-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .cancel-popup-content h3 {
+            margin: 0 0 20px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .cancel-popup-content textarea {
+            width: 100%;
+            height: 100px;
+            border: 1px solid #edf2f7;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 14px;
+            resize: vertical;
+            margin-bottom: 20px;
+        }
+
+        .cancel-popup-content .popup-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .cancel-popup-content .popup-btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+
+        .popup-btn-confirm {
+            background-color: #e53e3e;
+            color: #fff;
+        }
+
+        .popup-btn-confirm:hover {
+            background-color: #c53030;
+        }
+
+        .popup-btn-cancel {
+            background-color: #edf2f7;
+            color: #4a5568;
+        }
+
+        .popup-btn-cancel:hover {
+            background-color: #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="order-details-page">
+        
+        <%- include("../partials/user/header") %>
+        
+        <div class="profile-container">
+            
+            <%- include("../partials/user/sidebar", {active: 'orders'}) %>
+            
+            <div class="content">
+                <h3>Order details</h3>
+                <a href="/orders" class="back-button">
+                    <i class="fa fa-arrow-left"></i> Back to Orders
+                </a>
+                
+                <div class="order-details-header">
+                    <h1>Order Details <%= order.orderId %></h1>
+                    <div class="header-actions">
+                        <% if (order.status !== 'Cancelled' && order.status !== 'Delivered' && order.status !== 'Returned') { %>
+                            <button class="btn-cancel">Cancel Order</button>
+                        <% } %>
+                    </div>
+                </div>
+                
+                <div class="order-details-content">
+                    <div class="order-status">
+                        <div class="status-badge status-<%= order.status.toLowerCase().replace(' ', '-') %>">
+                            <%= order.status %>
+                        </div>
+                        <div class="order-date">Order Date: <%= order.createdOn ? new Date(order.createdOn).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A' %></div>
+                    </div>
+                    
+                    <div class="shipping-info">
+                        <h2 class="section-title">
+                            <i class="fa fa-map-marker"></i> Shipping Address
+                        </h2>
+                        <div class="shipping-address">
+                            <% if (selectedAddress) { %>
+                                <div class="address-name"><%= selectedAddress.name %></div>
+                                <div class="address-details">
+                                    <%= selectedAddress.addressType %>, <%= selectedAddress.landMark %><br>
+                                    <%= selectedAddress.city %>, <%= selectedAddress.state %> <%= selectedAddress.pincode %><br>
+                                    Phone: <%= selectedAddress.phone %> <%= selectedAddress.altPhone ? ', Alt: ' + selectedAddress.altPhone : '' %>
+                                </div>
+                            <% } else { %>
+                                <div class="address-details">Address not available</div>
+                            <% } %>
+                        </div>
+                    </div>
+                    
+                    <div class="order-items">
+                        <h2 class="section-title">
+                            <i class="fa fa-shopping-bag"></i> Order Items
+                        </h2>
+                        
+                        <% order.orderedItems.forEach((item, index) => { %>
+                            <div class="item-card" data-item-id="<%= item._id %>">
+                                
+                                    <img src="<%= item.product.productImage && item.product.productImage[0] ? '/Uploads/product-images/' + item.product.productImage[0] : '/images/placeholder.jpg' %>" alt="<%= item.product.productName %>">
+                               
+                                <div class="item-details">
+                                    <div class="item-name"><%= item.product.productName %></div>
+                                    <div class="item-price">₹<%= item.price.toFixed(2) %> x Qty: <%= item.quantity %></div>
+                                    <% if (item.status) { %>
+                                        <div class="status-badge status-<%= item.status.toLowerCase().replace(' ', '-') %>">
+                                            <%= item.status %>
+                                        </div>
+                                    <% } %>
+                                </div>
+                                <div class="item-actions">
+                                    <% if (order.status === 'Delivered') { %>
+                                        <button class="action-btn btn-return" data-item-id="<%= item.product._id %>">Request Return</button>
+                                    <% } else if (['pending', 'processing'].includes(order.status.toLowerCase()) && item.status !== 'Cancelled') { %>
+                                        <button class="action-btn btn-cancel-product" data-item-id="<%= item.product._id %>">Cancel Product</button>
+                                    <% } %>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                    
+                    <div class="order-summary">
+                        <h2 class="section-title">
+                            <i class="fa fa-file-text-o"></i> Order Summary
+                        </h2>
+                        <div class="summary-row">
+                            <div>Subtotal</div>
+                            <div>₹<%= order.finalAmount.toFixed(2) %></div>
+                        </div>
+                        <div class="summary-row">
+                            <div>Discount</div>
+                            <div>₹<%= order.discount.toFixed(2) %></div>
+                        </div>
+                        <div class="summary-row">
+                            <div>Shipping</div>
+                            <div>₹0.00</div>
+                        </div>
+                        <div class="summary-row total">
+                            <div>Grand Total</div>
+                            <div>₹<%= order.finalAmount.toFixed(2) %></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Cancellation Popup -->
+        <div class="cancel-popup" id="cancelPopup">
+            <div class="cancel-popup-content">
+                <h3>Reason for Cancellation</h3>
+                <textarea id="cancelReason" placeholder="Please provide the reason for cancelling this order"></textarea>
+                <div class="popup-actions">
+                    <button class="popup-btn popup-btn-cancel" id="popupCancel">Cancel</button>
+                    <button class="popup-btn popup-btn-confirm" id="popupConfirm">Submit</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Return Popup -->
+        <div class="cancel-popup" id="returnPopup">
+            <div class="cancel-popup-content">
+                <h3>Reason for Return</h3>
+                <textarea id="returnReason" placeholder="Please provide the reason for returning this product"></textarea>
+                <div class="popup-actions">
+                    <button class="popup-btn popup-btn-cancel" id="returnPopupCancel">Cancel</button>
+                    <button class="popup-btn popup-btn-confirm" id="returnPopupConfirm">Submit</button>
+                </div>
+            </div>
+        </div>
+        
+        <%- include("../partials/user/footer") %>
+    </div>
+    
+    <!-- Include external JS dependencies -->
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/jquery.nice-select.min.js"></script>
+    <script src="/js/jquery.nicescroll.min.js"></script>
+    <script src="/js/jquery.magnific-popup.min.js"></script>
+    <script src="/js/jquery.countdown.min.js"></script>
+    <script src="/js/jquery.slicknav.js"></script>
+    <script src="/js/mixitup.min.js"></script>
+    <script src="/js/owl.carousel.min.js"></script>
+    <script src="/js/main.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          // Debugging: Log order status to verify
+          console.log('Order Status:', '<%= order.status %>');
+      
+          const cancelPopup = document.getElementById('cancelPopup');
+          const popupConfirm = document.getElementById('popupConfirm');
+          const popupCancel = document.getElementById('popupCancel');
+          const cancelReason = document.getElementById('cancelReason');
+      
+          // Handle Cancel Order button (still requires reason)
+          document.querySelector('.btn-cancel')?.addEventListener('click', function () {
+            cancelPopup.style.display = 'flex';
+          });
+      
+          popupCancel.addEventListener('click', function () {
+            cancelPopup.style.display = 'none';
+            cancelReason.value = '';
+          });
+      
+          popupConfirm.addEventListener('click', function () {
+            const reason = cancelReason.value.trim();
+            if (!reason) {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Please provide a reason for cancellation.',
+              });
+              return;
+            }
+      
+            fetch('/cancelOrder', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ orderId: '<%= order.orderId %>', reason })
+            })
+              .then(response => response.json())
+              .then(data => {
+                if (data.success) {
+                  Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Order cancellation request submitted.',
+                    showConfirmButton: false,
+                    timer: 1500
+                  }).then(() => window.location.reload());
+                } else {
+                  Swal.fire({
+                    icon: 'error',
+                    title: 'Failed',
+                    text: 'Failed to cancel order: ' + data.message,
+                  });
+                }
+              })
+              .catch(error => {
+                console.error('Error cancelling order:', error);
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: 'An error occurred while cancelling the order.',
+                });
+              })
+              .finally(() => {
+                cancelPopup.style.display = 'none';
+                cancelReason.value = '';
+              });
+          });
+      
+          // Handle Cancel Product buttons (no reason required)
+          const cancelProductButtons = document.querySelectorAll('.btn-cancel-product');
+          console.log('Cancel Product Buttons Found:', cancelProductButtons.length);
+      
+          cancelProductButtons.forEach(button => {
+            button.addEventListener('click', function () {
+              const itemId = this.dataset.itemId;
+              console.log('Cancel Product Clicked:', { orderId: '<%= order._id %>', itemId });
+      
+              if (!itemId) {
+                console.error('Item ID is missing');
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: 'Product ID is missing.',
+                });
+                return;
+              }
+      
+              Swal.fire({
+                title: 'Cancel Product',
+                text: 'Are you sure you want to cancel this product?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e53e3e',
+                cancelButtonColor: '#718096',
+                confirmButtonText: 'Yes, cancel product',
+                cancelButtonText: 'No, keep it'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  fetch('/cancel-product', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      orderId: '<%= order._id %>',
+                      productId: itemId
+                    })
+                  })
+                    .then(response => response.json())
+                    .then(data => {
+                      if (data.success) {
+                        Swal.fire({
+                          icon: 'success',
+                          title: 'Cancelled!',
+                          text: 'Product cancelled successfully.',
+                          showConfirmButton: false,
+                          timer: 1500
+                        }).then(() => window.location.reload());
+                      } else {
+                        Swal.fire({
+                          icon: 'error',
+                          title: 'Failed',
+                          text: 'Failed to cancel product: ' + data.message,
+                          showConfirmButton: false,
+                          timer: 1500
+                        })
+                      }
+                    })
+                    .catch(error => {
+                      console.error('Error cancelling product:', error);
+                      Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred while cancelling the product.',
+                      });
+                    });
+                }
+              });
+            });
+          });
+      
+          // Handle Return buttons
+          document.querySelectorAll('.btn-return').forEach(button => {
+            button.addEventListener('click', function () {
+                const itemId = this.dataset.itemId;
+                const returnPopup = document.getElementById('returnPopup');
+                const returnPopupConfirm = document.getElementById('returnPopupConfirm');
+                const returnPopupCancel = document.getElementById('returnPopupCancel');
+                const returnReason = document.getElementById('returnReason');
+
+                // Show the return popup
+                returnPopup.style.display = 'flex';
+
+                // Handle cancel button in popup
+                returnPopupCancel.addEventListener('click', function () {
+                    returnPopup.style.display = 'none';
+                    returnReason.value = '';
+                });
+
+                // Handle confirm button in popup
+                returnPopupConfirm.addEventListener('click', function () {
+                    const reason = returnReason.value.trim();
+                    if (!reason) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Please provide a reason for return.',
+                        });
+                        return;
+                    }
+
+                    Swal.fire({
+                        title: 'Request Return',
+                        text: 'Are you sure you want to request a return for this product?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#38b2ac',
+                        cancelButtonColor: '#718096',
+                        confirmButtonText: 'Yes, request return',
+                        cancelButtonText: 'Cancel'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            fetch('/request-return', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ orderId: '<%= order.orderId %>', itemId, reason })
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Success',
+                                            text: 'Return request submitted.',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        }).then(() => window.location.reload());
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Failed',
+                                            text: 'Failed to request return: ' + data.message,
+                                        });
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error requesting return:', error);
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'An error occurred while requesting the return.',
+                                    });
+                                })
+                                .finally(() => {
+                                    returnPopup.style.display = 'none';
+                                    returnReason.value = '';
+                                });
+                        }
+                    });
+                }, { once: true }); // Ensure the confirm handler is only added once
+            });
+          });
+        });
+      </script>
+</body>
+</html>

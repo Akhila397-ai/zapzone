@@ -1,0 +1,630 @@
+<%- include('../partials/admin/header') %>
+<link rel="stylesheet" href="/css/admin/orders.css"/>
+<style>
+  /* Admin Order Details Page Styles */
+  .content-main {
+    padding-left: 250px;
+    transition: padding-left 0.3s ease;
+    padding-right: 24px;
+    padding-bottom: 40px;
+  }
+
+  .content-header {
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .content-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #6B6AE4;
+    letter-spacing: -0.02em;
+  }
+
+  /* Card Styles */
+  .card {
+    border-radius: 12px;
+    box-shadow: 0 4px 20px #6B6AE4;
+    margin-bottom: 24px;
+    background-color: #fff;
+    border: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px #6B6AE4;
+  }
+
+  .card-header {
+    background-color: #6B6AE4;
+    color: white;
+    border-bottom: 1px solid #e5e7eb;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    padding: 16px 24px;
+    font-weight: 600;
+    font-size: 18px;
+  }
+
+  .card-body {
+    padding: 24px;
+  }
+
+  /* Order Information Section */
+  .order-info-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .order-info-left {
+    flex: 1;
+    min-width: 300px;
+  }
+
+  .order-info-right {
+    width: 300px;
+  }
+
+  .info-row {
+    margin-bottom: 16px;
+  }
+
+  .info-label {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 4px;
+  }
+
+  .info-value {
+    color: #000000ba;
+  }
+
+  /* Order Status Section */
+  .order-status-section {
+    background-color: #1e2a3a;
+    border-radius: 10px;
+    padding: 20px;
+    color: white;
+  }
+
+  .status-header {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  .status-dropdown {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #374151;
+    background-color: white;
+    color: #6B6AE4;
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+
+  .btn-update-status {
+    width: 100%;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .btn-update-status:hover {
+    background: #2563eb;
+  }
+
+  .btn-accept-return {
+    width: 100%;
+    background: #10b981;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 10px;
+  }
+
+  .btn-accept-return:hover {
+    background: #059669;
+  }
+
+  .btn-decline-return {
+    width: 100%;
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 10px;
+  }
+
+  .btn-decline-return:hover {
+    background: #dc2626;
+  }
+
+  .return-reason {
+    margin-bottom: 16px;
+    padding: 12px;
+    background-color: #2d3b4e;
+    border-radius: 8px;
+  }
+
+  .return-reason-label {
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  /* Order Items Table */
+  .table {
+    margin-bottom: 0;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  .table thead th {
+    background-color: #6B6AE4;
+    font-weight: 600;
+    color: white;
+    font-size: 14px;
+    padding: 14px 12px;
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  .table tbody td {
+    vertical-align: middle;
+    padding: 14px 12px;
+    font-size: 14px;
+    color: #1a1a1a;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f9fafb;
+  }
+
+  /* Payment Summary Section */
+  .payment-summary {
+    background-color: #f9fafb;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+  }
+
+  .summary-header {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .summary-label {
+    color: #4b5563;
+  }
+
+  .summary-value {
+    font-weight: 500;
+    color: #6B6AE4;
+  }
+
+  .summary-total {
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .discount {
+    color: #10b981;
+  }
+
+  .cancelled {
+    color: #ef4444;
+  }
+
+  /* Button Styles */
+  .btn-group {
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-back {
+    background-color: #6B6AE4;
+    color: white;
+    border: none;
+    text-decoration: none;
+  }
+
+  .btn-back:hover {
+    background-color: #5b58c8;
+    color: white;
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .content-main {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    .order-info-section {
+      flex-direction: column;
+    }
+
+    .order-info-right {
+      width: 100%;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    .table thead th,
+    .table tbody td {
+      padding: 12px 8px;
+    }
+  }
+</style>
+
+<body>
+  <section class="content-main">
+    <!-- Content Header -->
+    <div class="content-header">
+      <div>
+        <h2 class="content-title">Order Details</h2>
+      </div>
+      <div class="btn-group">
+        <a href="/admin/order" class="btn btn-back">
+          <i class="bi bi-arrow-left"></i> Back to Orders
+        </a>
+      </div>
+    </div>
+
+    <!-- Order Information -->
+    <div class="card">
+      <div class="card-header">
+        Order Information
+      </div>
+      <div class="card-body">
+        <div class="order-info-section">
+          <div class="order-info-left">
+            <div class="info-row">
+              <div class="info-label">Order ID:</div>
+              <div class="info-value"><%= order.orderId %></div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">Customer Name:</div>
+              <div class="info-value"><%= order.user ? order.user.name : 'Unknown User' %></div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">Order Date:</div>
+              <div class="info-value"><%= order.createdOn ? order.createdOn.toLocaleDateString() : 'N/A' %></div>
+            </div>
+            <% if (order.cancellationReason) { %>
+              <div class="info-row">
+                <div class="info-label">Cancellation Reason:</div>
+                <div class="info-value cancelled"><%= order.cancellationReason %></div>
+              </div>
+            <% } %>
+            <% if (selectedAddress) { %>
+              <div class="info-value">
+                <%= selectedAddress.name %><br>
+                <%= selectedAddress.landMark %>, <%= selectedAddress.city %> - <%= selectedAddress.pincode %><br>
+                <%= selectedAddress.state %><br>
+                Phone: <%= selectedAddress.phone %><br>
+                <% if (selectedAddress.altPhone) { %>
+                  Alternate Phone: <%= selectedAddress.altPhone %>
+                <% } %>
+              </div>
+            <% } else { %>
+              <div class="info-value">Shipping address not available</div>
+            <% } %>
+          </div>
+          <div class="order-info-right">
+            <div class="order-status-section">
+              <div class="status-header">Order Status</div>
+              <form id="update-status-form">
+                <input type="hidden" name="orderId" value="<%= order.orderId %>">
+                <select name="status" class="status-dropdown">
+                  <option value="pending" <%= order.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                  <option value="processing" <%= order.status === 'processing' ? 'selected' : '' %>>Processing</option>
+                  <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                  <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                  <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                  <option value="Return Requested" <%= order.status === 'Return Requested' ? 'selected' : '' %>>Return Requested</option>
+                  <option value="Returned" <%= order.status === 'Returned' ? 'selected' : '' %>>Returned</option>
+                  <option value="Return Rejected" <%= order.status === 'Return Rejected' ? 'selected' : '' %>>Return Rejected</option>
+                </select>
+                <button type="submit" class="btn-update-status">Update Status</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Items -->
+    <div class="card">
+      <div class="card-header">
+        Order Items
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th width="30%">Product</th>
+                <th width="10%">Quantity</th>
+                <th width="15%">Price</th>
+                <th width="15%">Status</th>
+                <th width="20%">Return Reason</th>
+                <th width="20%">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% order.orderedItems.forEach((item) => { %>
+                <tr>
+                  <td><%= item.product ? item.product.productName : 'Unknown Product' %></td>
+                  <td><%= item.quantity %></td>
+                  <td>₹<%= item.price %></td>
+                  <td><%= item.status || 'N/A' %></td>
+                  <td><%= item.returnReason || 'N/A' %></td>
+                  <td>
+                    <% if (item.status === 'Return Requested') { %>
+                      <form class="accept-return-form" data-item-id="<%= item.product._id %>" data-order-id="<%= order.orderId %>">
+                        <button type="submit" class="btn-accept-return">Accept Return</button>
+                      </form>
+                      <form class="decline-return-form" data-item-id="<%= item.product._id %>" data-order-id="<%= order.orderId %>">
+                        <button type="submit" class="btn-decline-return">Decline Return</button>
+                      </form>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Payment Summary -->
+        <div class="payment-summary">
+          <div class="summary-header">Payment Summary</div>
+          <div class="summary-row">
+            <div class="summary-label">Items Total</div>
+            <div class="summary-value">₹<%= order.orderedItems.reduce((total, item) => total + item.price * item.quantity, 0) %></div>
+          </div>
+          <div class="summary-row">
+            <div class="summary-label">Discount</div>
+            <div class="summary-value discount">-₹<%= order.discount %></div>
+          </div>
+          <div class="summary-row">
+            <div class="summary-label">Order Total</div>
+            <div class="summary-value">₹<%= order.totalPrice %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+  <script>
+    // Update Status Form Submission
+    document.getElementById('update-status-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const orderId = this.querySelector('input[name="orderId"]').value;
+      const newStatus = this.querySelector('.status-dropdown').value;
+
+      Swal.fire({
+        title: "Update Order Status?",
+        text: `Are you sure you want to change the order status to ${newStatus}?`,
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes, Update",
+        cancelButtonText: "Cancel",
+        confirmButtonColor: "#3b82f6",
+        cancelButtonColor: "#6B6AE4"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch(`/admin/orderStatus/${orderId}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status: newStatus })
+          })
+            .then((response) => {
+              if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+              return response.json();
+            })
+            .then((data) => {
+              if (data.message === 'Order status updated successfully') {
+                Swal.fire({
+                  title: 'Success!',
+                  text: 'Order status updated successfully',
+                  icon: 'success',
+                  confirmButtonColor: '#3b82f6'
+                }).then(() => {
+                  window.location.reload();
+                });
+              } else {
+                Swal.fire({
+                  title: 'Error!',
+                  text: data.message || 'Failed to update status',
+                  icon: 'error',
+                  confirmButtonColor: '#6B6AE4'
+                });
+              }
+            })
+            .catch((error) => {
+              console.error('Error updating status:', error);
+              Swal.fire({
+                title: 'Error!',
+                text: 'Server error occurred',
+                icon: 'error',
+                confirmButtonColor: '#6B6AE4'
+              });
+            });
+        }
+      });
+    });
+
+    // Accept Return Button for Each Item
+    document.querySelectorAll('.accept-return-form').forEach(form => {
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const orderId = this.dataset.orderId;
+        const itemId = this.dataset.itemId;
+
+        Swal.fire({
+          title: "Accept Return Request?",
+          text: "Are you sure you want to accept the return request for this item?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Yes, Accept",
+          cancelButtonText: "Cancel",
+          confirmButtonColor: "#10b981",
+          cancelButtonColor: "#6B6AE4"
+        }).then((result) => {
+          if (result.isConfirmed) {
+            fetch(`/admin/orders/${orderId}/approve-return`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ itemId })
+            })
+              .then((response) => {
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return response.json();
+              })
+              .then((data) => {
+                if (data.message === 'Return approved successfully') {
+                  Swal.fire({
+                    title: 'Success!',
+                    text: 'Return request accepted successfully',
+                    icon: 'success',
+                    confirmButtonColor: '#10b981'
+                  }).then(() => {
+                    window.location.reload();
+                  });
+                } else {
+                  Swal.fire({
+                    title: 'Error!',
+                    text: data.message || 'Failed to accept return',
+                    icon: 'error',
+                    confirmButtonColor: '#6B6AE4'
+                  });
+                }
+              })
+              .catch((error) => {
+                console.error('Error accepting return:', error);
+                Swal.fire({
+                  title: 'Error!',
+                  text: 'Server error occurred',
+                  icon: 'error',
+                  confirmButtonColor: '#6B6AE4'
+                });
+              });
+          }
+        });
+      });
+    });
+
+    // Decline Return Button for Each Item
+    document.querySelectorAll('.decline-return-form').forEach(form => {
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const orderId = this.dataset.orderId;
+        const itemId = this.dataset.itemId;
+
+        Swal.fire({
+          title: "Decline Return Request?",
+          text: "Are you sure you want to decline the return request for this item?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Yes, Decline",
+          cancelButtonText: "Cancel",
+          confirmButtonColor: "#ef4444",
+          cancelButtonColor: "#6B6AE4"
+        }).then((result) => {
+          if (result.isConfirmed) {
+            fetch(`/admin/orders/${orderId}/reject-return`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ itemId })
+            })
+              .then((response) => {
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return response.json();
+              })
+              .then((data) => {
+                if (data.message === 'Return rejected successfully') {
+                  Swal.fire({
+                    title: 'Success!',
+                    text: 'Return request declined successfully',
+                    icon: 'success',
+                    confirmButtonColor: '#ef4444'
+                  }).then(() => {
+                    window.location.reload();
+                  });
+                } else {
+                  Swal.fire({
+                    title: 'Error!',
+                    text: data.message || 'Failed to decline return',
+                    icon: 'error',
+                    confirmButtonColor: '#6B6AE4'
+                  });
+                }
+              })
+              .catch((error) => {
+                console.error('Error declining return:', error);
+                Swal.fire({
+                  title: 'Error!',
+                  text: 'Server error occurred',
+                  icon: 'error',
+                  confirmButtonColor: '#6B6AE4'
+                });
+              });
+          }
+        });
+      });
+    });
+  </script>
+</body>
