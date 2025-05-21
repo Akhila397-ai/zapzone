@@ -57,6 +57,7 @@ const getAllProducts = async (req, res) => {
             delete searchQuery.$or;
         }
 
+            
         
         const productData = await Product.find(searchQuery)
             .populate('category')
@@ -65,7 +66,6 @@ const getAllProducts = async (req, res) => {
             .skip((page - 1) * limit)
             .exec();
 
-            console.log('productData============',productData);
             
 
        
@@ -95,9 +95,9 @@ const addProducts = async (req, res) => {
       console.log('Request Body:', req.body);
       console.log('Request Files:', req.files);
   
-      const {productName,description,category,regularPrice,salePrice,quantity,brand,ram,storage, processor,color}=req.body;
+      const {productName,description,category,salePrice,quantity,brand,ram,storage, processor,color}=req.body;
       
-       const regPrice = parseFloat(regularPrice);  
+      
        const salePriceValue = parseFloat(salePrice) || 0;
        const qty = parseInt(quantity);
       
@@ -153,7 +153,6 @@ const addProducts = async (req, res) => {
         description,
         category: categoryId._id,
         brand: brand,
-        regularPrice: regPrice,
         salePrice: salePriceValue,
         quantity: qty,
         isDeleted:false,

@@ -159,7 +159,7 @@
         .filter-title {
             font-weight: 600;
             margin-bottom: 10px;
-            color:black;
+            color: black;
         }
         
         .category-brand-container ul {
@@ -170,7 +170,6 @@
         
         .filter-item {
             margin-bottom: 8px;
-           
         }
         
         .filter-item a {
@@ -343,7 +342,7 @@
             text-decoration: none;
         }
         
-        /* Responsive Styles */
+        /* Responsive Formats */
         @media (max-width: 767px) {
             .zz-filter-section {
                 margin-bottom: 20px;
@@ -380,10 +379,59 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Notification Styles */
+        .zz-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #28a745; /* Green for success */
+            color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 2000;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            max-width: 300px;
+            animation: slideIn 0.3s ease-in-out;
+        }
+
+        .zz-notification.error {
+            background-color: #e74c3c; /* Red for error */
+        }
+
+        .zz-notification.show {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- breadcrumbs -->
+    <!-- Breadcrumbs -->
     <div class="zz-breadcrumb-area">
         <div class="container">
             <nav aria-label="breadcrumb">
@@ -395,16 +443,16 @@
         </div>
     </div>
 
-    <!-- main container -->
+    <!-- Main Container -->
     <div class="zz-shop-container">
         <div class="container">
             <div class="row">
-                <!-- filter -->
+                <!-- Filter Section -->
                 <div class="col-lg-3">
                     <form action="/filter" method="GET" class="zz-filter-section" id="filterForm">
                         <h4 class="zz-filter-title">Filter Products</h4>
                         
-                        <!-- search option -->
+                        <!-- Search Option -->
                         <div class="zz-search-box">
                             <input type="text" name="search" class="zz-search-input" placeholder="Search products..." value="<%= typeof search !== 'undefined' ? search : '' %>" aria-label="Search products">
                             <button type="button" class="zz-search-cancel" aria-label="Clear search">
@@ -419,10 +467,9 @@
                                 <ul>
                                     <% if (category && category.length > 0) { %>
                                         <% category.forEach(cat => { %>
-                                            <li class="filter-item <%= typeof selectedCategory !== 'undefined' && selectedCategory === cat._id.toString() ? 'active' : '' %>" data-filter="cat" data-value="<%= cat._id %>">
+                                            <li class="filter-item <%= selectedCategory === cat._id.toString() ? 'active' : '' %>" data-filter="cat" data-value="<%= cat._id %>">
                                                 <a href="#"><%= cat.name %></a>
                                             </li>
-                                            
                                         <% }) %>
                                     <% } else { %>
                                         <li>No categories available</li>
@@ -431,17 +478,16 @@
                             </div>
                         </div>
 
-                        
+                        <!-- Brand Filter -->
                         <div class="filter-section">
                             <div class="filter-title">Brand</div>
                             <div class="category-brand-container">
                                 <ul>
                                     <% if (brands && brands.length > 0) { %>
                                         <% brands.forEach(brand => { %>
-                                            <li class="filter-item <%= typeof selectedBrand !== 'undefined' && selectedBrand === brand._id.toString() ? 'active' : '' %>" data-filter="brand" data-value="<%= brand._id %>">
+                                            <li class="filter-item <%= selectedBrand === brand._id.toString() ? 'active' : '' %>" data-filter="brand" data-value="<%= brand._id %>">
                                                 <a href="#"><%= brand.name %></a>
                                             </li>
-                                            
                                         <% }) %>
                                     <% } else { %>
                                         <li>No brands available</li>
@@ -450,7 +496,7 @@
                             </div>
                         </div>
                         
-                        <!-- sorting -->
+                        <!-- Sorting -->
                         <div class="zz-filter-group">
                             <label for="sortSelect" class="zz-filter-label">Sort By</label>
                             <select id="sortSelect" name="sort" class="form-select zz-form-select zz-sort-select">
@@ -462,7 +508,7 @@
                             </select>
                         </div>
                         
-                        <!-- price range -->
+                        <!-- Price Range -->
                         <div class="zz-filter-group">
                             <label class="zz-filter-label" for="priceRange">Price Range (INR)</label>
                             <select name="priceRange" id="priceRange" class="form-control" aria-label="Select price range">
@@ -475,13 +521,13 @@
                             </select>
                         </div>
                         
-                        <!-- filtering button -->
+                        <!-- Filtering Button -->
                         <button type="submit" class="zz-filter-btn">Apply Filters</button>
                         <a href="#" class="zz-reset-btn" id="resetFilters">Reset Filters</a>
                     </form>
                 </div>
                 
-                <!-- products Section -->
+                <!-- Products Section -->
                 <div class="col-lg-9 position-relative">
                     <div class="loading-overlay" id="loadingOverlay">
                         <div class="loading-spinner"></div>
@@ -527,23 +573,20 @@
                         <% } %>
                     </div>
                     
-                    <!-- Pagination corner -->
+                    <!-- Pagination -->
                     <% if (totalPages >= 1) { %>
                         <nav aria-label="Product navigation">
                             <ul class="pagination zz-pagination" id="paginationContainer">
-                              
                                 <li class="page-item zz-page-item <%= currentPage === 1 ? 'disabled' : '' %>">
                                     <a class="page-link zz-page-link" href="#" data-page="<%= currentPage - 1 %>" aria-label="Previous">
                                         <span aria-hidden="true">«</span>
                                     </a>
                                 </li>
-                         
                                 <% for(let i = 1; i <= totalPages; i++) { %>
                                     <li class="page-item zz-page-item <%= currentPage === i ? 'active' : '' %>">
                                         <a class="page-link zz-page-link" href="#" data-page="<%= i %>"><%= i %></a>
                                     </li>
                                 <% } %>
-                           
                                 <li class="page-item zz-page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
                                     <a class="page-link zz-page-link" href="#" data-page="<%= currentPage + 1 %>" aria-label="Next">
                                         <span aria-hidden="true">»</span>
@@ -557,11 +600,15 @@
         </div>
     </div>
 
+    <!-- Notification Container -->
+    <div class="zz-notification" id="notification" style="display: none;">
+        <span id="notificationMessage"></span>
+    </div>
+
     <%- include("../partials/user/footer") %>
 
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const filterForm = document.getElementById('filterForm');
@@ -571,6 +618,28 @@
             const searchInput = document.querySelector('.zz-search-input');
             const resetFiltersBtn = document.getElementById('resetFilters');
             const loadingOverlay = document.getElementById('loadingOverlay');
+
+            // Function to show notification
+            function showNotification(message, type = 'success') {
+                const notification = document.getElementById('notification');
+                const notificationMessage = document.getElementById('notificationMessage');
+                
+                notificationMessage.textContent = message;
+                notification.className = `zz-notification ${type} show`;
+                
+                // Show notification
+                notification.style.display = 'block';
+                
+                // Auto-hide after 2 seconds
+                setTimeout(() => {
+                    notification.style.animation = 'slideOut 0.3s ease-in-out';
+                    setTimeout(() => {
+                        notification.style.display = 'none';
+                        notification.style.animation = 'slideIn 0.3s ease-in-out';
+                        notification.className = 'zz-notification'; // Reset classes
+                    }, 300);
+                }, 2000);
+            }
 
             function showLoading() {
                 if (loadingOverlay) loadingOverlay.style.display = 'flex';
@@ -583,10 +652,31 @@
             function fetchProducts(params = {}, page = 1) {
                 showLoading();
                 params.page = page;
+
+                // Collect all filter parameters
+                const formData = new FormData(filterForm);
+                const currentParams = {
+                    search: formData.get('search') || '',
+                    sort: formData.get('sort') || 'newest',
+                    priceRange: formData.get('priceRange') || '',
+                    cat: $('.filter-item[data-filter="cat"].active').data('value') || '',
+                    brand: $('.filter-item[data-filter="brand"].active').data('value') || ''
+                };
+
+                // Merge with additional params
+                Object.assign(currentParams, params);
+                Object.keys(currentParams).forEach(key => {
+                    if (!currentParams[key]) delete currentParams[key];
+                });
+
+                // Update URL without reloading
+                const queryString = new URLSearchParams(currentParams).toString();
+                history.pushState(null, '', `/filter?${queryString}`);
+
                 $.ajax({
                     url: '/filter',
                     method: 'GET',
-                    data: params,
+                    data: currentParams,
                     success: function(response) {
                         const $response = $(response);
                         const newProducts = $response.find('#productsContainer').html();
@@ -602,55 +692,13 @@
                             paginationContainer.innerHTML = '';
                         }
 
-                        updateFilterStates(params);
+                        updateFilterStates(currentParams);
                         hideLoading();
-
-                        // Re-attach cart button listeners after new products are loaded
-                        const cartButtons = document.querySelectorAll('.cart-btn:not(.disabled)');
-                        cartButtons.forEach(button => {
-                            button.addEventListener('click', function(e) {
-                                e.preventDefault();
-                                const productId = this.getAttribute('data-product-id');
-                                const quantity = 1; // Default quantity for shop page
-
-                                $.ajax({
-                                    url: '/addToCart',
-                                    type: 'POST',
-                                    data: {
-                                        id: productId,
-                                        qty: quantity
-                                    },
-                                    success: function(response) {
-                                        if (response.success) {
-                                            Swal.fire({
-                                                icon: 'success',
-                                                title: 'Added to Cart',
-                                                text: 'Product successfully added to your cart!',
-                                                timer: 2000,
-                                                showConfirmButton: false
-                                            });
-                                        } else {
-                                            Swal.fire({
-                                                icon: 'error',
-                                                title: 'Add Failed',
-                                                text: 'Could not add the product. Please try again.',
-                                            });
-                                        }
-                                    },
-                                    error: function(xhr, status, error) {
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Error',
-                                            text: 'Something went wrong!',
-                                        });
-                                        console.error('AJAX Error:', status, error);
-                                    }
-                                });
-                            });
-                        });
+                        attachCartButtonListeners();
+                        attachWishlistButtonListeners();
                     },
                     error: function() {
-                        alert('Error fetching products. Please try again.');
+                        showNotification('Error fetching products. Please try again.', 'error');
                         hideLoading();
                     }
                 });
@@ -667,30 +715,81 @@
                     $(`.filter-item[data-filter="brand"][data-value="${params.brand}"]`).addClass('active');
                 }
 
-                if (params.sort) {
-                    $('#sortSelect').val(params.sort);
-                }
-
-                if (params.priceRange) {
-                    $('#priceRange').val(params.priceRange);
-                }
-
-                if (params.search) {
-                    searchInput.value = params.search;
-                } else {
-                    searchInput.value = '';
-                }
+                $('#sortSelect').val(params.sort || 'newest');
+                $('#priceRange').val(params.priceRange || '');
+                searchInput.value = params.search || '';
             }
+
+            function attachCartButtonListeners() {
+                const cartButtons = document.querySelectorAll('.cart-btn:not(.disabled)');
+                cartButtons.forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const productId = this.getAttribute('data-product-id');
+                        const quantity = 1;
+
+                        $.ajax({
+                            url: '/addToCart',
+                            type: 'POST',
+                            data: {productId,quantity},
+                            success: function(response) {
+                                if (response.success) {
+                                    showNotification('Product added to cart!', 'success');
+                                } else {
+                                    showNotification('Could not add to cart. Please try again.', 'error');
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                showNotification('Something went wrong!', 'error');
+                                console.error('AJAX Error:', status, error);
+                            }
+                        });
+                    });
+                });
+            }
+
+         function attachWishlistButtonListeners() {
+    const wishlistButtons = document.querySelectorAll('.wishlist-btn a');
+
+    wishlistButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            const href = this.getAttribute('href');
+            const productId = new URLSearchParams(href.split('?')[1]).get('id');
+            console.log('Href:', href);
+            console.log('ProductId:', productId);
+
+            if (!productId) {
+                showNotification('Product ID is missing!', 'error');
+                return;
+            }
+
+            $.ajax({
+                url: '/addToWishlist',
+                type: 'POST',
+                data: { productId: productId },
+                success: function(response) {
+                    if (response.success) {
+                        showNotification('Added to your wishlist!', 'success');
+                    } else {
+                        showNotification(response.message || 'Could not add to wishlist.', 'error');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    showNotification('Something went wrong!', 'error');
+                    console.error('AJAX Error:', status, error, xhr.responseText);
+                }
+            });
+        });
+    });
+}
+
 
             if (filterForm) {
                 filterForm.addEventListener('submit', function(e) {
                     e.preventDefault();
-                    const formData = new FormData(filterForm);
-                    const params = {};
-                    formData.forEach((value, key) => {
-                        if (value) params[key] = value;
-                    });
-                    fetchProducts(params);
+                    fetchProducts();
                 });
             }
 
@@ -698,24 +797,15 @@
                 e.preventDefault();
                 const filterType = $(this).data('filter');
                 const filterValue = $(this).data('value');
-                const formData = new FormData(filterForm);
-                const params = {};
-                formData.forEach((value, key) => {
-                    if (value) params[key] = value;
-                });
-                params[filterType] = filterValue;
-                fetchProducts(params);
+                $(`.filter-item[data-filter="${filterType}"]`).removeClass('active');
+                $(this).addClass('active');
+                fetchProducts({ [filterType]: filterValue });
             });
 
             if (searchCancelBtn && searchInput) {
                 searchCancelBtn.addEventListener('click', function() {
                     searchInput.value = '';
-                    const formData = new FormData(filterForm);
-                    const params = {};
-                    formData.forEach((value, key) => {
-                        if (key !== 'search' && value) params[key] = value;
-                    });
-                    fetchProducts(params);
+                    fetchProducts({ search: '' });
                 });
             }
 
@@ -732,91 +822,19 @@
                 e.preventDefault();
                 const page = $(this).data('page');
                 if (page && !$(this).parent().hasClass('disabled')) {
-                    const formData = new FormData(filterForm);
-                    const params = {};
-                    formData.forEach((value, key) => {
-                        if (value) params[key] = value;
-                    });
-                    fetchProducts(params, page);
+                    fetchProducts({}, page);
                 }
             });
 
             const sortSelect = document.querySelector('.zz-sort-select');
             if (sortSelect && productsContainer) {
                 sortSelect.addEventListener('change', function() {
-                    const sortValue = this.value;
-                    const products = Array.from(productsContainer.querySelectorAll('.col-lg-3.col-md-4.col-sm-6.col-12'));
-                    
-                    if (products.length > 0) {
-                        products.sort((a, b) => {
-                            const priceA = parseFloat(a.dataset.price);
-                            const priceB = parseFloat(b.dataset.price);
-                            const titleA = a.dataset.name;
-                            const titleB = b.dataset.name;
-                            
-                            if (sortValue === 'price-low') {
-                                return priceA - priceB;
-                            } else if (sortValue === 'price-high') {
-                                return priceB - priceA;
-                            } else if (sortValue === 'a-z') {
-                                return titleA.localeCompare(titleB);
-                            } else if (sortValue === 'z-a') {
-                                return titleB.localeCompare(titleA);
-                            } else {
-                                return 0;
-                            }
-                        });
-                        
-                        products.forEach(product => {
-                            productsContainer.appendChild(product);
-                        });
-                    }
+                    fetchProducts({ sort: this.value });
                 });
             }
 
-            // Attach cart button listeners on page load
-            const cartButtons = document.querySelectorAll('.cart-btn:not(.disabled)');
-            cartButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const productId = this.getAttribute('data-product-id');
-                    const quantity = 1; // Default quantity for shop page
-
-                    $.ajax({
-                        url: '/addToCart',
-                        type: 'POST',
-                        data: {
-                            id: productId,
-                            qty: quantity
-                        },
-                        success: function(response) {
-                            if (response.success) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Added to Cart',
-                                    text: 'Product successfully added to your cart!',
-                                    timer: 2000,
-                                    showConfirmButton: false
-                                });
-                            } else {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Add Failed',
-                                    text: 'Could not add the product. Please try again.',
-                                });
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'Something went wrong!',
-                            });
-                            console.error('AJAX Error:', status, error);
-                        }
-                    });
-                });
-            });
+            attachCartButtonListeners();
+            attachWishlistButtonListeners();
         });
     </script>
 </body>

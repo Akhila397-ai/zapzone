@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="css/style.css" type="text/css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
-        /* Base Styles */
+        /* Existing styles remain unchanged */
         .product-unavailable {
           display: flex;
           flex-direction: column;
@@ -544,6 +544,51 @@
                 font-size: 18px;
             }
         }
+        /* Add new styles for offer section */
+        .zz-offer-wrapper {
+            margin-bottom: 20px;
+        }
+        
+        .zz-offer-label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .zz-offer-selector select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #333;
+            background-color: #fff;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        
+        .zz-offer-selector select:focus {
+            border-color: #e74c3c;
+            outline: none;
+        }
+        
+        #offerError {
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .zz-offer-price-preview {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #28a745; /* Green for discounted price */
+        }
+
+        .zz-no-offers {
+            font-size: 14px;
+            color: #777;
+            margin-top: 8px;
+        }
     </style>
 </head>
 <body>
@@ -599,11 +644,43 @@
                         <div class="zz-product-info">
                             <h1><%= product.productName %></h1>
                             <div class="zz-product-price">
-                                ₹ <%= product.salePrice %>
-                                <% if (product.regularPrice && product.regularPrice > product.salePrice) { %>
-                                    <span class="zz-original-price">₹ <%= product.regularPrice %></span>
-                                    <% const discount = Math.round(((product.regularPrice - product.salePrice) / product.regularPrice) * 100) %>
-                                    <span class="zz-discount-badge"><%= discount %>% OFF</span>
+                                ₹ <%= bestOffer ? discountedPrice.toFixed(2) : product.salePrice %>
+                                <% if (bestOffer) { %>
+                                    <span class="zz-original-price">₹ <%= product.salePrice %></span>
+                                <% } %>
+                            </div>
+                            <!-- Offer Display -->
+                            <div class="zz-offer-wrapper">
+                                <span class="zz-offer-label">Available Offers:</span>
+                                <% if (offers && offers.length > 0) { %>
+                                    <ul class="zz-offer-list mt-2">
+                                        <% offers.forEach(offer => { %>
+                                            <li
+                                                class="zz-offer-item mb-2 p-2 border rounded"
+                                                data-id="<%= offer._id %>"
+                                                data-code="<%= offer.code %>"
+                                                data-discount-type="<%= offer.discountType %>"
+                                                data-discount-amount="<%= offer.discountAmount %>"
+                                                data-min-purchase="<%= offer.minPurchase %>"
+                                            >
+                                                <strong><%= offer.offerName %></strong>: 
+                                                <% if (offer.discountType === 'percentage') { %>
+                                                    <%= offer.discountAmount %>% OFF 
+                                                <% } else { %>
+                                                    ₹<%= offer.discountAmount %> OFF 
+                                                <% } %>
+                                                (Min. Purchase ₹<%= offer.minPurchase %>)  
+                                                <br>
+                                                <span class="text-muted">Use Code: <strong><%= offer.code %></strong></span>
+                                            </li>
+                                        <% }) %>
+                                    </ul>
+                                    <small id="offerError" class="text-danger d-none">
+                                        Please meet the minimum purchase requirement to apply an offer.
+                                    </small>
+                                    <div id="offerPricePreview" class="zz-offer-price-preview d-none mt-2"></div>
+                                <% } else { %>
+                                    <div class="zz-no-offers text-muted">No offers available</div>
                                 <% } %>
                             </div>
     
@@ -627,7 +704,7 @@
                                 <div class="zz-meta-item">
                                     <span class="zz-meta-label">Availability:</span>
                                     <span class="zz-meta-value" style="color: <%= product.quantity > 0 ? 'green' : 'red' %>; font-weight: 900;">
-                                      <%= product.quantity > 0 ? 'In Stock' : 'Out of Stock' %>
+                                        <%= product.quantity > 0 ? 'In Stock' : 'Out of Stock' %>
                                     </span>
                                 </div>
                             </div>
@@ -767,7 +844,17 @@
         document.addEventListener('DOMContentLoaded', function() {
             const mainImage = document.getElementById('mainImage');
             const thumbnails = document.querySelectorAll('.zz-thumbnail');
+            const decreaseBtn = document.getElementById('decreaseQty');
+            const increaseBtn = document.getElementById('increaseQty');
+            const quantityInput = document.getElementById('quantityInput');
+            const addToCartBtn = document.getElementById('addToCartBtn');
+            const offerSelect = document.getElementById('offerSelect');
+            const offerError = document.getElementById('offerError');
+            const offerPricePreview = document.getElementById('offerPricePreview');
+            const productPrice = <%= bestOffer ? discountedPrice : product.salePrice %>;
+            const isOutOfStock = <%= product.quantity === 0 %>;
             
+            // Thumbnail switching
             thumbnails.forEach(thumb => {
                 thumb.addEventListener('click', function() {
                     mainImage.src = this.getAttribute('data-image');
@@ -777,17 +864,12 @@
             });
             
             // Quantity selector
-            const decreaseBtn = document.getElementById('decreaseQty');
-            const increaseBtn = document.getElementById('increaseQty');
-            const quantityInput = document.getElementById('quantityInput');
-            const addToCartBtn = document.getElementById('addToCartBtn');
-            const isOutOfStock = `<%= product.quantity === 0 %>`;
-            
             if (!isOutOfStock) {
                 decreaseBtn.addEventListener('click', function() {
                     const currentValue = parseInt(quantityInput.value);
                     if (currentValue > 1) {
                         quantityInput.value = currentValue - 1;
+                        updateOfferValidation();
                     }
                 });
                 
@@ -796,6 +878,7 @@
                     const maxValue = parseInt(quantityInput.getAttribute('max'));
                     if (currentValue < maxValue) {
                         quantityInput.value = currentValue + 1;
+                        updateOfferValidation();
                     }
                 });
                 
@@ -804,12 +887,53 @@
                     const min = parseInt(this.getAttribute('min'));
                     const max = parseInt(this.getAttribute('max'));
                     
-                    if (value < min) {
+                    if (value < min || isNaN(value)) {
                         this.value = min;
                     } else if (value > max) {
                         this.value = max;
                     }
+                    updateOfferValidation();
                 });
+            }
+            
+            // Offer validation and price preview
+            function updateOfferValidation() {
+                if (!offerSelect) return;
+                
+                const selectedOption = offerSelect.options[offerSelect.selectedIndex];
+                const minPurchase = parseFloat(selectedOption.getAttribute('data-min-purchase') || 0);
+                const quantity = parseInt(quantityInput.value);
+                const totalPrice = productPrice * quantity;
+                const discountType = selectedOption.getAttribute('data-discount-type');
+                const discountAmount = parseFloat(selectedOption.getAttribute('data-discount-amount') || 0);
+                
+                // Reset error and preview
+                offerError.classList.add('d-none');
+                offerPricePreview.classList.add('d-none');
+                
+                if (offerSelect.value && minPurchase > 0 && totalPrice < minPurchase) {
+                    offerError.classList.remove('d-none');
+                    offerError.textContent = `Minimum purchase of ₹${minPurchase} required for this offer.`;
+                    offerSelect.value = ''; // Reset selection
+                    return;
+                }
+                
+                // Show price preview if offer selected
+                if (offerSelect.value) {
+                    let discount = 0;
+                    if (discountType === 'percentage') {
+                        discount = (totalPrice * discountAmount) / 100;
+                    } else if (discountType === 'fixed') {
+                        discount = discountAmount;
+                    }
+                    const discountedPrice = (totalPrice - discount).toFixed(2);
+                    offerPricePreview.textContent = `Price after offer: ₹${discountedPrice}`;
+                    offerPricePreview.classList.remove('d-none');
+                }
+            }
+            
+            if (offerSelect) {
+                offerSelect.addEventListener('change', updateOfferValidation);
             }
             
             // AJAX Add to Cart
@@ -818,13 +942,36 @@
                     e.preventDefault();
                     const productId = this.getAttribute('data-product-id');
                     const quantity = parseInt(quantityInput.value);
+                    let offerId = '';
+                    let offerCode = '';
+                    
+                    // Validate offer if selected
+                    if (offerSelect && offerSelect.value) {
+                        const selectedOption = offerSelect.options[offerSelect.selectedIndex];
+                        const minPurchase = parseFloat(selectedOption.getAttribute('data-min-purchase') || 0);
+                        const totalPrice = productPrice * quantity;
+                        
+                        if (minPurchase > 0 && totalPrice < minPurchase) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Invalid Offer',
+                                text: `Minimum purchase of ₹${minPurchase} required for this offer.`,
+                            });
+                            return;
+                        }
+                        
+                        offerId = offerSelect.value;
+                        offerCode = selectedOption.getAttribute('data-code');
+                    }
                     
                     $.ajax({
                         url: '/addToCart',
                         type: 'POST',
                         data: {
-                            id: productId,
-                            qty: quantity
+                            productId,
+                            quantity,
+                            offerId,
+                            offerCode
                         },
                         success: function(response) {
                             if (response.success) {
@@ -839,7 +986,7 @@
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Add Failed',
-                                    text: 'Could not add the product. Please try again.',
+                                    text: response.message || 'Could not add the product. Please try again.',
                                 });
                             }
                         },
@@ -855,6 +1002,7 @@
                 });
             }
             
+            // Tab switching
             const tabLinks = document.querySelectorAll('.zz-nav-link');
             const tabContents = document.querySelectorAll('.zz-tab-pane');
             

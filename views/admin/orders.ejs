@@ -1,6 +1,9 @@
 <%- include('../partials/admin/header') %>
 <link rel="stylesheet" href="/css/admin/orders.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
 <style>
+  /* Existing styles remain unchanged */
   /* Admin Orders Page Styles */
   .content-main {
     padding-left: 250px;
@@ -38,7 +41,7 @@
     border-bottom: 1px solid #e5e7eb;
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
-    padding: 16px 24px;
+    padding: 16px;
   }
 
   /* Search and Create Button Section */
@@ -56,7 +59,7 @@
   .input-group {
     border-radius: 8px;
     overflow: hidden;
-    max-width: 520px;
+    max-width: 580px;
     background-color: #fff;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   }
@@ -78,7 +81,7 @@
   }
 
   .input-group .btn:hover {
-    background-color: #5b58c8;
+    background-color: #agency: none;
   }
 
   /* Button Styles */
@@ -209,6 +212,23 @@
     box-shadow: 0 2px 8px rgba(107, 106, 228, 0.3);
   }
 
+  /* Order Icon Styles */
+  .order-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f9fafb;
+    border-radius: 4px;
+    border: 1px solid #e5e7eb;
+  }
+
+  .order-icon i {
+    font-size: 24px;
+    color: #6B6AE4;
+  }
+
   /* Responsive Adjustments */
   @media (max-width: 900px) {
     .div-sec {
@@ -249,6 +269,11 @@
     .table thead th, .table tbody td {
       padding: 12px 8px;
     }
+
+    /* Hide order icon column on small screens to save space */
+    .order-icon-column {
+      display: none;
+    }
   }
 
   /* No orders message */
@@ -272,24 +297,23 @@
       </div>
     </div>
     
-    
-    
     <div class="card">
       <div class="card-header">
         <div class="d-flex justify-content-between align-items-center">
           <!-- Search Bar -->
-        <form action="/admin/order/" method="get" class="flex-grow-1 me-1">
-  <div class="div-sec">
-    <div class="input-group input-group-sm shadow-sm">
-      <input type="text" class="form-control border-0" placeholder="Search for Orders (Order ID, Customer)" name="search" value="<%= search %>">
-      <input type="hidden" name="status" value="<%= status %>">
-      <input type="hidden" name="page" value="<%= currentPage %>">
-      <button class="btn btn-light" type="submit">
-        <i class="bi bi-search"></i> Search
-      </button>
-    </div>
-  </div>
-</form>
+          <form action="/admin/order" method="get" class="flex-grow-1 me-1" onsubmit="return validateSearch()">
+            <div class="div-sec">
+              <div class="input-group input-group-sm shadow-sm">
+                <input type="text" class="form-control border-0" placeholder="Search for Orders (Order ID, Customer)" name="search" value="<%= search %>">
+                <input type="hidden" name="status" value="<%= status %>">
+                <input type="hidden" name="page" value="<%= currentPage %>">
+                <button class="btn btn-light" type="submit">
+                  <i class="bi bi-search"></i> Search
+                </button>
+                  <button type="button" class="btn btn-outline-secondary" onclick="clearSearch()" title="Clear Search">❌</button>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -302,9 +326,10 @@
               <table class="table table-hover">
                 <thead>
                   <tr>
+                    <th width="10%" class="order-icon-column">Order Icon</th>
                     <th width="15%">Order ID</th>
-                    <th width="25%">Customer Name</th>
-                    <th width="20%">Order Date</th>
+                    <th width="20%">Customer Name</th>
+                    <th width="15%">Order Date</th>
                     <th width="15%">Total Amount</th>
                     <th width="15%">Status</th>
                     <th width="10%">Actions</th>
@@ -314,11 +339,14 @@
                   <% if (typeof orders !== 'undefined' && orders && orders.length > 0) { %>
                     <% orders.forEach((order) => { %>
                       <tr>
-                       <td><%= order.orderId %></td>
+                        <td class="order-icon-column">
+                          <div class="order-icon">
+                            <i class="bi bi-cart"></i>
+                          </div>
+                        </td>
+                        <td><%= order.orderId %></td>
                         <td><%= order.user ? order.user.name : 'Unknown User' %></td>
-
                         <td><%= order.createdOn.toLocaleDateString() %></td>
-
                         <td>₹<%= order.totalPrice %></td>
                         <td>
                           <% if (order.status === 'completed') { %>
@@ -338,9 +366,9 @@
                     <% }); %>
                   <% } else { %>
                     <tr>
-                      <td colspan="6">
+                      <td colspan="7">
                         <div class="no-orders-message">
-                          No orders in the DATABASE
+                          <%= search ? `No orders found for "${search}"` : 'No orders in the DATABASE' %>
                         </div>
                       </td>
                     </tr>
@@ -352,19 +380,19 @@
               <div class="pagination-container">
                 <% if (typeof currentPage !== 'undefined' && typeof totalPages !== 'undefined') { %>
                   <% if (currentPage > 1) { %>
-                    <a href="?page=<%= currentPage - 1 %>">← Previous</a>
+                    <a href="?page=<%= currentPage - 1 %>&search=<%= search %>&status=<%= status %>">← Previous</a>
                   <% } %>
               
                   <% for (let i = 1; i <= totalPages; i++) { %>
                     <% if (i === currentPage) { %>
                       <span class="current-page"><%= i %></span>
                     <% } else { %>
-                      <a href="?page=<%= i %>"><%= i %></a>
+                      <a href="?page=<%= i %>&search=<%= search %>&status=<%= status %>"><%= i %></a>
                     <% } %>
                   <% } %>
               
                   <% if (currentPage < totalPages) { %>
-                    <a href="?page=<%= currentPage + 1 %>">Next →</a>
+                    <a href="?page=<%= currentPage + 1 %>&search=<%= search %>&status=<%= status %>">Next →</a>
                   <% } %>
                 <% } else { %>
                   <a href="#" class="disabled">← Previous</a>
@@ -383,10 +411,15 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   
   <script>
-   function viewOrderDetails(orderId) {
-    window.location.href = `/admin/viewOrder/${orderId}`;
+    function viewOrderDetails(orderId) {
+      window.location.href = `/admin/viewOrder/${orderId}`;
+    }
+    function clearSearch() {
+    const searchInput = document.querySelector('input[name="search"]');
+    searchInput.value = '';
+    document.querySelector('form').submit();
   }
-    
-    
+
+   
   </script>
 </body>

@@ -29,10 +29,11 @@ const orderSchema = new Schema({
       type: Number,
       default: 0
     },
-    status: {
-      type: String,
-      enum: ["Cancelled", "Return Requested", "Returned","Return Rejected"]
-    }
+   status: {
+  type: String,
+  enum: ["pending", "Cancelled", "Return Requested", "Returned", "Return Rejected"],
+  default: "pending"
+}
   }],
   totalPrice: {
     type: Number,
@@ -73,7 +74,22 @@ const orderSchema = new Schema({
   couponApplied: {
     type: Boolean,
     default: false 
-  }
+  },
+   razorpayOrderId: {
+    type: String
+  },
+  razorpayPaymentId: {
+    type: String
+  },
+  razorpaySignature: {
+    type: String
+  },
+  paymentMethod: {
+    type: String,
+    required: true,
+    enum: ['COD', 'Razorpay', 'Wallet'],
+    default: 'COD'
+  },
 });
 
 const Order = mongoose.model("Order", orderSchema);

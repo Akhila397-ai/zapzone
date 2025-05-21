@@ -11,41 +11,43 @@
     <link rel="stylesheet" href="css/style.css" type="text/css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
-        /* Base Styles */
+        /* Existing styles unchanged */
+        .zz-item-price-original {
+            text-decoration: line-through;
+            color: #777;
+            font-size: 13px;
+            margin-right: 8px;
+        }
+        .zz-item-price-offer {
+            color: #e74c3c;
+            font-weight: 600;
+        }
         body {
             background-color: #f5f5f5;
             font-family: 'Nunito Sans', sans-serif;
         }
-        
-        /* Breadcrumb Styles */
         .zz-breadcrumb-area {
             background-color: #fff;
             padding: 15px 0;
             border-bottom: 1px solid #eee;
             margin-bottom: 30px;
         }
-        
         .zz-breadcrumb {
             margin-bottom: 0;
             padding: 0;
             background: none;
         }
-        
         .zz-breadcrumb-item a {
             color: #555;
             text-decoration: none;
             transition: color 0.3s;
         }
-        
         .zz-breadcrumb-item a:hover {
             color: #e74c3c;
         }
-        
         .zz-breadcrumb-item.active {
             color: #e74c3c;
         }
-        
-        /* Cart Styles */
         .zz-cart-container {
             background-color: white;
             border-radius: 8px;
@@ -53,7 +55,6 @@
             margin-bottom: 30px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
-        
         .zz-cart-title {
             font-size: 24px;
             font-weight: 700;
@@ -62,33 +63,27 @@
             border-bottom: 1px solid #eee;
             padding-bottom: 15px;
         }
-        
         .zz-cart-empty {
             text-align: center;
             padding: 40px 20px;
         }
-        
         .zz-cart-empty i {
             font-size: 60px;
             color: #ddd;
             margin-bottom: 20px;
         }
-        
         .zz-cart-empty h3 {
             font-size: 20px;
             color: #555;
             margin-bottom: 15px;
         }
-        
         .zz-cart-empty p {
             color: #777;
             margin-bottom: 20px;
         }
-        
         .zz-cart-table {
             width: 100%;
         }
-        
         .zz-cart-table th {
             font-weight: 600;
             color: #555;
@@ -96,16 +91,13 @@
             padding: 12px;
             text-align: left;
         }
-        
         .zz-cart-item {
             border-bottom: 1px solid #eee;
         }
-        
         .zz-cart-item td {
             padding: 15px 12px;
             vertical-align: middle;
         }
-        
         .zz-item-image {
             width: 90px;
             height: 90px;
@@ -116,40 +108,32 @@
             align-items: center;
             justify-content: center;
         }
-        
         .zz-item-image img {
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
         }
-        
         .zz-item-info h4 {
             font-size: 16px;
             font-weight: 600;
             margin-bottom: 5px;
         }
-        
         .zz-item-info h4 a {
             color: #333;
             text-decoration: none;
             transition: color 0.3s;
         }
-        
         .zz-item-info h4 a:hover {
             color: #e74c3c;
         }
-        
         .zz-item-meta {
             font-size: 13px;
             color: #777;
         }
-        
         .zz-item-price {
             font-weight: 600;
             color: #333;
         }
-        
-        /* Quantity Widget */
         .zz-quantity-widget {
             display: flex;
             align-items: center;
@@ -158,7 +142,6 @@
             overflow: hidden;
             width: 110px;
         }
-        
         .zz-quantity-btn {
             width: 35px;
             height: 35px;
@@ -171,11 +154,9 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
-        
         .zz-quantity-btn:hover {
             background-color: #e9ecef;
         }
-        
         .zz-quantity-input {
             width: 40px;
             height: 35px;
@@ -184,23 +165,18 @@
             border-left: 1px solid #ddd;
             border-right: 1px solid #ddd;
         }
-        
         .zz-item-total {
             font-weight: 700;
             color: #e74c3c;
         }
-        
         .zz-item-remove a {
             color: #ccc;
             font-size: 18px;
             transition: color 0.3s;
         }
-        
         .zz-item-remove a:hover {
             color: #e74c3c;
         }
-        
-        /* Cart Actions */
         .zz-cart-actions {
             display: flex;
             justify-content: space-between;
@@ -208,7 +184,6 @@
             padding-top: 20px;
             border-top: 1px solid #eee;
         }
-        
         .zz-continue-shopping {
             display: inline-flex;
             align-items: center;
@@ -217,16 +192,13 @@
             text-decoration: none;
             transition: color 0.3s;
         }
-        
         .zz-continue-shopping i {
             margin-right: 8px;
         }
-        
         .zz-continue-shopping:hover {
             color: #e74c3c;
             text-decoration: none;
         }
-        
         .zz-update-cart {
             background-color: #f8f9fa;
             border: 1px solid #ddd;
@@ -237,18 +209,14 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-        
         .zz-update-cart:hover {
             background-color: #e9ecef;
         }
-        
-        /* Cart Summary */
         .zz-cart-summary {
             background-color: #f9f9f9;
             border-radius: 8px;
             padding: 25px;
         }
-        
         .zz-summary-title {
             font-size: 18px;
             font-weight: 700;
@@ -257,22 +225,18 @@
             border-bottom: 1px solid #eee;
             padding-bottom: 15px;
         }
-        
         .zz-summary-item {
             display: flex;
             justify-content: space-between;
             margin-bottom: 12px;
         }
-        
         .zz-summary-label {
             color: #555;
         }
-        
         .zz-summary-value {
             font-weight: 600;
             color: #333;
         }
-        
         .zz-summary-total {
             display: flex;
             justify-content: space-between;
@@ -280,19 +244,16 @@
             margin-top: 15px;
             border-top: 1px solid #eee;
         }
-        
         .zz-total-label {
             font-size: 16px;
             font-weight: 700;
             color: #333;
         }
-        
         .zz-total-value {
             font-size: 18px;
             font-weight: 800;
             color: #e74c3c;
         }
-        
         .zz-checkout-btn {
             display: block;
             width: 100%;
@@ -308,43 +269,35 @@
             transition: background-color 0.3s;
             text-decoration: none;
         }
-        
         .zz-checkout-btn:hover {
             background-color: #333;
             color: white;
             text-decoration: none;
         }
-        
         .zz-payment-options {
             margin-top: 20px;
             text-align: center;
             padding-top: 15px;
             border-top: 1px solid #eee;
         }
-        
         .zz-payment-options p {
             font-size: 13px;
             color: #777;
             margin-bottom: 10px;
         }
-        
         .zz-payment-icons {
             display: flex;
             justify-content: center;
             gap: 10px;
         }
-        
         .zz-payment-icons img {
             height: 30px;
             opacity: 0.7;
             transition: opacity 0.3s;
         }
-        
         .zz-payment-icons img:hover {
             opacity: 1;
         }
-        
-        /* Coupon Section */
         .zz-coupon-section {
             margin-top: 20px;
             background-color: #f9f9f9;
@@ -352,18 +305,15 @@
             padding: 20px;
             margin-bottom: 30px;
         }
-        
         .zz-coupon-title {
             font-size: 16px;
             font-weight: 600;
             margin-bottom: 15px;
             color: #333;
         }
-        
         .zz-coupon-form {
             display: flex;
         }
-        
         .zz-coupon-input {
             flex: 1;
             padding: 10px 15px;
@@ -371,7 +321,6 @@
             border-radius: 5px 0 0 5px;
             font-size: 14px;
         }
-        
         .zz-apply-coupon {
             background-color: #555;
             color: white;
@@ -382,23 +331,124 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
-        
         .zz-apply-coupon:hover {
             background-color: #333;
         }
-        
-        /* Responsive Styles */
+        .zz-item-offer {
+            font-size: 13px;
+            color: #28a745;
+            margin-top: 5px;
+        }
+        .radici {
+            font-size: 13px;
+            color: #777;
+            margin-top: 5px;
+        }
+        /* New styles for coupon modal */
+        .zz-coupon-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .zz-coupon-modal-content {
+            background-color: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .zz-coupon-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .zz-coupon-modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+        }
+        .zz-coupon-modal-close {
+            font-size: 24px;
+            color: #555;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        .zz-coupon-modal-close:hover {
+            color: #e74c3c;
+        }
+        .zz-coupon-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .zz-coupon-item {
+            border: 1px solid #eee;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .zz-coupon-info h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .zz-coupon-info p {
+            font-size: 13px;
+            color: #777;
+            margin: 0;
+        }
+        .zz-coupon-apply-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .zz-coupon-apply-btn:hover {
+            background-color: #c0392b;
+        }
+        .zz-view-coupons-btn {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            color: #555;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-left: 10px;
+        }
+        .zz-view-coupons-btn:hover {
+            background-color: #e9ecef;
+        }
         @media (max-width: 991px) {
             .zz-cart-summary {
                 margin-top: 30px;
             }
         }
-        
         @media (max-width: 767px) {
             .zz-cart-table thead {
                 display: none;
             }
-            
             .zz-cart-table, 
             .zz-cart-table tbody, 
             .zz-cart-table tr, 
@@ -406,12 +456,10 @@
                 display: block;
                 width: 100%;
             }
-            
             .zz-cart-item {
                 padding: 15px 0;
                 position: relative;
             }
-            
             .zz-cart-item td {
                 text-align: right;
                 padding-left: 35%;
@@ -420,7 +468,6 @@
                 padding-bottom: 8px;
                 padding-top: 8px;
             }
-            
             .zz-cart-item td:before {
                 content: attr(data-title);
                 position: absolute;
@@ -430,29 +477,24 @@
                 color: #555;
                 text-align: left;
             }
-            
             .zz-item-image {
                 margin: 0 auto;
             }
-            
             .zz-item-remove {
                 position: absolute;
                 top: 15px;
                 right: 0;
             }
-            
             .zz-cart-actions {
                 flex-direction: column;
                 gap: 15px;
             }
-            
             .zz-quantity-widget {
                 margin-left: auto;
             }
         }
-        
     </style>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
 </head>
 <body>
     <!-- Pass userId to JavaScript -->
@@ -519,23 +561,36 @@
                                                     <span> | Color: <%= item.productId.color %></span>
                                                 <% } %>
                                             </div>
+                                            <% if (item.offerId && item.offerCode && item.discount > 0) { %>
+                                                <div class="zz-item-offer">
+                                                    Offer: <%= item.offerCode %> (Saved ₹<%= item.discount.toFixed(2) %>)
+                                                </div>
+                                            <% } else { %>
+                                                <div class="zz-no-offer">No offer applied</div>
+                                            <% } %>
                                         </td>
-                                        <td data-title="Price" class="zz-item-price">₹ <%= item.productId.salePrice.toFixed(2) %></td>
+                                        <td data-title="Price">
+                                            <% if (item.discount > 0) { %>
+                                                <span class="zz-item-price-original">₹ <%= item.productId.salePrice.toFixed(2) %></span>
+                                                <span class="zz-item-price-offer">₹ <%= (item.productId.salePrice - item.discount).toFixed(2) %></span>
+                                            <% } else { %>
+                                                <span class="zz-item-price">₹ <%= item.price.toFixed(2) %></span>
+                                            <% } %>
+                                        </td>
                                         <td data-title="Quantity">
                                             <div class="zz-quantity-widget">
                                                 <button type="button" class="zz-quantity-btn decrease-qty">
                                                     <i class="fa fa-minus"></i>
                                                 </button>
-                                                <input type="number" class="zz-quantity-input quantity-input" value="<%= item.quantity %>" min="1" max="<%= item.productId.quantity  %>">
+                                                <input type="number" class="zz-quantity-input quantity-input" value="<%= item.quantity %>" min="1" max="<%= item.productId.quantity %>">
                                                 <button type="button" class="zz-quantity-btn increase-qty">
                                                     <i class="fa fa-plus"></i>
                                                 </button>
                                             </div>
                                         </td>
-                                        <td data-title="Total" class="zz-item-total">₹ <%= (item.productId.salePrice * item.quantity).toFixed(2) %></td>
+                                        <td data-title="Total" class="zz-item-total">₹ <%= (item.totalPrice).toFixed(2) %></td>
                                         <td data-title="Remove" class="zz-item-remove">
                                             <a href="#" class="remove-item" data-product-id="<%= item.productId._id %>" title="Remove this item">
-
                                                 <i class="fa fa-times"></i>
                                             </a>
                                         </td>
@@ -556,10 +611,13 @@
                 <!-- Coupon Section -->
                 <div class="zz-coupon-section">
                     <h3 class="zz-coupon-title">Have a coupon?</h3>
-                    <form class="zz-coupon-form">
-                        <input type="text" class="zz-coupon-input" placeholder="Enter coupon code">
-                        <button type="button" class="zz-apply-coupon">Apply</button>
-                    </form>
+                    <div style="display: flex; align-items: center;">
+                        <form class="zz-coupon-form">
+                            <input type="text" class="zz-coupon-input" placeholder="Enter coupon code">
+                            <button type="button" class="zz-apply-coupon">Apply</button>
+                        </form>
+                        <button type="button" class="zz-view-coupons-btn">View Coupons</button>
+                    </div>
                 </div>
             </div>
 
@@ -574,18 +632,14 @@
                     </div>
                     
                     <div class="zz-summary-item">
+                        <span class="zz-summary-label">Offer Discount</span>
+                        <span class="zz-summary-value"><%= cart && cart.items.length && cart.displayDiscount ? cart.displayDiscount.toFixed(2) : '0.00' %> ₹</span>
+                    </div>
+                    
+                    <div class="zz-summary-item">
                         <span class="zz-summary-label">Shipping</span>
                         <span class="zz-summary-value">₹ <%= cart && cart.items.length && cart.shipping != null ? cart.shipping.toFixed(2) : '50.00' %></span>
                     </div>
-                    
-                    <% if (cart && cart.discount > 0) { %>
-                        <div class="zz-summary-item">
-                            <span class="zz-summary-label">Discount</span>
-                            <span class="zz-summary-value">- ₹ <%= cart.discount.toFixed(2) %></span>
-                        </div>
-                    <% } %>
-                    
-                   
                     
                     <div class="zz-summary-total">
                         <span class="zz-total-label">Total</span>
@@ -610,6 +664,19 @@
         </div>
     </div>
 
+    <!-- Coupon Modal -->
+    <div class="zz-coupon-modal" id="couponModal">
+        <div class="zz-coupon-modal-content">
+            <div class="zz-coupon-modal-header">
+                <h4 class="zz-coupon-modal-title">Available Coupons</h4>
+                <button class="zz-coupon-modal-close">&times;</button>
+            </div>
+            <div class="zz-coupon-list" id="couponList">
+                <!-- Coupons will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
     <%- include("../partials/user/footer") %>
 
     <script src="js/jquery-3.3.1.min.js"></script>
@@ -621,7 +688,12 @@
             const decreaseBtns = document.querySelectorAll('.decrease-qty');
             const increaseBtns = document.querySelectorAll('.increase-qty');
             const quantityInputs = document.querySelectorAll('.quantity-input');
-            const updateCartBtn = document.getElementById('updateCartBtn');
+            const removeButtons = document.querySelectorAll('.remove-item');
+            // New elements for coupon modal
+            const viewCouponsBtn = document.querySelector('.zz-view-coupons-btn');
+            const couponModal = document.querySelector('#couponModal');
+            const closeModalBtn = document.querySelector('.zz-coupon-modal-close');
+            const couponList = document.querySelector('#couponList');
 
             // Function to update server-side cart
             function updateCartItem(productId, quantity) {
@@ -635,47 +707,86 @@
                         updates: [{ productId, quantity }]
                     })
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
-                    console.log(data)
+                    console.log('Server response:', data);
                     if (data.success) {
                         Swal.fire({
-                             icon: 'success',
-                             title: 'Cart Updated',
-                             text: 'Your cart has been updated successfully!',
-                             timer: 2000, // Optionally auto-close after 2 seconds
-                             showConfirmButton: false
-                         });
+                            icon: 'success',
+                            title: 'Cart Updated',
+                            text: 'Your cart has been updated successfully!',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
                         updateCartSummary(data.cart);
+                       _notification: updateCartItemsUI(data.cart.items);
                     } else {
+                        let errorMessage = data.message || 'There was an issue updating your cart.';
+                        if (data.errors && data.errors.length > 0) {
+                            errorMessage = data.errors.map(err => err.message).join('\n');
+                        }
                         Swal.fire({
-                             icon: 'error',
-                             title: 'Update Failed',
-                             text: 'There was an issue updating your cart. Please try again.'
-                           });
+                            icon: 'error',
+                            title: 'Update Failed',
+                            text: errorMessage,
+                            showConfirmButton: true
+                        });
                     }
                 })
                 .catch(error => {
-                    console.error('Error updating cart:', error);
+                    console.error('Fetch error:', error);
                     Swal.fire({
-                       icon: 'error',
-                       title: 'Error',
-                       text: 'An error occurred. Please try again later.'
+                        icon: 'error',
+                        title: 'Error',
+                        text: error.message || 'An error occurred. Please try again later.',
+                        showConfirmButton: true
                     });
                 });
             }
 
             // Function to update cart summary totals
             function updateCartSummary(cart) {
-                const subtotalElement = document.querySelector('.zz-summary-item .zz-summary-value');
-                // const shippingElement = document.querySelectorAll('.zz-summary-item .zz-summary-value')[1];
-                // const taxElement = document.querySelectorAll('.zz-summary-item .zz-summary-value')[2];
+                console.log('Updating cart summary with:', cart);
+                if (!cart || !cart.subtotal || !cart.displayDiscount || !cart.shipping || !cart.total) {
+                    console.error('Invalid cart data for summary update');
+                    return;
+                }
+
+                const subtotalElement = document.querySelector('.zz-summary-item:nth-child(1) .zz-summary-value');
+                const discountElement = document.querySelector('.zz-summary-item:nth-child(2) .zz-summary-value');
+                const shippingElement = document.querySelector('.zz-summary-item:nth-child(3) .zz-summary-value');
                 const totalElement = document.querySelector('.zz-total-value');
 
+                if (!subtotalElement || !discountElement || !shippingElement || !totalElement) {
+                    console.error('One or more summary elements not found in DOM');
+                    return;
+                }
+
                 subtotalElement.innerText = `₹ ${cart.subtotal.toFixed(2)}`;
-                // shippingElement.innerText = `₹ ${cart.shipping.toFixed(2)}`;
-                // taxElement.innerText = `₹ ${cart.tax.toFixed(2)}`;
-                totalElement.innerText = `₹ ${cart.subtotal.toFixed(2)}`;
+                discountElement.innerText = `${cart.displayDiscount.toFixed(2)} ₹`;
+                shippingElement.innerText = `₹ ${cart.shipping.toFixed(2)}`;
+                totalElement.innerText = `₹ ${cart.total.toFixed(2)}`;
+            }
+
+            // Function to update cart items UI
+            function updateCartItemsUI(items) {
+                console.log('Updating cart items UI with:', items);
+                items.forEach(item => {
+                    const cartItem = document.querySelector(`.zz-cart-item[data-product-id="${item.productId}"]`);
+                    if (cartItem) {
+                        const quantityInput = cartItem.querySelector('.quantity-input');
+                        const totalElement = cartItem.querySelector('.zz-item-total');
+                        quantityInput.value = item.quantity;
+                        totalElement.innerText = `₹ ${item.totalPrice.toFixed(2)}`;
+                    } else {
+                        console.warn(`Cart item with productId ${item.productId} not found in DOM`);
+                    }
+                });
             }
 
             // Update the quantity value when the decrease button is clicked
@@ -694,28 +805,26 @@
 
             // Update the quantity value when the increase button is clicked
             increaseBtns.forEach(btn => {
-    btn.addEventListener('click', function () {
-        const input = this.parentNode.querySelector('.quantity-input');
-        const currentValue = parseInt(input.value);
-        const maxValue = parseInt(input.getAttribute('max'));
-        const productId = this.closest('.zz-cart-item').getAttribute('data-product-id');
-
-        if (currentValue < maxValue) {
-            input.value = currentValue + 1;
-            updateItemPrice(this.closest('.zz-cart-item'));
-            updateCartItem(productId, currentValue + 1);
-        } else {
-            Swal.fire({
-                icon: 'info',
-                title: 'Stock Limit Reached',
-                text: 'You have reached the maximum available stock for this product.',
-                timer: 1500,
-                showConfirmButton: false
+                btn.addEventListener('click', function() {
+                    const input = this.parentNode.querySelector('.quantity-input');
+                    const currentValue = parseInt(input.value);
+                    const maxValue = parseInt(input.getAttribute('max'));
+                    const productId = this.closest('.zz-cart-item').getAttribute('data-product-id');
+                    if (currentValue < maxValue) {
+                        input.value = currentValue + 1;
+                        updateItemPrice(this.closest('.zz-cart-item'));
+                        updateCartItem(productId, currentValue + 1);
+                    } else {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Stock Limit Reached',
+                            text: 'You have reached the maximum available stock for this product.',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    }
+                });
             });
-        }
-    });
-});
-
 
             // Validate quantity when input value changes
             quantityInputs.forEach(input => {
@@ -738,76 +847,20 @@
 
             // Update item price calculation based on quantity
             function updateItemPrice(cartItem) {
-                const price = parseFloat(cartItem.querySelector('.zz-item-price').innerText.replace('₹ ', ''));
+                const priceElement = cartItem.querySelector('.zz-item-price-offer') || cartItem.querySelector('.zz-item-price');
+                const price = parseFloat(priceElement.innerText.replace('₹ ', ''));
                 const quantity = parseInt(cartItem.querySelector('.quantity-input').value);
                 const totalElement = cartItem.querySelector('.zz-item-total');
-
                 const total = price * quantity;
                 totalElement.innerText = `₹ ${total.toFixed(2)}`;
             }
 
-            // Update cart functionality when "Update Cart" button is clicked
-            if (updateCartBtn) {
-                updateCartBtn.addEventListener('click', function() {
-                    const cartItems = document.querySelectorAll('.zz-cart-item');
-                    const updates = [];
-
-                    cartItems.forEach(item => {
-                        const productId = item.getAttribute('data-product-id');
-                        const quantity = parseInt(item.querySelector('.quantity-input').value);
-
-                        updates.push({
-                            productId: productId,
-                            quantity: quantity
-                        });
-                    });
-
-                    // Send AJAX request to update the cart on the backend
-                    fetch('/update-cart', {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            userId: userId,
-                            updates: updates
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            updateCartSummary(data.cart);
-                            Swal.fire({
-                                    icon: 'success',
-                                    title: 'Cart Updated',
-                                    text: 'Products have been successfully updated in your cart.',
-                                    timer: 2000,
-                                    showConfirmButton: false
-                            });
-                        } else {
-                            Swal.fire({
-                                   icon: 'error',
-                                   title: 'Update Failed',
-                                   text: 'Failed to update cart. Please try again.',
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error updating cart:', error);
-                        alert('An error occurred. Please try again.');
-                    });
-                });
-            }
-
-            // Remove item functionalit
-        });
-        const removeButtons = document.querySelectorAll('.remove-item');
+            // Remove item functionality
             removeButtons.forEach(button => {
                 button.addEventListener('click', function(e) {
                     e.preventDefault();
                     const productId = this.getAttribute('data-product-id');
-                    console.log('Removing product:', productId);
-        
+
                     Swal.fire({
                         title: 'Are you sure?',
                         text: 'Do you want to remove this item from your cart?',
@@ -822,14 +875,15 @@
                                 headers: {
                                     'Content-Type': 'application/json'
                                 },
-                                credentials: 'include' // Ensure cookies are sent
+                                credentials: 'include'
                             })
                             .then(response => {
-                                console.log('RemoveFromCart response status:', response.status);
+                                if (!response.ok) {
+                                    throw new Error(`HTTP error! Status: ${response.status}`);
+                                }
                                 return response.json();
                             })
                             .then(data => {
-                                console.log('RemoveFromCart response:', data);
                                 if (data.success) {
                                     Swal.fire({
                                         icon: 'success',
@@ -838,21 +892,137 @@
                                         timer: 1500,
                                         showConfirmButton: false
                                     }).then(() => {
-                                        window.location.reload();
+                                        const cartItem = button.closest('.zz-cart-item');
+                                        if (cartItem) cartItem.remove();
+                                        updateCartSummary(data.cart);
+                                        updateCartItemsUI(data.cart.items);
                                     });
                                 } else {
-                                    Swal.fire('Failed', data.message || 'Failed to remove item', 'error');
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Failed',
+                                        text: data.message || 'Failed to remove item'
+                                    });
                                 }
                             })
                             .catch(error => {
                                 console.error('Fetch error:', error);
-                                Swal.fire('Error', 'An error occurred. Please try again.', 'error');
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: error.message || 'An error occurred. Please try again.'
+                                });
                             });
                         }
                     });
                 });
             });
 
+            // New coupon modal functionality
+            viewCouponsBtn.addEventListener('click', function() {
+                fetch('/api/coupons', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    couponList.innerHTML = '';
+                    if (data.coupons && data.coupons.length > 0) {
+                        data.coupons.forEach(coupon => {
+                            const couponItem = document.createElement('div');
+                            couponItem.className = 'zz-coupon-item';
+                            couponItem.innerHTML = `
+                                <div class="zz-coupon-info">
+                                    <h4>${coupon.code}</h4>
+                                    <p>${coupon.description} (Discount: ${coupon.discountType === 'percentage' ? `${coupon.discountValue}%` : `₹${coupon.discountValue}`})</p>
+                                </div>
+                                <button class="zz-coupon-apply-btn" data-coupon-code="${coupon.code}">Apply</button>
+                            `;
+                            couponList.appendChild(couponItem);
+                        });
+                    } else {
+                        couponList.innerHTML = '<p>No coupons available at the moment.</p>';
+                    }
+                    couponModal.style.display = 'flex';
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to load coupons. Please try again.',
+                        showConfirmButton: true
+                    });
+                });
+            });
+
+            closeModalBtn.addEventListener('click', function() {
+                couponModal.style.display = 'none';
+            });
+
+            couponModal.addEventListener('click', function(e) {
+                if (e.target === couponModal) {
+                    couponModal.style.display = 'none';
+                }
+            });
+
+            couponList.addEventListener('click', function(e) {
+                if (e.target.classList.contains('zz-coupon-apply-btn')) {
+                    const couponCode = e.target.getAttribute('data-coupon-code');
+                    fetch('/apply-coupon', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ userId, couponCode })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Coupon Applied',
+                                text: 'Coupon applied successfully!',
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then(() => {
+                                updateCartSummary(data.cart);
+                                updateCartItemsUI(data.cart.items);
+                                couponModal.style.display = 'none';
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Failed',
+                                text: data.message || 'Failed to apply coupon',
+                                showConfirmButton: true
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Fetch error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'An error occurred. Please try again.',
+                            showConfirmButton: true
+                        });
+                    });
+                }
+            });
+        });
     </script>
 </body>
 </html>

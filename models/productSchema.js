@@ -44,7 +44,7 @@ const productSchema = new Schema(
     },
     regularPrice: {
       type: Number,
-      required: true,
+      required: false,
     },
     salePrice: {
       type: Number,

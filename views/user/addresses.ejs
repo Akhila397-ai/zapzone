@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,7 +18,8 @@
     <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
     <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="css/style.css" type="text/css">
-   
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         * {
             margin: 0;
@@ -99,6 +101,7 @@
         .button-container {
             display: flex;
             gap: 10px;
+            align-items: center;
         }
         
         .edit-btn {
@@ -137,6 +140,18 @@
             background-color: #660000;
             color: white;
             text-decoration: none;
+        }
+        
+        .default-radio {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+        
+        .default-label {
+            color: #28a745;
+            font-weight: 600;
+            font-size: 14px;
+            margin-top: 5px;
         }
         
         .add-btn {
@@ -202,40 +217,50 @@
         <div class="content">
             <div class="greeting">MY ADDRESSES</div>
             
-        <!-- Addresses Container -->
-        <div class="addresses-container">
-            <% if (addresses && addresses.length > 0) { %>
-                <!-- Address Items -->
-                <% addresses.forEach((address, index) => { %>
-                    <div class="address-item">
-                        <div class="address-details">
-                            <div class="address-name">• <%= address.name %></div>
-                            <div class="address-text"><%= address.landMark %>, <%= address.city %>, <%= address.state %> - <%= address.pincode %></div>
-                            <div class="address-phone">
-                                Phone: <%= address.phone %><br>
-                                Alternate: <%= address.altPhone %>
+            <!-- Addresses Container -->
+            <div class="addresses-container">
+                <% if (addresses && addresses.length > 0) { %>
+                    <!-- Address Items -->
+                    <% addresses.forEach((address, index) => { %>
+                        <div class="address-item">
+                            <div class="address-details">
+                                <div class="address-name">• <%= address.name %></div>
+                                <div class="address-text"><%= address.landMark %>, <%= address.city %>, <%= address.state %> - <%= address.pincode %></div>
+                                <div class="address-phone">
+                                    Phone: <%= address.phone %><br>
+                                    Alternate: <%= address.altPhone %>
+                                </div>
+                                <% if (address.isDefault) { %>
+                                    <div class="default-label">Default Address</div>
+                                <% } %>
+                            </div>
+                            <div class="button-container">
+                                <% if (addresses.length > 1) { %>
+                                    <input type="radio" 
+                                           class="default-radio" 
+                                           name="defaultAddress" 
+                                           value="<%= address._id %>" 
+                                           <%= address.isDefault ? 'checked' : '' %> 
+                                           data-address-id="<%= address._id %>">
+                                <% } %>
+                                <a href="/edit-address?id=<%= address._id %>" class="edit-btn">Edit</a>
+                                <a href="/delete-address?id=<%= address._id %>" class="delete-btn" onclick="return confirm('Are you sure you want to delete this address?')">Delete</a>
                             </div>
                         </div>
-                        <div class="button-container">
-                            <a href="/edit-address?id=<%= address._id %>" class="edit-btn">Edit</a>
-                            <a href="/delete-address?id=<%= address._id %>" class="delete-btn" onclick="return confirm('Are you sure You want to delete this address?')">Delete</a>
-                        </div>
+                    <% }); %>
+            
+                    <!-- Add Address Button -->
+                    <div style="text-align: left;">
+                        <a href="/add-address" class="add-btn">Add Another Address</a>
                     </div>
-                <% }); %>
-        
-                <!-- Add Address Button -->
-                <div style="text-align: left;">
-                    <a href="/add-address" class="add-btn">Add Another Address</a>
-                </div>
-            <% } else { %>
-                <!-- No Addresses Message -->
-                <div class="no-address-container">
-                    <div class="no-address-message">You haven't added any addresses yet.</div>
-                    <a href="/add-address" class="add-btn">Add Your First Address</a>
-                </div>
-            <% } %>
-        </div>
-        
+                <% } else { %>
+                    <!-- No Addresses Message -->
+                    <div class="no-address-container">
+                        <div class="no-address-message">You haven't added any addresses yet.</div>
+                        <a href="/add-address" class="add-btn">Add Your First Address</a>
+                    </div>
+                <% } %>
+            </div>
         </div>
     </div>
 
@@ -251,5 +276,59 @@
     <script src="js/mixitup.min.js"></script>
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('.default-radio').on('change', function(e) {
+                e.preventDefault();
+                const addressId = $(this).data('address-id');
+
+                Swal.fire({
+                    title: 'Set as Default?',
+                    text: 'Do you want to set this address as your default address?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, set it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/set-default-address',
+                            method: 'PATCH',
+                            data: { addressId },
+                            success: function(response) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Success',
+                                    text: response.message || 'Default address updated successfully.'
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            },
+                            error: function(xhr) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: xhr.responseJSON?.message || 'Something went wrong.'
+                                });
+                                // Revert radio button selection
+                                $('.default-radio').each(function() {
+                                    $(this).prop('checked', $(this).data('address-id') === addressId && response?.previousDefault);
+                                });
+                            }
+                        });
+                    } else {
+                        // Revert radio button selection
+                        $('.default-radio').each(function() {
+                            $(this).prop('checked', $(this).data('address-id') === addressId && $(this).attr('checked'));
+                        });
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
+```

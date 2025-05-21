@@ -46,10 +46,10 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Cart"
     }],
-    wallet: [{
-        type: Schema.Types.ObjectId,
-        ref: "Wishlist"
-    }],
+    wallet: {
+        type: Number,
+        default: 0
+    },
     orderHistory: [{
         type: Schema.Types.ObjectId,
         ref: "Order"
@@ -61,6 +61,14 @@ const userSchema = new Schema({
     referalCode: {
         type: String
     },
+    walletTransactions: [
+  {
+    amount: Number,
+    type: { type: String, enum: ["Credit", "Debit"] },
+    description: String,
+    date: { type: Date, default: Date.now },
+  }
+],
     redeemed: {
         type: Boolean
     },

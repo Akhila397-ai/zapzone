@@ -1,0 +1,360 @@
+<%- include("../partials/user/header") %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZAPZONE - Payment Failed</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        /* Base Styles */
+        body {
+            background-color: #f5f5f5;
+            font-family: 'Nunito Sans', sans-serif;
+        }
+        
+        /* Breadcrumb Styles */
+        .zz-breadcrumb-area {
+            background-color: #fff;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 30px;
+        }
+        
+        .zz-breadcrumb {
+            margin-bottom: 0;
+            padding: 0;
+            background: none;
+        }
+        
+        .zz-breadcrumb-item a {
+            color: #555;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .zz-breadcrumb-item a:hover {
+            color: #e74c3c;
+        }
+        
+        .zz-breadcrumb-item.active {
+            color: #e74c3c;
+        }
+        
+        /* Payment Failed Container */
+        .zz-payment-failed-container {
+            padding: 50px 0;
+        }
+        
+        .payment-failed-box {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        /* Error Icon */
+        .error-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 30px;
+            position: relative;
+        }
+        
+        .error-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #e74c3c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: scale(0);
+        }
+        
+        .error-exclamation {
+            color: white;
+            font-size: 60px;
+            font-weight: bold;
+            opacity: 0;
+        }
+        
+        /* Content Styles */
+        .payment-failed-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #e74c3c;
+            opacity: 0;
+        }
+        
+        .payment-failed-text {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 30px;
+            opacity: 0;
+        }
+        
+        .payment-error-details {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+            border-left: 4px solid #e74c3c;
+            opacity: 0;
+        }
+        
+        .payment-error-details h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .payment-error-details p {
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+        
+        .error-code {
+            font-family: monospace;
+            background: #eee;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        /* Button Styles */
+        .payment-action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            opacity: 0;
+        }
+        
+        .zz-btn {
+            padding: 12px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 15px;
+            border: none;
+            display: block;
+            width: 100%;
+            text-align: center;
+            text-decoration: none;
+        }
+        
+        .zz-btn-primary {
+            background-color: black;
+            color: white;
+        }
+        
+        .zz-btn-primary:hover {
+            background-color: #333;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .zz-btn-secondary {
+            background-color: #f8f9fa;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+        
+        .zz-btn-secondary:hover {
+            background-color: #e9ecef;
+            text-decoration: none;
+            color: #333;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .payment-failed-box {
+                padding: 30px 20px;
+            }
+            
+            .payment-failed-title {
+                font-size: 24px;
+            }
+            
+            .error-icon {
+                width: 80px;
+                height: 80px;
+                margin-bottom: 25px;
+            }
+            
+            .error-circle {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .error-exclamation {
+                font-size: 48px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .payment-failed-box {
+                padding: 25px 15px;
+            }
+            
+            .payment-failed-title {
+                font-size: 22px;
+            }
+            
+            .payment-failed-text {
+                font-size: 14px;
+            }
+            
+            .zz-btn {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Breadcrumbs -->
+    <div class="zz-breadcrumb-area">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb zz-breadcrumb">
+                    <li class="breadcrumb-item zz-breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item zz-breadcrumb-item"><a href="/checkout">Checkout</a></li>
+                    <li class="breadcrumb-item zz-breadcrumb-item active" aria-current="page">Payment Failed</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="zz-payment-failed-container">
+        <div class="container">
+            <div class="payment-failed-box">
+                <div class="error-icon">
+                    <div class="error-circle">
+                        <div class="error-exclamation">!</div>
+                    </div>
+                </div>
+                
+                <h1 class="payment-failed-title">Payment Failed</h1>
+                
+                <p class="payment-failed-text">We're sorry, but we couldn't process your payment. Please check your payment details and try again.</p>
+                
+                <div class="payment-error-details">
+                    <h3>Error Details</h3>
+                    <p>Order ID: <span class="error-code">ZZ-ORD-78952463</span></p>
+                    <p>Error: <span class="error-code">Payment authorization failed</span></p>
+                    <p>Time: <span id="timestamp" class="error-code"></span></p>
+                </div>
+                
+                <div class="payment-action-buttons">
+                    <a href="/checkout" class="zz-btn zz-btn-primary" id="tryAgainBtn">Try Payment Again</a>
+                    <a href="/contact" class="zz-btn zz-btn-secondary">Contact Support</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include("../partials/user/footer") %>
+
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+        // Set current timestamp
+        document.getElementById('timestamp').textContent = new Date().toLocaleString();
+        
+        // Animations using GSAP
+        document.addEventListener('DOMContentLoaded', () => {
+            // Main container animation
+            gsap.to('.payment-failed-box', {
+                opacity: 1,
+                y: 0,
+                duration: 0.6,
+                ease: 'power2.out'
+            });
+            
+            // Circle animation
+            gsap.to('.error-circle', {
+                scale: 1,
+                duration: 0.5,
+                ease: 'back.out(1.7)',
+                delay: 0.2
+            });
+            
+            // Exclamation mark animation
+            gsap.to('.error-exclamation', {
+                opacity: 1,
+                duration: 0.3,
+                delay: 0.6
+            });
+            
+            // Text elements animation
+            gsap.to('.payment-failed-title', {
+                opacity: 1,
+                y: 0,
+                duration: 0.5,
+                delay: 0.7
+            });
+            
+            gsap.to('.payment-failed-text', {
+                opacity: 1,
+                y: 0,
+                duration: 0.5,
+                delay: 0.8
+            });
+            
+            gsap.to('.payment-error-details', {
+                opacity: 1,
+                y: 0,
+                duration: 0.5,
+                delay: 0.9
+            });
+            
+            gsap.to('.payment-action-buttons', {
+                opacity: 1,
+                y: 0,
+                duration: 0.5,
+                delay: 1.0
+            });
+            
+            // Button shake animation when clicked
+            document.getElementById('tryAgainBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                gsap.to('#tryAgainBtn', {
+                    x: [-5, 5, -5, 5, 0],
+                    duration: 0.4,
+                    onComplete: () => {
+                        // Simulate reload or redirect
+                        gsap.to('.payment-failed-box', {
+                            opacity: 0,
+                            y: -20,
+                            duration: 0.3,
+                            delay: 0.2,
+                            onComplete: () => {
+                                window.location.href = '/checkout';
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

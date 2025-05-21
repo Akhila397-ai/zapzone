@@ -108,13 +108,13 @@
             text-transform: capitalize;
         }
 
-        .status-pending { background-color: #fed7e2; color: #9b2c2c; }
-        .status-processing { background-color: #bee3f8; color: #2b6cb0; }
-        .status-shipped { background-color: #c6f6d5; color: #276749; }
-        .status-delivered { background-color: #b2f5ea; color: #234e52; }
-        .status-cancelled { background-color: #fed7e2; color: #9b2c2c; }
-        .status-return-request { background-color: #feebc8; color: #7b341e; }
-        .status-returned { background-color: #e2e8f0; color: #4a5568; }
+        .status-pending {  color: orange; font-weight: bold;}
+        .status-processing { color: yellow;font-weight: bold; }
+        .status-shipped {  color: #276749;font-weight: bold; }
+        .status-delivered {  color:green; font-weight: bold;}
+        .status-cancelled {  color: red; font-weight: bold; }
+        .status-return-request { color: #7b341e;font-weight: bold }
+        .status-returned {  color: #007BFF;font-weight: bold  }
 
         .order-date {
             font-size: 16px;
@@ -471,35 +471,44 @@
                         </div>
                     </div>
                     
-                    <div class="order-items">
-                        <h2 class="section-title">
-                            <i class="fa fa-shopping-bag"></i> Order Items
-                        </h2>
-                        
-                        <% order.orderedItems.forEach((item, index) => { %>
-                            <div class="item-card" data-item-id="<%= item._id %>">
-                                
-                                    <img src="<%= item.product.productImage && item.product.productImage[0] ? '/Uploads/product-images/' + item.product.productImage[0] : '/images/placeholder.jpg' %>" alt="<%= item.product.productName %>">
-                               
-                                <div class="item-details">
-                                    <div class="item-name"><%= item.product.productName %></div>
-                                    <div class="item-price">₹<%= item.price.toFixed(2) %> x Qty: <%= item.quantity %></div>
-                                    <% if (item.status) { %>
-                                        <div class="status-badge status-<%= item.status.toLowerCase().replace(' ', '-') %>">
-                                            <%= item.status %>
-                                        </div>
-                                    <% } %>
-                                </div>
-                                <div class="item-actions">
-                                    <% if (order.status === 'Delivered') { %>
-                                        <button class="action-btn btn-return" data-item-id="<%= item.product._id %>">Request Return</button>
-                                    <% } else if (['pending', 'processing'].includes(order.status.toLowerCase()) && item.status !== 'Cancelled') { %>
-                                        <button class="action-btn btn-cancel-product" data-item-id="<%= item.product._id %>">Cancel Product</button>
-                                    <% } %>
-                                </div>
-                            </div>
-                        <% }) %>
-                    </div>
+                   <div class="order-items">
+  <h2 class="section-title">
+    <i class="fa fa-shopping-bag"></i> Order Items
+  </h2>
+
+  <% order.orderedItems.forEach((item, index) => { %>
+    <div class="item-card" data-item-id="<%= item._id %>">
+      <img
+        src="<%= item.product.productImage && item.product.productImage[0] ? '/Uploads/product-images/' + item.product.productImage[0] : '/images/placeholder.jpg' %>"
+        alt="<%= item.product.productName %>"
+      />
+      <div class="item-details">
+        <div class="item-name"><%= item.product.productName %></div>
+        <div class="item-price">₹<%= item.price.toFixed(2) %> x Qty: <%= item.quantity %></div>
+        <% if (item.status) { %>
+          <% 
+            // Determine the displayed status
+            let displayStatus = item.status;
+            if (order.status === 'Delivered' && 
+                !['Cancelled', 'Returned', 'Return Rejected'].includes(item.status)) {
+              displayStatus = 'Delivered';
+            }
+          %>
+          <div class="status-badge status-<%= displayStatus.toLowerCase().replace(' ', '-') %>">
+            <%= displayStatus %>
+          </div>
+        <% } %>
+      </div>
+      <div class="item-actions">
+        <% if (order.status === 'Delivered' && item.status !== 'Cancelled') { %>
+          <button class="action-btn btn-return" data-item-id="<%= item.product._id %>">Request Return</button>
+        <% } else if (['pending', 'processing'].includes(order.status.toLowerCase()) && item.status !== 'Cancelled') { %>
+          <button class="action-btn btn-cancel-product" data-item-id="<%= item.product._id %>">Cancel Product</button>
+        <% } %>
+      </div>
+    </div>
+  <% }) %>
+</div>
                     
                     <div class="order-summary">
                         <h2 class="section-title">

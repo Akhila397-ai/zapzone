@@ -1,3 +1,4 @@
+```html
 <%- include('../partials/admin/header') %>
 <link rel="stylesheet" href="/css/admin/orders.css"/>
 <style>
@@ -201,6 +202,22 @@
     background-color: #f9fafb;
   }
 
+  /* Product Image Styles */
+  .product-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .table tbody td:first-child {
+    text-align: center;
+    vertical-align: middle;
+  }
+
   /* Payment Summary Section */
   .payment-summary {
     background-color: #f9fafb;
@@ -299,6 +316,11 @@
     .table tbody td {
       padding: 12px 8px;
     }
+
+    .product-image {
+      width: 40px;
+      height: 40px;
+    }
   }
 </style>
 
@@ -389,7 +411,8 @@
           <table class="table table-striped">
             <thead>
               <tr>
-                <th width="30%">Product</th>
+                <th width="15%">Image</th>
+                <th width="25%">Product</th>
                 <th width="10%">Quantity</th>
                 <th width="15%">Price</th>
                 <th width="15%">Status</th>
@@ -400,6 +423,13 @@
             <tbody>
               <% order.orderedItems.forEach((item) => { %>
                 <tr>
+                 <td>
+               <% if (item.product && item.product.productImage && item.product.productImage.length > 0) { %>
+               <img src="/Uploads/product-images/<%= item.product.productImage[0] %>" alt="<%= item.product.productName %>" class="product-image" loading="lazy" />
+               <% } else { %>
+               <img src="/images/default-product.jpg" alt="Default Product" class="product-image" loading="lazy" />
+               <% } %>
+                 </td>
                   <td><%= item.product ? item.product.productName : 'Unknown Product' %></td>
                   <td><%= item.quantity %></td>
                   <td>₹<%= item.price %></td>
@@ -533,7 +563,7 @@
                 return response.json();
               })
               .then((data) => {
-                if (data.message === 'Return approved successfully') {
+                if (data.success) {
                   Swal.fire({
                     title: 'Success!',
                     text: 'Return request accepted successfully',
@@ -628,3 +658,4 @@
     });
   </script>
 </body>
+```

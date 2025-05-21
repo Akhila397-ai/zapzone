@@ -1,0 +1,1166 @@
+<%- include('../partials/admin/header') %>
+<link rel="stylesheet" href="/css/admin/coupon.css"/>
+<style>
+  /* Admin Coupon Page Styles */
+  .content-main {
+    padding-left: 250px;
+  }
+
+  .content-header {
+    margin-bottom: 20px;
+  }
+
+  .content-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  /* Card Styles */
+  .card {
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    margin-bottom: 20px;
+    background-color: #fff;
+    border: none;
+  }
+
+  .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+
+  /* Search and Create Button Section */
+  .div-sec {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-radius: 15px;
+    background-color: #6B6AE4;
+    height: auto;
+  }
+
+  .input-group {
+    border-radius: 6px;
+    overflow: hidden;
+    max-width: 500px;
+    width: 100%;
+  }
+
+  .input-group input {
+    height: 40px;
+    font-size: 14px;
+  }
+
+  .input-group .btn {
+    padding: 8px 16px;
+    background-color: #6B6AE4;
+  }
+
+  .btn-primary {
+    background-color: #3b7ddd;
+    border-color: #3b7ddd;
+  }
+
+  .btn-primary:hover {
+    background-color: #326abc;
+    border-color: #2f64b1;
+  }
+
+  /* Create Button Styling */
+  .btn.btn-primary.btn-sm {
+    background-color: #6B6AE4;
+    border-color: #6B6AE4;
+    padding: 8px 16px;
+    font-weight: 500;
+    border-radius: 7px;
+    margin: 10px 0;
+    width: fit-content;
+  }
+
+  /* Form Elements */
+  .form-label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #495057;
+  }
+
+  .form-control {
+    padding: 10px 12px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
+
+  .form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(59, 125, 221, 0.25);
+  }
+
+  /* Error Messages */
+  .error-message {
+    color: #dc3545;
+    font-size: 13px;
+    margin-top: 5px;
+    display: none;
+  }
+
+  /* Table Styles */
+  .table {
+    margin-bottom: 0;
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .table thead th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+    font-size: 14px;
+    padding: 12px 15px;
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  .table thead th:nth-child(3),
+  .table thead th:nth-child(4),
+  .table thead th:nth-child(5),
+  .table thead th:nth-child(6),
+  .table thead th:nth-child(7),
+  .table thead th:nth-child(8),
+  .table thead th:nth-child(9) {
+    text-align: center;
+  }
+
+  .table tbody td {
+    vertical-align: middle;
+    padding: 12px 15px;
+    font-size: 14px;
+    color: #333;
+  }
+
+  .table tbody td:nth-child(3),
+  .table tbody td:nth-child(4),
+  .table tbody td:nth-child(5),
+  .table tbody td:nth-child(6),
+  .table tbody td:nth-child(7),
+  .table tbody td:nth-child(8),
+  .table tbody td:nth-child(9) {
+    text-align: center;
+  }
+
+  .table-hover tbody tr:hover {
+    background-color: rgba(59, 125, 221, 0.05);
+  }
+
+  /* Badge Styles */
+  .badge {
+    padding: 6px 10px;
+    font-weight: 500;
+    font-size: 12px;
+    border-radius: 4px;
+  }
+
+  /* Button Styles */
+  .action-btn, .status-btn {
+    padding: 5px 10px;
+    font-size: 13px;
+    border-radius: 4px;
+    font-weight: 500;
+    display: inline-block;
+    min-width: 80px;
+    text-align: center;
+  }
+
+  .btn-info {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+  }
+
+  .btn-info:hover {
+    background-color: #138496;
+    border-color: #117a8b;
+  }
+
+  .btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+  }
+
+  .btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+    color: white;
+  }
+
+  .btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+  }
+
+  .btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+  }
+
+  .btn-danger.status-btn,
+  .badge.bg-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    text-decoration: none;
+  }
+
+  .btn-success.status-btn,
+  .badge.bg-success {
+    background-color: #2ecc71 !important;
+    border-color: #2ecc71 !important;
+  }
+
+  /* Standardize Edit and Delete buttons in Actions column */
+  .table .btn-info.text-white,
+  .table .btn-danger.text-white {
+    width: 85px;
+    height: 32px;
+    padding: 6px 10px;
+    font-size: 13px;
+    border-radius: 4px;
+    line-height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 3px;
+  }
+
+  .table .btn-info.text-white {
+    background-color: #2ecc71 !important;
+    border-color: #2ecc71 !important;
+  }
+
+  .table .btn-danger.text-white {
+    background-color: #e74c3c !important;
+    border-color: #e74c3c !important;
+  }
+
+  /* Remove conflicting style */
+  .btn-info.text-white[style*="background-color: #dc3545"] {
+    background-color: #e74c3c !important;
+    border-color: #e74c3c !important;
+  }
+
+  /* Pagination Styles */
+  .pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .pagination-container a, .pagination-container span {
+    padding: 8px 12px;
+    margin: 0 4px;
+    border-radius: 4px;
+    font-size: 14px;
+    text-decoration: none;
+  }
+
+  .pagination-container a {
+    background-color: #f8f9fa;
+    color: #6B6AE4;
+    border: 1px solid #dee2e6;
+  }
+
+  .pagination-container a:hover {
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+  }
+
+  .pagination-container .current-page {
+    background-color: #6B6AE4;
+    color: white;
+    border: 1px solid #6B6AE4;
+  }
+
+  /* Popup Styles */
+  #createCouponPopup.popup-overlay,
+  #editCouponPopup.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  #createCouponPopup.popup-overlay.active,
+  #editCouponPopup.popup-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  #createCouponPopup .popup-container,
+  #editCouponPopup .popup-container {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    width: 100%;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    transform: scale(0.95);
+    transition: transform 0.3s ease-in-out;
+  }
+
+  #createCouponPopup.popup-overlay.active .popup-container,
+  #editCouponPopup.popup-overlay.active .popup-container {
+    transform: scale(1);
+  }
+
+  #createCouponPopup .close-btn,
+  #editCouponPopup .close-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: none;
+    border: none;
+    font-size: 26px;
+    font-weight: 300;
+    color: #6c757d;
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+
+  #createCouponPopup .close-btn:hover,
+  #editCouponPopup .close-btn:hover {
+    color: #343a40;
+    transform: rotate(90deg);
+  }
+
+  #createCouponPopup .popup-title,
+  #editCouponPopup .popup-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #2D3047;
+    margin: 0 0 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e9ecef;
+  }
+
+  #createCouponPopup .mb-4,
+  #editCouponPopup .mb-4 {
+    margin-bottom: 20px;
+  }
+
+  #createCouponPopup .form-label,
+  #editCouponPopup .form-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  #createCouponPopup .form-control,
+  #editCouponPopup .form-control {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: #333;
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  }
+
+  #createCouponPopup .form-control:focus,
+  #editCouponPopup .form-control:focus {
+    border-color: #FFAA8A;
+    box-shadow: 0 0 0 0.2rem rgba(255, 170, 138, 0.25);
+  }
+
+  #createCouponPopup .error-message,
+  #editCouponPopup .error-message {
+    font-size: 12px;
+    color: #dc3545;
+    margin-top: 4px;
+    display: none;
+    font-weight: 400;
+  }
+
+  #createCouponPopup .popup-buttons,
+  #editCouponPopup .popup-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 25px;
+  }
+
+  #createCouponPopup .btn,
+  #editCouponPopup .btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+  }
+
+  #createCouponPopup .cancel-btn,
+  #editCouponPopup .cancel-btn {
+    background-color: #6c757d;
+    color: #fff;
+  }
+
+  #createCouponPopup .cancel-btn:hover,
+  #editCouponPopup .cancel-btn:hover {
+    background-color: #5a6268;
+    transform: translateY(-1px);
+  }
+
+  #createCouponPopup .btn-primary,
+  #editCouponPopup .btn-primary {
+    background-color: #FFAA8A;
+    color: #fff;
+  }
+
+  #createCouponPopup .btn-primary:hover,
+  #editCouponPopup .btn-primary:hover {
+    background-color: #FF8C61;
+    transform: translateY(-1px);
+  }
+
+  #createCouponPopup .btn-primary:active,
+  #editCouponPopup .btn-primary:active {
+    transform: translateY(0);
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 900px) {
+    .div-sec {
+      flex-direction: column;
+      align-items: stretch;
+      padding: 10px;
+    }
+
+    .div-sec .input-group {
+      margin-bottom: 15px;
+      max-width: 100%;
+    }
+
+    .btn.btn-primary.btn-sm {
+      margin: 10px auto;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .content-main {
+      padding-left: 0;
+    }
+
+    .card-body .row {
+      flex-direction: column;
+    }
+
+    .col-md-3, .col-md-8 {
+      width: 100%;
+    }
+
+    .col-md-3 {
+      margin-bottom: 20px;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    .table thead th,
+    .table tbody td {
+      padding: 10px 8px;
+    }
+
+    .action-btn, .status-btn {
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+
+    .table .btn-info.text-white,
+    .table .btn-danger.text-white {
+      width: 75px;
+      height: 28px;
+      font-size: 12px;
+      padding: 4px 8px;
+      margin: 2px;
+    }
+
+    #createCouponPopup .popup-container,
+    #editCouponPopup .popup-container {
+      padding: 20px;
+      max-width: 90%;
+    }
+
+    #createCouponPopup .popup-title,
+    #editCouponPopup .popup-title {
+      font-size: 20px;
+      margin-bottom: 15px;
+    }
+
+    #createCouponPopup .form-label,
+    #editCouponPopup .form-label {
+      font-size: 13px;
+    }
+
+    #createCouponPopup .form-control,
+    #editCouponPopup .form-control {
+      padding: 8px 10px;
+      font-size: 13px;
+    }
+
+    #createCouponPopup .popup-buttons,
+    #editCouponPopup .popup-buttons {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    #createCouponPopup .btn,
+    #editCouponPopup .btn {
+      width: 100%;
+      padding: 12px;
+    }
+
+    #createCouponPopup .close-btn,
+    #editCouponPopup .close-btn {
+      font-size: 22px;
+      top: 10px;
+      right: 10px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    #createCouponPopup .popup-container,
+    #editCouponPopup .popup-container {
+      padding: 15px;
+    }
+
+    #createCouponPopup .popup-title,
+    #editCouponPopup .popup-title {
+      font-size: 18px;
+      padding-bottom: 8px;
+    }
+
+    #createCouponPopup .form-label,
+    #editCouponPopup .form-label {
+      font-size: 12px;
+    }
+
+    #createCouponPopup .form-control,
+    #editCouponPopup .form-control {
+      padding: 6px 8px;
+      font-size: 12px;
+    }
+
+    #createCouponPopup .error-message,
+    #editCouponPopup .error-message {
+      font-size: 11px;
+    }
+
+    #createCouponPopup .btn,
+    #editCouponPopup .btn {
+      padding: 10px;
+      font-size: 13px;
+    }
+
+    #createCouponPopup .mb-4,
+    #editCouponPopup .mb-4 {
+      margin-bottom: 15px;
+    }
+  }
+</style>
+
+<body>
+  <section class="content-main">
+    <!-- Content Header -->
+    <div class="content-header">
+      <div>
+        <h2 class="content-title card-title">Coupons</h2>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="card-header px-4 py-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <!-- Search Bar and Create Button -->
+          <form action="/admin/coupons/" method="get" class="flex-grow-1 me-1">
+            <div class="div-sec">
+              <div class="input-group input-group-sm shadow-sm">
+                <input type="text" class="form-control border-0 py-2" placeholder="Search coupons" name="search">
+                <button class="btn btn-light border-start" type="submit">
+                  <i class="bi bi-search"></i> Search
+                </button>
+              </div>
+              <button type="button" class="btn btn-primary btn-sm shadow-sm py-2 px-3" onclick="openCreatePopup()">
+                <i class="bi bi-plus-circle"></i> Create New Coupon+
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th width="15%">COUPON NAME</th>
+                  <th width="15%">COUPON CODE</th>
+                  <th width="10%">MIN CART VALUE</th>
+                  <th width="10%">COUPON AMOUNT</th>
+                  <th width="10%">VALID FROM</th>
+                  <th width="10%">VALID UPTO</th>
+                  <th width="10%" class="text-center">STATUS</th>
+                  <th width="10%" class="text-center">LIST/UNLIST</th>
+                  <th class="text-center" width="10%">ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (coupons && coupons.length > 0) { %>
+                  <% coupons.slice().reverse().forEach((coupon, index) => { %>
+                    <% if(coupon.isDeleted === false) { %>
+                      <tr>
+                        <td><%= coupon.name || 'N/A' %></td>
+                        <td><%= coupon.code %></td>
+                        <td><%= coupon.minOrderAmount || 'N/A' %></td>
+                        <td><%= coupon.discountAmount %></td>
+                        <td><%= coupon.validFrom ? new Date(coupon.validFrom).toLocaleDateString() : 'N/A' %></td>
+                        <td><%= new Date(coupon.expiryDate).toLocaleDateString() %></td>
+                        <td class="text-center">
+                          <span class="badge <%= coupon.isActive ? 'bg-success' : 'bg-danger' %>">
+                            <%= coupon.isActive ? 'Active' : 'Inactive' %>
+                          </span>
+                        </td>
+                        <td class="text-center">
+                          <% if (!coupon.isActive) { %>
+                            <button class="btn btn-success text-white status-btn" onclick="confirmStatusChange('<%= coupon._id %>', 'activate')">List</button>
+                          <% } else { %>
+                            <button class="btn btn-danger text-white status-btn" onclick="confirmStatusChange('<%= coupon._id %>', 'deactivate')">Unlist</button>
+                          <% } %>
+                        </td>
+                        <td class="text-center">
+                          <button class="btn btn-info text-white" onclick="openEditPopup('<%= coupon._id %>', '<%= coupon.code %>', '<%= coupon.discountAmount %>', '<%= coupon.expiryDate.toISOString().split('T')[0] %>', '<%= coupon.name || '' %>', '<%= coupon.minOrderAmount || '' %>', '<%= coupon.validFrom ? coupon.validFrom.toISOString().split('T')[0] : '' %>')">Edit</button>
+                          <button class="btn btn-danger text-white" onclick="confirmDelete('<%= coupon._id %>')">Delete</button>
+                        </td>
+                      </tr>
+                    <% } %>
+                  <% }); %>
+                <% } %>
+              </tbody>
+            </table>
+            
+            <!-- Pagination Section -->
+            <div class="pagination-container">
+              <% if (typeof currentPage !== 'undefined' && typeof totalPages !== 'undefined') { %>
+                <% if (currentPage > 1) { %>
+                  <a href="?page=<%= currentPage - 1 %>">« Previous</a>
+                <% } %>
+            
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                  <% if (i === currentPage) { %>
+                    <span class="current-page"><%= i %></span>
+                  <% } else { %>
+                    <a href="?page=<%= i %>"><%= i %></a>
+                  <% } %>
+                <% } %>
+            
+                <% if (currentPage < totalPages) { %>
+                  <a href="?page=<%= currentPage + 1 %>">Next »</a>
+                <% } %>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Edit Coupon Popup -->
+  <div id="editCouponPopup" class="popup-overlay">
+    <div class="popup-container">
+      <button class="close-btn" onclick="closeEditPopup()">×</button>
+      <h2 class="popup-title">Edit Coupon</h2>
+      <form id="editCouponForm">
+        <input type="hidden" id="editCouponId" name="couponId">
+        <div class="mb-4">
+          <label for="editCouponName" class="form-label">Coupon Name</label>
+          <input type="text" id="editCouponName" name="couponName" class="form-control" placeholder="Enter coupon name" required>
+          <div id="edit-name-error" class="error-message"></div>
+        </div>
+        <div class="mb-4">
+          <label for="editCouponCode" class="form-label">Coupon Code</label>
+          <input type="text" id="editCouponCode" name="couponCode" classiuni-control" placeholder="Enter coupon code" required>
+          <div id="edit-code-error" class="error-message"></div>
+        </div>
+        <div class="mb-4">
+          <label for="editCouponMinCartValue" class="form-label">Min Cart Value</label>
+          <input type="number" id="editCouponMinCartValue" name="couponMinCartValue" class="form-control" placeholder="Enter minimum cart value" required min="0">
+          <div id="edit-mincart-error" class="error-message"></div>
+        </div>
+        <div class="mb-4">
+          <label for="editCouponDiscount" class="form-label">Coupon Amount</label>
+          <input type="number" id="editCouponDiscount" name="couponDiscount" class="form-control" placeholder="Enter coupon amount" required min="1">
+          <div id="edit-discount-error" class="error-message"></div>
+        </div>
+        <div class="mb-4">
+          <label for="editCouponValidFrom" class="form-label">Valid From</label>
+          <input type="date" id="editCouponValidFrom" name="couponValidFrom" class="form-control" required>
+          <div id="edit-validfrom-error" class="error-message"></div>
+        </div>
+        <div class="mb-4">
+          <label for="editCouponExpiry" class="form-label">Valid Upto</label>
+          <input type="date" id="editCouponExpiry" name="couponExpiry" class="form-control" required>
+          <div id="edit-expiry-error" class="error-message"></div>
+        </div>
+        <div class="popup-buttons">
+          <button type="button" class="btn cancel-btn" onclick="closeEditPopup()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update Coupon</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Create Coupon Popup -->
+  <div id="createCouponPopup" class="popup-overlay">
+    <div class="popup-container">
+      <button class="close-btn" onclick="closeCreatePopup()">×</button>
+      <h2 class="popup-title">Create New Coupon</h2>
+      <form id="createCouponForm">
+        <div class="mb-4">
+          <label for="createCouponName" class="form-label">Coupon Name</label>
+          <input type="text" id="createCouponName" name="couponName" class="form-control" placeholder="Enter coupon name" required>
+          <div id="create-name-error" class="error-message"></div>
+        </div>
+        <div class="mb-4">
+          <label for="createCouponCode" class="form-label">Coupon Code</label>
+          <input type="text" id="createCouponCode" name="couponCode" class="form-control" placeholder="Enter coupon code" required>
+          <div id="create-code-error" class="error-message"></div>
+        </div>
+        <div class="mb-4">
+          <label for="createCouponMinCartValue" class="form-label">Min Cart Value</label>
+          <input type="number" id="createCouponMinCartValue" name="couponMinCartValue" class="form-control" placeholder="Enter minimum cart value" required min="0">
+          <div id="create-mincart-error" class="error-message"></div>
+        </div>
+        <div class="mb-4">
+          <label for="createCouponDiscount" class="form-label">Coupon Amount</label>
+          <input type="number" id="createCouponDiscount" name="couponDiscount" class="form-control" placeholder="Enter coupon amount" required min="1">
+          <div id="create-discount-error" class="error-message"></div>
+        </div>
+        <div class="mb-4">
+          <label for="createCouponValidFrom" class="form-label">Valid From</label>
+          <input type="date" id="createCouponValidFrom" name="couponValidFrom" class="form-control" required>
+          <div id="create-validfrom-error" class="error-message"></div>
+        </div>
+        <div class="mb-4">
+          <label for="createCouponExpiry" class="form-label">Valid Upto</label>
+          <input type="date" id="createCouponExpiry" name="couponExpiry" class="form-control" required>
+          <div id="create-expiry-error" class="error-message"></div>
+        </div>
+        <div class="popup-buttons">
+          <button type="button" class="btn cancel-btn" onclick="closeCreatePopup()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Coupon</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const editCouponForm = document.querySelector("#editCouponForm");
+      const createCouponForm = document.querySelector("#createCouponForm");
+
+      if (editCouponForm) {
+        editCouponForm.addEventListener("submit", handleEditFormSubmit);
+      }
+      
+      if (createCouponForm) {
+        createCouponForm.addEventListener("submit", handleCreateFormSubmit);
+      }
+    });
+
+    // Validate Form
+    function validateForm(nameId, codeId, minCartId, discountId, validFromId, expiryId, nameErrorId, codeErrorId, minCartErrorId, discountErrorId, validFromErrorId, expiryErrorId) {
+      clearErrorMessages(nameErrorId, codeErrorId, minCartErrorId, discountErrorId, validFromErrorId, expiryErrorId);
+
+      const name = document.getElementById(nameId).value.trim();
+      const code = document.getElementById(codeId).value.trim();
+      const minCartValue = document.getElementById(minCartId).value;
+      const discount = document.getElementById(discountId).value;
+      const validFrom = document.getElementById(validFromId).value;
+      const expiry = document.getElementById(expiryId).value;
+      let isValid = true;
+
+      if (name === "") {
+        displayErrorMessage(nameErrorId, 'Please enter a coupon name');
+        isValid = false;
+      }
+
+      if (code === "") {
+        displayErrorMessage(codeErrorId, 'Please enter a coupon code');
+        isValid = false;
+      } else if (!/^[A-Z0-9]{4,10}$/.test(code)) {
+        displayErrorMessage(codeErrorId, 'Coupon code must be 4-10 alphanumeric characters');
+        isValid = false;
+      }
+
+      if (minCartValue === "" || isNaN(minCartValue) || minCartValue < 0) {
+        displayErrorMessage(minCartErrorId, 'Minimum cart value must be a non-negative number');
+        isValid = false;
+      }
+
+      if (discount === "" || isNaN(discount) || discount < 1) {
+        displayErrorMessage(discountErrorId, 'Coupon amount must be at least 1');
+        isValid = false;
+      }
+
+      if (validFrom === "") {
+        displayErrorMessage(validFromErrorId, 'Please select a valid from date');
+        isValid = false;
+      }
+
+      if (expiry === "") {
+        displayErrorMessage(expiryErrorId, 'Please select an expiry date');
+        isValid = false;
+      } else {
+        const today = new Date().setHours(0, 0, 0, 0);
+        const validFromDate = new Date(validFrom).setHours(0, 0, 0, 0);
+        const expiryDate = new Date(expiry).setHours(0, 0, 0, 0);
+        if (validFromDate < today) {
+          displayErrorMessage(validFromErrorId, 'Valid from date must be today or in the future');
+          isValid = false;
+        }
+        if (expiryDate < validFromDate) {
+          displayErrorMessage(expiryErrorId, 'Expiry date must be after valid from date');
+          isValid = false;
+        }
+      }
+
+      return isValid;
+    }
+
+    // Display Error Message
+    function displayErrorMessage(elementId, message) {
+      const errorElement = document.getElementById(elementId);
+      errorElement.innerText = message;
+      errorElement.style.display = 'block';
+    }
+
+    // Clear Error Messages
+    function clearErrorMessages(nameErrorId, codeErrorId, minCartErrorId, discountErrorId, validFromErrorId, expiryErrorId) {
+      const nameErrorElement = document.getElementById(nameErrorId);
+      const codeErrorElement = document.getElementById(codeErrorId);
+      const minCartErrorElement = document.getElementById(minCartErrorId);
+      const discountErrorElement = document.getElementById(discountErrorId);
+      const validFromErrorElement = document.getElementById(validFromErrorId);
+      const expiryErrorElement = document.getElementById(expiryErrorId);
+      nameErrorElement.innerText = "";
+      nameErrorElement.style.display = "none";
+      codeErrorElement.innerText = "";
+      codeErrorElement.style.display = "none";
+      minCartErrorElement.innerText = "";
+      minCartErrorElement.style.display = "none";
+      discountErrorElement.innerText = "";
+      discountErrorElement.style.display = "none";
+      validFromErrorElement.innerText = "";
+      validFromErrorElement.style.display = "none";
+      expiryErrorElement.innerText = "";
+      expiryErrorElement.style.display = "none";
+    }
+
+    // Edit Coupon Popup Functions
+    function openEditPopup(couponId, couponCode, couponDiscount, couponExpiry, couponName, couponMinCartValue, couponValidFrom) {
+      couponCode = couponCode.replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>').replace(/"/g, '"');
+      couponName = couponName.replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>').replace(/"/g, '"');
+      
+      document.getElementById('editCouponId').value = couponId;
+      document.getElementById('editCouponName').value = couponName;
+      document.getElementById('editCouponCode').value = couponCode;
+      document.getElementById('editCouponMinCartValue').value = couponMinCartValue;
+      document.getElementById('editCouponDiscount').value = couponDiscount;
+      document.getElementById('editCouponValidFrom').value = couponValidFrom;
+      document.getElementById('editCouponExpiry').value = couponExpiry;
+      
+      document.getElementById('editCouponPopup').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeEditPopup() {
+      document.getElementById('editCouponPopup').classList.remove('active');
+      document.body.style.overflow = 'auto';
+      clearErrorMessages('edit-name-error', 'edit-code-error', 'edit-mincart-error', 'edit-discount-error', 'edit-validfrom-error', 'edit-expiry-error');
+    }
+
+    // Open and Close Create Popup
+    function openCreatePopup() {
+      document.getElementById('createCouponPopup').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeCreatePopup() {
+      document.getElementById('createCouponPopup').classList.remove('active');
+      document.body.style.overflow = 'auto';
+      document.getElementById('createCouponName').value = '';
+      document.getElementById('createCouponCode').value = '';
+      document.getElementById('createCouponMinCartValue').value = '';
+      document.getElementById('createCouponDiscount').value = '';
+      document.getElementById('createCouponValidFrom').value = '';
+      document.getElementById('createCouponExpiry').value = '';
+      clearErrorMessages('create-name-error', 'create-code-error', 'create-mincart-error', 'create-discount-error', 'create-validfrom-error', 'create-expiry-error');
+    }
+
+    // Handle Create Form Submit
+    async function handleCreateFormSubmit(event) {
+      event.preventDefault();
+      
+      if (!validateForm('createCouponName', 'createCouponCode', 'createCouponMinCartValue', 'createCouponDiscount', 'createCouponValidFrom', 'createCouponExpiry', 'create-name-error', 'create-code-error', 'create-mincart-error', 'create-discount-error', 'create-validfrom-error', 'create-expiry-error')) {
+        return;
+      }
+      
+      const name = document.getElementById('createCouponName').value.trim();
+      const code = document.getElementById('createCouponCode').value.trim();
+      const minCartValue = document.getElementById('createCouponMinCartValue').value;
+      const discount = document.getElementById('createCouponDiscount').value;
+      const validFrom = document.getElementById('createCouponValidFrom').value;
+      const expiry = document.getElementById('createCouponExpiry').value;
+      
+      try {
+        const response = await fetch('/admin/addCoupon', {
+          method: "POST",
+          headers: {
+            'Content-Type': "application/json"
+          },
+          body: JSON.stringify({ name, code, minCartValue, discount, validFrom, expiry })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          Swal.fire({
+            title: "Success!",
+            text: "Coupon created successfully",
+            icon: "success",
+            confirmButtonText: "OK"
+          }).then(() => {
+            window.location.reload();
+          });
+        } else {
+          Swal.fire({
+            title: "Error!",
+            text: data.message || "Failed to create coupon",
+            icon: "error",
+            confirmButtonText: "OK"
+          });
+        }
+      } catch (error) {
+        console.error("Error creating coupon");
+        Swal.fire({
+          title: "Error!",
+          text: "An unexpected error occurred",
+          icon: "error",
+          confirmButtonText: "OK"
+        });
+      }
+    }
+
+    // Handle Edit Form Submit
+    async function handleEditFormSubmit(event) {
+      event.preventDefault();
+
+      if (!validateForm('editCouponName', 'editCouponCode', 'editCouponMinCartValue', 'editCouponDiscount', 'editCouponValidFrom', 'editCouponExpiry', 'edit-name-error', 'edit-code-error', 'edit-mincart-error', 'edit-discount-error', 'edit-validfrom-error', 'edit-expiry-error')) {
+        return;
+      }
+
+      const couponId = document.getElementById('editCouponId').value;
+      const name = document.getElementById('editCouponName').value.trim();
+      const code = document.getElementById('editCouponCode').value.trim();
+      const minCartValue = document.getElementById('editCouponMinCartValue').value;
+      const discount = document.getElementById('editCouponDiscount').value;
+      const validFrom = document.getElementById('editCouponValidFrom').value;
+      const expiry = document.getElementById('editCouponExpiry').value;
+
+      try {
+        const response = await fetch('/admin/editCoupon/' + couponId, {
+          method: "PATCH",
+          headers: {
+            'Content-Type': "application/json"
+          },
+          body: JSON.stringify({ name, code, minCartValue, discount, validFrom, expiry })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          Swal.fire({
+            title: "Success!",
+            text: "Coupon updated successfully",
+            icon: "success",
+            confirmButtonText: "OK"
+          }).then(() => {
+            window.location.reload();
+          });
+        } else {
+          Swal.fire({
+            title: "Error!",
+            text: Lobster || "Failed to update coupon",
+            icon: "error",
+            confirmButtonText: "OK"
+          });
+        }
+      } catch (error) {
+        console.error("Error updating coupon:", error);
+        Swal.fire({
+          title: "Error!",
+          text: "An unexpected error occurred",
+          icon: "error",
+          confirmButtonText: "OK"
+        });
+      }
+    }
+
+    // Delete Coupon Function
+    async function confirmDelete(couponId) {
+      const deleteCoupon = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, delete it!"
+      });
+
+      if (deleteCoupon.isConfirmed) {
+        try {
+          const response = await fetch(`/admin/deleteCoupon/${couponId}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json"
+            }
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            Swal.fire({
+              title: "Deleted!",
+              text: "Coupon has been deleted.",
+              icon: "success"
+            }).then(() => {
+              location.reload();
+            });
+          } else {
+            Swal.fire({
+              title: "Error!",
+              text: data.message || "Error while deleting.",
+              icon: "error"
+            });
+          }
+        } catch (error) {
+          console.error("Server error due to internal issue", error);
+          Swal.fire({
+            title: "Error!",
+            text: "An unexpected error occurred.",
+            icon: "error"
+          });
+        }
+      }
+    }
+
+    // Confirm Status Change (Activate/Deactivate)
+    async function confirmStatusChange(couponId, action) {
+      const isActivate = action === 'activate';
+      const title = isActivate ? 'Activate Coupon?' : 'Deactivate Coupon?';
+      const text = isActivate 
+        ? 'This will activate the coupon.'
+        : 'This will deactivate the coupon.';
+      const confirmButtonText = isActivate ? 'Yes, activate it!' : 'Yes, deactivate it!';
+      const route = isActivate ? `/admin/activateCoupon?id=${couponId}` : `/admin/deactivateCoupon?id=${couponId}`;
+
+      const result = await Swal.fire({
+        title: title,
+        text: text,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: isActivate ? '#28a745' : '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: confirmButtonText,
+        cancelButtonText: 'Cancel'
+      });
+
+      if (result.isConfirmed) {
+        try {
+          const response = await fetch(route, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            Swal.fire({
+              title: isActivate ? 'Activated!' : 'Deactivated!',
+              text: `Coupon has been ${isActivate ? 'activated' : 'deactivated'}.`,
+              icon: 'success',
+              confirmButtonText: 'OK'
+            }).then(() => {
+              window.location.reload();
+            });
+          } else {
+            Swal.fire({
+              title: 'Error!',
+              text: data.message || `Failed to ${isActivate ? 'activate' : 'deactivate'} coupon.`,
+              icon: 'error',
+              confirmButtonText: 'OK'
+            });
+          }
+        } catch (error) {
+          console.error(`Error ${isActivate ? 'activating' : 'deactivating'} coupon:`, error);
+          Swal.fire({
+            title: 'Error!',
+            text: 'An unexpected error occurred.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      }
+    }
+
+    // Close popup if user clicks outside the popup container
+    document.getElementById('editCouponPopup').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeEditPopup();
+      }
+    });
+
+    document.getElementById('createCouponPopup').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeCreatePopup();
+      }
+    });
+  </script>
+</body>

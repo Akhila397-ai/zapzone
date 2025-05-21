@@ -13,7 +13,7 @@
                 <div class="header__top__links">
                     <% if (user) { %>
                         <div class="header__top__hover">
-                            <img class="header__profile-img" src= "<%= profilePicture %>" || '/img/default-profile.png">
+                           <img class="header__profile-img" src="<%= profilePicture || 'https://res.cloudinary.com/dlf7ygi2x/image/upload/v1746018861/360_F_850472001_eLLSs2ZOAAqJBpJN0r3cTtBZVSdDt3TH_iqme3a.jpg' %>" alt="Avatar">
                             <span> <%= user.name %> <i class="arrow_carrot-down"></i></span>
                             <ul>
                                 <li><a href="/profile">My Profile</a></li>
@@ -244,6 +244,7 @@
         font-weight: 600;
         position: relative;
         padding: 3px 0;
+        text-decoration: none;
     }
     .header__menu ul li a:after {
         position: absolute;

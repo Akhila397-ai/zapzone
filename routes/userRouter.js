@@ -6,6 +6,7 @@ const productController = require('../controllers/user/productController');
 const profileController = require('../controllers/user/profileController')
 const cartController = require('../controllers/user/cartController')
 const checkoutContoller = require('../controllers/user/checkoutController')
+const wishlistController= require('../controllers/user/wishlistController')
 const passport = require("passport");
 const { uploadProfilePicture } = require('../helpers/multer');
 
@@ -66,7 +67,7 @@ router.post('/add-address',userAuth,profileController.postAddAddress);
 router.get('/edit-address',userAuth,profileController.editAddress);
 router.post('/update-address',userAuth,profileController.postEditAddress);
 router.patch('/delete-address',userAuth,profileController.deleteAddress);
-
+router.patch('/set-default-address',userAuth,profileController.setDefaultAddress);
 //cart management
 router.get('/cart',userAuth,cartController.loadCart);
 router.post('/addToCart',userAuth,cartController.addToCart);
@@ -83,6 +84,24 @@ router.get('/orderdetails',userAuth,checkoutContoller.loadOrderDetails)
 router.post('/cancelOrder',userAuth,checkoutContoller.cancelOrder);
 router.post('/cancel-product', userAuth,checkoutContoller.cancelProduct);
 router.post('/request-return',userAuth,checkoutContoller.requestReturn);
+router.get('/coupons/available',userAuth,checkoutContoller.getAvailableCoupons);
+router.post('/apply-coupon',userAuth,checkoutContoller.applyCoupon);
+router.post('/remove-coupon',userAuth,checkoutContoller.removeCoupon);
+router.post('/create-razorpay-order',checkoutContoller.createRazorpayOrder);
+router.post('/verify-razorpay-payment',checkoutContoller.verifyRazorpayPayment);
+router.get('/payment-failure', userAuth,checkoutContoller.loadPaymentFailurePage)
+
+
+
+
+//wallet management
+router.get('/wallet',userAuth,checkoutContoller.loadWallet)
+
+//wishlist management
+router.get('/wishlist',userAuth,wishlistController.loadWishlist);
+router.post('/addToWishlist',userAuth,wishlistController.addToWishlist);
+router.patch('/remove-from-wishlist',userAuth,wishlistController.removeFromWishlist)
+
 
 
 module.exports = router

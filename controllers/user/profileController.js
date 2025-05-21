@@ -440,13 +440,12 @@ const userAddress = async (req, res) => {
         const userData = await User.findById(userId);
         const addressDocs = await Address.find({ userId });
 
-        // Flatten the nested address arrays
         const addresses = addressDocs.flatMap(doc => doc.address);
 
         res.render('addresses', {
             active: 'addresses',
             profilePicture: userData.profilePicture,
-            addresses // now this is a flat array of individual address objects
+            addresses 
         });
     } catch (error) {
         console.error(error);
@@ -507,14 +506,12 @@ const postAddAddress = async (req, res) => {
         };
 
         if (!userAddress) {
-            // No address document yet
             const addressDoc = new Address({
                 userId,
                 address: [newAddress]
             });
             await addressDoc.save();
         } else {
-            // If new address is default, unset all other addresses
             if (newAddress.isDefault) {
                 userAddress.address.forEach(addr => addr.isDefault = false);
             }
@@ -667,6 +664,45 @@ const deleteAddress = async (req, res) => {
       res.status(500).json({ message: 'Server error while removing profile photo.' });
     }
   };
+
+  const setDefaultAddress = async (req, res) => {
+    try {
+        const userId = req.session.user;
+        const { addressId } = req.body;
+
+        if (!userId) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+
+        const userAddress = await Address.findOne({ userId });
+        if (!userAddress) {
+            return res.status(404).json({ message: 'No addresses found' });
+        }
+
+        const addressExists = userAddress.address.some(
+            (addr) => addr._id.toString() === addressId
+        );
+        if (!addressExists) {
+            return res.status(404).json({ message: 'Address not found' });
+        }
+
+        userAddress.address.forEach((addr) => {
+            addr.isDefault = false;
+        });
+
+        const targetAddress = userAddress.address.find(
+            (addr) => addr._id.toString() === addressId
+        );
+        targetAddress.isDefault = true;
+
+        await userAddress.save();
+
+        res.status(200).json({ message: 'Default address updated successfully' });
+    } catch (error) {
+        console.error('Error in setDefaultAddress:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
 module.exports={
     getForgotPassword,
     forgotEmailValid,
@@ -691,5 +727,6 @@ module.exports={
     postEditAddress,
     deleteAddress,
     removeProfilePhoto,
+    setDefaultAddress,
 
 }

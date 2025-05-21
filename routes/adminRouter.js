@@ -7,6 +7,8 @@ const categoryController=require('../controllers/admin/categoryController')
 const productController=require('../controllers/admin/productController');
 const brandController = require('../controllers/admin/brandController')
 const orderController =require('../controllers/admin/orderController')
+const couponController=require('../controllers/admin/couponController')
+const offerController = require('../controllers/admin/offerController')
 const {upload} = require('../helpers/multer');
 router.get('/pagenotfound',adminController.pagenotfound)
 router.get('/login', adminController.loadLogin);  
@@ -51,5 +53,28 @@ router.patch('/orderStatus/:id',adminAuth,orderController.updateOrderStatus);
 router.post("/orders/:id/approve-return", adminAuth,orderController.approveReturn);
 router.post("/orders/:id/reject-return", adminAuth,orderController.rejectReturn);
 
+
+//coupon management
+router.get('/coupons',adminAuth,couponController.listCoupons);
+router.post('/addCoupon',adminAuth,couponController.addCoupon);
+router.patch('/editCoupon/:id',adminAuth,couponController.editCoupon);
+router.get('/activateCoupon',adminAuth,couponController.activateCoupon);
+router.get('/deactivateCoupon',adminAuth,couponController.deactivateCoupon);
+router.patch('/deleteCoupon/:id',adminAuth,couponController.deleteCoupon);
+
+//offer management
+
+
+router.get('/offers',adminAuth, offerController.getOffers);
+router.post('/addOffer',adminAuth,offerController.addOffer);
+router.post('/editOffer',adminAuth, offerController.editOffer);
+router.post('/toggleOffer',adminAuth, offerController.toggleOffer);
+router.patch('/deleteOffer/:offerId', offerController.deleteOffer);
+
+
+//sales report
+router.get('/sales-report',adminAuth,adminController.getSalesReport);
+router.get('/sales-report/pdf',adminAuth,adminController.downloadSalesReportPDF);
+router.get('/sales-report/excel',adminAuth,adminController.downloadSalesReportExcel);
 
 module.exports=router;

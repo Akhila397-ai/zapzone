@@ -1,0 +1,509 @@
+<%- include('../partials/admin/header') %>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+
+<style>
+  /* Existing styles with updated status button styles */
+  :root {
+    --primary-color: #6B6AE4;
+    --primary-dark: #5655c6;
+    --secondary-color: #2D3047;
+    --text-dark: #333;
+    --text-light: #495057;
+    --background-light: #f8f9fa;
+    --white: #fff;
+    --danger: #dc3545;
+    --success: #28a745;
+    --warning: #f1c40f;
+    --info: #17a2b8;
+    --purple: #6f42c1;
+    --orange: #fd7e14;
+  }
+
+  .content-main {
+    padding-left: 250px;
+    padding-right: 20px;
+    padding-top: 20px;
+    min-height: calc(100vh - 70px);
+    background-color: #f1f3f5;
+  }
+
+  /* ... (rest of the existing styles unchanged) ... */
+   :root {
+    --primary-color: #6B6AE4;
+    --primary-dark: #5655c6;
+    --secondary-color: #2D3047;
+    --text-dark: #333;
+    --text-light: #495057;
+    --background-light: #f8f9fa;
+    --white: #fff;
+    --danger: #dc3545;
+    --success: #28a745;
+  }
+
+  .content-main {
+    padding-left: 250px;
+    padding-right: 20px;
+    padding-top: 20px;
+    min-height: calc(100vh - 70px);
+    background-color: #f1f3f5;
+  }
+
+  .content-header {
+    margin-bottom: 20px;
+  }
+
+  .content-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-dark);
+  }
+
+  /* Card Styles */
+  .card {
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    margin-bottom: 20px;
+    background-color: var(--white);
+    border: none;
+  }
+
+  .card-header {
+    background-color: var(--background-light);
+    border-bottom: 1px solid #e9ecef;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    padding: 1rem;
+  }
+
+  /* Summary Cards */
+  .summary-card {
+    padding: 1rem;
+    text-align: center;
+    border-radius: 8px;
+    background-color: var(--white);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  }
+
+  .summary-card h6 {
+    font-size: 14px;
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+  }
+
+  .summary-card p {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0;
+  }
+
+  /* Search Section */
+  .div-sec {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    border-radius: 15px;
+    background-color: var(--primary-color);
+    height: 122px;
+    padding: 0 2rem;
+  }
+
+  .input-group {
+    border-radius: 6px;
+    overflow: hidden;
+    max-width: 500px;
+    border: 1px solid #dfe6e9;
+  }
+
+  .input-group input {
+    height: 40px;
+    font-size: 14px;
+    border: none;
+  }
+
+  .input-group .btn {
+    padding: 8px 16px;
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--white);
+  }
+
+  .input-group .btn:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+  }
+
+  .btn-primary {
+    background-color: #000;
+    border-color: var(--primary-color);
+    padding: 8px 16px;
+    font-weight: 500;
+    border-radius: 7px;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+  }
+
+  /* Table Styles */
+  .table {
+    margin-bottom: 0;
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .table thead th {
+    background-color: var(--background-light);
+    font-weight: 600;
+    color: var(--text-light);
+    font-size: 14px;
+    padding: 12px 8px;
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  .table thead th {
+    text-align: center;
+  }
+
+  .table tbody td {
+    vertical-align: middle;
+    padding: 12px 8px;
+    font-size: 14px;
+    color: var(--text-dark);
+    text-align: center;
+  }
+
+  .table-hover tbody tr:hover {
+    background-color: rgba(59, 125, 221, 0.05);
+  }
+
+  /* Status Button Styles */
+  .status-button {
+    padding: 5px 10px;
+    font-size: 13px;
+    border-radius: 4px;
+    font-weight: 500;
+    display: inline-block;
+    min-width: 80px;
+    text-align: center;
+  }
+
+  .status-pending { background-color: #f1c40f; color: #fff; }
+  .status-cancelled { background-color: #dc3545; color: #fff; }
+  .status-delivered { background-color: #2ecc71; color: #fff; }
+
+  /* Pagination Styles */
+  .pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .pagination-container a, .pagination-container span {
+    padding: 8px 12px;
+    margin: 0 4px;
+    border-radius: 4px;
+    font-size: 14px;
+    text-decoration: none;
+  }
+
+  .pagination-container a {
+    background-color: var(--background-light);
+    color: var(--primary-color);
+    border: 1px solid #dee2e6;
+  }
+
+  .pagination-container a:hover {
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+  }
+
+  .pagination-container .current-page {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: 1px solid var(--primary-color);
+  }
+
+  /* Export Buttons */
+  .export-buttons {
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn-danger {
+    background-color: var(--danger);
+    border-color: var(--danger);
+  }
+
+  .btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+  }
+
+  .btn-success {
+    background-color: var(--success);
+    border-color: var(--success);
+  }
+
+  .btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 900px) {
+    .div-sec {
+      flex-direction: column;
+      align-items: stretch;
+      height: auto;
+      padding: 1rem;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+      max-width: 100%;
+    }
+
+    .export-buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .content-main {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    .table thead {
+      display: none;
+    }
+
+    .table, .table tbody, .table tr, .table td {
+      display: block;
+      width: 100%;
+    }
+
+    .table tr {
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .table td {
+      text-align: right;
+      padding: 0.75rem 1rem;
+      position: relative;
+      padding-left: 50%;
+    }
+
+    .table td::before {
+      content: attr(data-label);
+      position: absolute;
+      left: 1rem;
+      width: 45%;
+      text-align: left;
+      font-weight: 500;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .summary-card p {
+      font-size: 16px;
+    }
+
+    .summary-card h6 {
+      font-size: 12px;
+    }
+  }
+
+  /* Updated Status Button Styles */
+  .status-button {
+    padding: 5px 10px;
+    font-size: 13px;
+    border-radius: 4px;
+    font-weight: 500;
+    display: inline-block;
+    min-width: 80px;
+    text-align: center;
+    color: #fff;
+  }
+
+  .status-pending { background-color: var(--warning); }
+  .status-processing { background-color: var(--info); }
+  .status-shipped { background-color: var(--purple(TARGET: var(--purple); }
+  .status-delivered { background-color: var(--success); }
+  .status-cancelled { background-color: var(--danger); }
+  .status-return-requested { background-color: var(--orange); }
+  .status-returned { background-color: var(--success); }
+  .status-return-rejected { background-color: var(--danger); }
+
+  /* Validation feedback */
+  .invalid-feedback {
+    display: none;
+    color: var(--danger);
+    font-size: 12px;
+    margin-top: 5px;
+  }
+
+  .input-group input:invalid + .invalid-feedback {
+    display: block;
+  }
+</style>
+
+<body>
+  <section class="content-main">
+    <!-- Content Header -->
+    <div class="content-header">
+      <h2 class="content-title card-title">Sales Report</h2>
+    </div>
+
+    <div class="card">
+      <div class="card-header px-4 py-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <!-- Date Range Filter -->
+          <form action="/admin/sales-report" method="GET" class="flex-grow-1 me-1" id="dateFilterForm">
+            <div class="div-sec">
+              <div class="input-group input-group-sm shadow-sm">
+                <input type="date" class="form-control border-0 py-2" name="startDate" value="<%= startDate %>" placeholder="Start Date" required>
+                <div class="invalid-feedback">Please select a valid start date.</div>
+                <input type="date" class="form-control border-0 py-2" name="endDate" value="<%= endDate %>" placeholder="End Date" required>
+                <div class="invalid-feedback">Please select a valid end date.</div>
+                <button class="btn btn-light border-start" type="submit">
+                  <i class="bi bi-search"></i> Search
+                </button>
+              </div>
+              <button type="button" class="btn btn-primary btn-sm shadow-sm py-2 px-3" onclick="clearSearch()">
+                <i class="bi bi-x-circle"></i> Clear
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+      <div class="col-md-2">
+        <div class="summary-card">
+          <h6>Gross Sales</h6>
+          <p>₹<%= grossSales.toLocaleString('en-IN') %></p>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="summary-card">
+          <h6>Coupons Redeemed</h6>
+          <p>₹<%= couponsRedeemed.toLocaleString('en-IN') %></p>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="summary-card">
+          <h6>Discounts</h6>
+          <p>₹<%= discounts.toLocaleString('en-IN') %></p>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="summary-card">
+          <h6>Net Sales</h6>
+          <p>₹<%= netSales.toLocaleString('en-IN') %></p>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="summary-card">
+          <h6>Total Orders</h6>
+          <p><%= totalOrders %></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table Section -->
+    <div class="card">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th width="15%">ORDER ID</th>
+                <th width="10%">AMOUNT</th>
+                <th width="10%">COUPON</th>
+                <th width="10%">FINAL AMOUNT</th>
+                <th width="15%">PAYMENT</th>
+                <th width="15%">DATE</th>
+                <th width="15%">STATUS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% orders.forEach(order => { %>
+              <tr>
+                <td data-label="ORDER ID"><%= order.orderId.slice(0, 13) %></td>
+                <td data-label="AMOUNT">₹<%= order.amount.toLocaleString('en-IN') %></td>
+                <td data-label="COUPON">₹<%= order.coupon.toLocaleString('en-IN') %></td>
+                <td data-label="FINAL AMOUNT">₹<%= order.finalAmount.toLocaleString('en-IN') %></td>
+                <td data-label="PAYMENT"><%= order.paymentMethod %></td>
+                <td data-label="DATE"><%= order.date %></td>
+                <td data-label="STATUS">
+                  <span class="status-button status-<%= order.status.toLowerCase().replace(' ', '-') %>">
+                    <%= order.status %>
+                  </span>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination Section -->
+    <div class="pagination-container">
+      <% if (currentPage > 1) { %>
+        <a href="?page=<%= currentPage - 1 %>&startDate=<%= startDate %>&endDate=<%= endDate %>">« Previous</a>
+      <% } %>
+      <% for(let i = 1; i <= totalPages; i++) { %>
+        <% if (i === currentPage) { %>
+          <span class="current-page"><%= i %></span>
+        <% } else { %>
+          <a href="?page=<%= i %>&startDate=<%= startDate %>&endDate=<%= endDate %>"><%= i %></a>
+        <% } %>
+      <% } %>
+      <% if (currentPage < totalPages) { %>
+        <a href="?page=<%= currentPage + 1 %>&startDate=<%= startDate %>&endDate=<%= endDate %>">Next »</a>
+      <% } %>
+    </div>
+
+    <!-- Export Buttons -->
+    <div class="export-buttons mt-3 justify-content-center">
+      <a href="/admin/sales-report/pdf?startDate=<%= startDate %>&endDate=<%= endDate %>" class="btn btn-danger btn-sm">PDF</a>
+      <a href="/admin/sales-report/excel?startDate=<%= startDate %>&endDate=<%= endDate %>" class="btn btn-success btn-sm">Excel</a>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script>
+    function clearSearch() {
+      window.location.href = '/admin/sales-report';
+    }
+
+    // Client-side validation for date inputs
+    $(document).ready(function() {
+      $('#dateFilterForm').on('submit', function(e) {
+        const startDate = $('input[name="startDate"]').val();
+        const endDate = $('input[name="endDate"]').val();
+        if (startDate && endDate && new Date(endDate) < new Date(startDate)) {
+          e.preventDefault();
+          alert('End date cannot be earlier than start date.');
+        }
+      });
+    });
+  </script>
+</body>

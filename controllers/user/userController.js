@@ -5,7 +5,8 @@ const Brand =require('../../models/brandSchema')
 const nodemailer = require('nodemailer');
 const env = require('dotenv').config();
 const bcrypt = require('bcrypt');
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const Cart = require("../../models/cartSchema");
 
 const pageNotFound = async (req,res) => {
     try {
@@ -37,7 +38,7 @@ const loadHomePage = async (req, res) => {
             user: userData,
             products: productData,
             categories,
-            profilePicture
+             profilePicture: userData?.profilePicture || null
         });
         
     } catch (error) {
@@ -276,80 +277,64 @@ async function sendVerificationEmail(email,otp){
 
 const loadShoppingPage = async (req, res) => {
     try {
-        const user = req.session.user;
-        const userData = await User.findById(user)
-
-        const categories = await Category.find({ isListed: true });
-
-        const categoryIds = categories.map(cat => cat._id);
-
-        const brand = await Brand.find({ isListed: true });
-        const brandIds = brand.map(brand => brand._id);
-
+        const userId = req.session.user;
         const page = parseInt(req.query.page) || 1;
         const limit = 9;
         const skip = (page - 1) * limit;
-        
 
-          const products = await Product.find({
+        let userData = null;
+        if (userId) {
+            userData = await User.findById(userId);
+            cart = await Cart.findOne({userId})
+           
+        }
+
+        const categories = await Category.find({ isListed: true });
+        const brands = await Brand.find({ isListed: true });
+
+        const query = {
             isBlocked: false,
+            isDeleted: false,
             // quantity: { $gt: 0 }
-            isDeleted:false,
-        })
+        };
+
+        const products = await Product.find(query)
             .sort({ createdAt: -1 })
             .skip(skip)
-            .limit(limit);
+            .limit(limit)
+            .lean();
 
-        // Count all available products that belong to listed categories
-        const totalProducts = await Product.countDocuments({
-            isBlocked: false,
-            category: { $in: categoryIds },
-            quantity: { $gt: 0 }
-        });
-
+        const totalProducts = await Product.countDocuments(query);
         const totalPages = Math.ceil(totalProducts / limit);
 
-        const categoriesWithIds = categories.map(category => ({
-            _id: category._id,
-            name: category.name
-        }));
-        const brandsWithIds = brand.map(brand => ({
-            _id: brand._id,
-            name: brand.name
-        }));
-
-        // console.log(products, 'products list');
-        
-        
         res.render('shop', {
             user: userData,
             products,
-            category: categoriesWithIds,
-            brands: brandsWithIds,
+            cart,
+            category: categories,
+            brands,
             totalProducts,
             currentPage: page,
             totalPages,
-            profilePicture:userData.profilePicture
+            selectedCategory: null,
+            selectedBrand: null,
+            sort: 'newest',
+            priceRange: '',
+            search: '',
+            req,
+            profilePicture: userData?.profilePicture || null
         });
-
     } catch (error) {
-        console.log('error', error);
-        res.redirect("/pageNotFound");
+        console.error('Error in loadShoppingPage:', error);
+        res.status(500).render('error', { message: 'An error occurred while loading the shop page.' });
     }
 };
-
 
 
 const filterProduct = async (req, res) => {
     try {
         const userId = req.session.user;
-        const category = req.query.cat;
-        const brand =req.query.brand;
-        
-        const search = req.query.search?.trim();
-        const sort = req.query.sort || 'newest';
-        const priceRange = req.query.priceRange; 
-        const page = parseInt(req.query.page) || 1;
+        const { cat, brand, search, sort = 'newest', priceRange, page = 1 } = req.query;
         const itemsPerPage = 6;
 
         const query = {
@@ -363,24 +348,26 @@ const filterProduct = async (req, res) => {
         }
 
         const categories = await Category.find({ isListed: true });
-        const brands = await Brand.find({isListed:true})
+        const brands = await Brand.find({ isListed: true });
 
-        if (category) {
-            const findCategory = await Category.findById(category);
+        if (cat) {
+            const findCategory = await Category.findById(cat);
             if (!findCategory) {
                 return res.status(400).render('shop', {
                     user: userData,
                     products: [],
                     category: categories,
+                    brands,
                     totalPages: 0,
-                    currentPage: page,
+                    currentPage: parseInt(page) || 1,
                     selectedCategory: null,
-                    sort,
-                    priceRange: priceRange || '', 
+                    selectedBrand: null,
+                    sort: sort || 'newest',
+                    priceRange: priceRange || '',
                     search: search || '',
-                    req: req,
+                    req,
                     message: 'Invalid category selected',
-                    profilePicture: userData.profilePicture || null
+                    profilePicture: userData?.profilePicture || null
                 });
             }
             query.category = findCategory._id;
@@ -393,26 +380,29 @@ const filterProduct = async (req, res) => {
                 await userData.save();
             }
         }
-        if(brand){
+
+        if (brand) {
             const findBrand = await Brand.findById(brand);
-            if(!findBrand){
-                res.status(400).render('shop',{
+            if (!findBrand) {
+                return res.status(400).render('shop', {
                     user: userData,
                     products: [],
                     category: categories,
-                    totalPages: 0,
                     brands,
-                    currentPage: page,
-                    selectedCategory: null,
-                    sort,
-                    priceRange: priceRange || '', 
+                    totalPages: 0,
+                    currentPage: parseInt(page) || 1,
+                    selectedCategory: cat || null,
+                    selectedBrand: null,
+                    sort: sort || 'newest',
+                    priceRange: priceRange || '',
                     search: search || '',
-                    req: req,
+                    req,
                     message: 'Invalid brand selected',
-                    profilePicture:userData.profilePicture,
-                })
+                    profilePicture: userData?.profilePicture || null
+                });
             }
             query.brand = findBrand._id;
+
             if (userData) {
                 userData.searchHistory.push({
                     brand: findBrand._id,
@@ -420,17 +410,16 @@ const filterProduct = async (req, res) => {
                 });
                 await userData.save();
             }
-
         }
 
-        if (search) {
+        if (search?.trim()) {
             const matchingCategories = await Category.find({
-                name: { $regex: search, $options: 'i' }
+                name: { $regex: search.trim(), $options: 'i' }
             }).select('_id');
             const categoryIds = matchingCategories.map(cat => cat._id);
             query.$or = [
-                { productName: { $regex: search, $options: 'i' } },
-                { description: { $regex: search, $options: 'i' } }
+                { productName: { $regex: search.trim(), $options: 'i' } },
+                { description: { $regex: search.trim(), $options: 'i' } }
             ];
             if (categoryIds.length > 0) {
                 query.$or.push({ category: { $in: categoryIds } });
@@ -442,26 +431,33 @@ const filterProduct = async (req, res) => {
                 query.salePrice = { $gte: 250000 };
             } else {
                 const [minPrice, maxPrice] = priceRange.split('-').map(Number);
-                query.salePrice = { $gte: minPrice, $lte: maxPrice };
+                if (!isNaN(minPrice) && !isNaN(maxPrice)) {
+                    query.salePrice = { $gte: minPrice, $lte: maxPrice };
+                }
             }
         }
 
         let sortOptions = {};
-        if (sort === 'price-low') {
-            sortOptions = { salePrice: 1 };
-        } else if (sort === 'price-high') {
-            sortOptions = { salePrice: -1 };
-        } else if (sort === 'a-z') {
-            sortOptions = { productName: 1 };
-        } else if (sort === 'z-a') {
-            sortOptions = { productName: -1 };
-        } else {
-            sortOptions = { createdAt: -1 };
+        switch (sort) {
+            case 'price-low':
+                sortOptions = { salePrice: 1 };
+                break;
+            case 'price-high':
+                sortOptions = { salePrice: -1 };
+                break;
+            case 'a-z':
+                sortOptions = { productName: 1 };
+                break;
+            case 'z-a':
+                sortOptions = { productName: -1 };
+                break;
+            default:
+                sortOptions = { createdAt: -1 };
         }
 
         const totalProducts = await Product.countDocuments(query);
         const totalPages = Math.ceil(totalProducts / itemsPerPage);
-        const skip = (page - 1) * itemsPerPage;
+        const skip = (parseInt(page) - 1) * itemsPerPage;
 
         const products = await Product.find(query)
             .sort(sortOptions)
@@ -471,17 +467,18 @@ const filterProduct = async (req, res) => {
 
         res.render('shop', {
             user: userData,
-            products: products,
+            products,
             category: categories,
-            totalPages,
-            currentPage: page,
-            selectedCategory: category || null,
             brands,
-            sort,
-            priceRange: priceRange || '', 
+            totalPages,
+            currentPage: parseInt(page) || 1,
+            selectedCategory: cat || null,
+            selectedBrand: brand || null,
+            sort: sort || 'newest',
+            priceRange: priceRange || '',
             search: search || '',
-            req: req,
-            profilePicture:userData.profilePicture  ||null,
+            req,
+            profilePicture: userData?.profilePicture || null
         });
     } catch (error) {
         console.error('Error in filterProduct:', error);
