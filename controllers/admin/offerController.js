@@ -24,6 +24,8 @@ const getOffers = async (req, res) => {
     console.log(categories);
     
     const products = await Product.find({}).select('productName').lean();
+    
+    
 
     const totalOffers = await Offer.countDocuments(query);
     const offers = await Offer.find(query)
@@ -34,7 +36,7 @@ const getOffers = async (req, res) => {
         path: 'applicableTo',
         select: 'name productName'
       });
-      console.log(offers);
+      console.log(offers,'11111');
       
 
     res.render('offer', {

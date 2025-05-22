@@ -7,6 +7,7 @@ const env = require('dotenv').config();
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 const Cart = require("../../models/cartSchema");
+const Offer =require('../../models/offerSchema')
 
 const pageNotFound = async (req,res) => {
     try {
@@ -19,32 +20,96 @@ const pageNotFound = async (req,res) => {
 
 
 const loadHomePage = async (req, res) => {
-    try {
-        const userId = req.session.user;
-        let userData = null;
-        let profilePicture = null;
-        
-        if (userId) {
-            userData = await User.findById(userId);
-            profilePicture = userData?.profilePicture || '/img/default-profile.png';
-        }
-        
-        const categories = await Category.find({ isListed: true });
-        const productData = await Product.find({ isBlocked: false, quantity: { $gt: 0 } })
-            .sort({ createdAt: -1 })
-            .limit(4);
-        
-        return res.render('home', {
-            user: userData,
-            products: productData,
-            categories,
-             profilePicture: userData?.profilePicture || null
-        });
-        
-    } catch (error) {
-        console.error('Error loading home page:', error);
-        res.status(500).send('Server Error');
+  try {
+    const userId = req.session.user;
+    let userData = null;
+    let profilePicture = null;
+
+    if (userId) {
+      userData = await User.findById(userId);
+      profilePicture = userData?.profilePicture || '/img/default-profile.png';
     }
+
+    const categories = await Category.find({ isListed: true }).lean();
+    const products = await Product.find({ isBlocked: false,isDeleted:false, quantity: { $gt: 0 } })
+      .populate('category', 'name')
+      .sort({ createdAt: -1 })
+      .limit(4)
+      .lean();
+
+    // Fetch active percentage-based offers
+    const currentDate = new Date();
+    const offers = await Offer.find({
+      isListed: true,
+      isDeleted: false,
+      validFrom: { $lte: currentDate },
+      validUpto: { $gte: currentDate },
+      discountType: 'percentage', // You may want to include 'fixed' discounts too
+    })
+      .populate('applicableTo', 'name productName')
+      .lean();
+
+    // Map products to include the highest offer percentage and calculated offer price
+    const productsWithOffers = products.map(product => {
+      let offerPercentage = product.productOffer || 0;
+      let offerPrice = product.salePrice;
+      let appliedOffer = null;
+
+      // Check for product-specific offer
+      const productOffer = offers.find(
+        offer =>
+          offer.offerType === 'product' &&
+          offer.applicableTo &&
+          offer.applicableTo._id.toString() === product._id.toString()
+      );
+
+      // Check for category-specific offer
+      const categoryOffer = offers.find(
+        offer =>
+          offer.offerType === 'category' &&
+          offer.applicableTo &&
+          product.category &&
+          offer.applicableTo._id.toString() === product.category._id.toString()
+      );
+
+      // Use the highest percentage discount and calculate offer price
+      if (productOffer && (!categoryOffer || productOffer.discountAmount > categoryOffer.discountAmount)) {
+        offerPercentage = productOffer.discountAmount;
+        appliedOffer = productOffer;
+      } else if (categoryOffer) {
+        offerPercentage = categoryOffer.discountAmount;
+        appliedOffer = categoryOffer;
+      }
+
+      // Calculate offer price if there's an applicable offer
+      if (appliedOffer) {
+        if (appliedOffer.discountType === 'percentage') {
+          offerPrice = product.salePrice * (1 - offerPercentage / 100);
+        } else if (appliedOffer.discountType === 'fixed') {
+          offerPrice = product.salePrice - offerPercentage;
+        }
+        // Ensure offer price is not negative and round to nearest integer
+        offerPrice = Math.max(0, Math.round(offerPrice));
+      }
+
+      return {
+        ...product,
+        offerPercentage: Math.round(offerPercentage),
+        offerPrice: appliedOffer ? offerPrice : null, // Only include offerPrice if there's an offer
+        hasOffer: !!appliedOffer, // Boolean to indicate if an offer is applied
+      };
+    });
+
+    return res.render('home', {
+      user: userData,
+      products: productsWithOffers,
+      categories,
+      profilePicture: userData?.profilePicture || null,
+    });
+  } catch (error) {
+    console.error('Error loading home page:', error);
+    res.status(500).send('Server Error');
+  }
 };
 
 
@@ -276,60 +341,121 @@ async function sendVerificationEmail(email,otp){
 
 
 const loadShoppingPage = async (req, res) => {
-    try {
-        const userId = req.session.user;
-        const page = parseInt(req.query.page) || 1;
-        const limit = 9;
-        const skip = (page - 1) * limit;
+  try {
+    const userId = req.session.user;
+    const page = parseInt(req.query.page) || 1;
+    const limit = 9;
+    const skip = (page - 1) * limit;
 
-        let userData = null;
-        if (userId) {
-            userData = await User.findById(userId);
-            cart = await Cart.findOne({userId})
-           
-        }
-
-        const categories = await Category.find({ isListed: true });
-        const brands = await Brand.find({ isListed: true });
-
-        const query = {
-            isBlocked: false,
-            isDeleted: false,
-            // quantity: { $gt: 0 }
-        };
-
-        const products = await Product.find(query)
-            .sort({ createdAt: -1 })
-            .skip(skip)
-            .limit(limit)
-            .lean();
-
-        const totalProducts = await Product.countDocuments(query);
-        const totalPages = Math.ceil(totalProducts / limit);
-
-        res.render('shop', {
-            user: userData,
-            products,
-            cart,
-            category: categories,
-            brands,
-            totalProducts,
-            currentPage: page,
-            totalPages,
-            selectedCategory: null,
-            selectedBrand: null,
-            sort: 'newest',
-            priceRange: '',
-            search: '',
-            req,
-            profilePicture: userData?.profilePicture || null
-        });
-    } catch (error) {
-        console.error('Error in loadShoppingPage:', error);
-        res.status(500).render('error', { message: 'An error occurred while loading the shop page.' });
+    let userData = null;
+    let cart = null;
+    if (userId) {
+      userData = await User.findById(userId);
+      cart = await Cart.findOne({ userId });
     }
-};
 
+    const categories = await Category.find({ isListed: true }).lean();
+    const brands = await Brand.find({ isListed: true }).lean();
+
+    const query = {
+      isBlocked: false,
+      isDeleted: false,
+      // quantity: { $gt: 0 } // Removed to allow out-of-stock products to show
+    };
+
+    const products = await Product.find(query)
+      .populate('category', 'name')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    // Fetch active offers
+    const currentDate = new Date();
+    const offers = await Offer.find({
+      isListed: true,
+      isDeleted: false,
+      validFrom: { $lte: currentDate },
+      validUpto: { $gte: currentDate },
+    })
+      .populate('applicableTo', 'name productName')
+      .lean();
+
+    // Map products to include offer details
+    const productsWithOffers = products.map((product) => {
+      let offerPercentage = product.productOffer || 0;
+      let offerPrice = product.salePrice;
+      let appliedOffer = null;
+
+      // Check for product-specific offer
+      const productOffer = offers.find(
+        (offer) =>
+          offer.offerType === 'product' &&
+          offer.applicableTo &&
+          offer.applicableTo._id.toString() === product._id.toString()
+      );
+
+      // Check for category-specific offer
+      const categoryOffer = offers.find(
+        (offer) =>
+          offer.offerType === 'category' &&
+          offer.applicableTo &&
+          product.category &&
+          offer.applicableTo._id.toString() === product.category._id.toString()
+      );
+
+      // Use the highest discount
+      if (productOffer && (!categoryOffer || productOffer.discountAmount > categoryOffer.discountAmount)) {
+        offerPercentage = productOffer.discountAmount;
+        appliedOffer = productOffer;
+      } else if (categoryOffer) {
+        offerPercentage = categoryOffer.discountAmount;
+        appliedOffer = categoryOffer;
+      }
+
+      // Calculate offer price if there's an applicable offer
+      if (appliedOffer) {
+        if (appliedOffer.discountType === 'percentage') {
+          offerPrice = product.salePrice * (1 - offerPercentage / 100);
+        } else if (appliedOffer.discountType === 'fixed') {
+          offerPrice = product.salePrice - offerPercentage;
+        }
+        offerPrice = Math.max(0, Math.round(offerPrice));
+      }
+
+      return {
+        ...product,
+        offerPercentage: Math.round(offerPercentage),
+        offerPrice: appliedOffer ? offerPrice : null,
+        hasOffer: !!appliedOffer,
+      };
+    });
+
+    const totalProducts = await Product.countDocuments(query);
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    res.render('shop', {
+      user: userData,
+      products: productsWithOffers,
+      cart,
+      category: categories,
+      brands,
+      totalProducts,
+      currentPage: page,
+      totalPages,
+      selectedCategory: null,
+      selectedBrand: null,
+      sort: 'newest',
+      priceRange: '',
+      search: '',
+      req,
+      profilePicture: userData?.profilePicture || null,
+    });
+  } catch (error) {
+    console.error('Error in loadShoppingPage:', error);
+    res.status(500).render('error', { message: 'An error occurred while loading the shop page.' });
+  }
+};
 
 const filterProduct = async (req, res) => {
     try {

@@ -12,7 +12,6 @@ const isValidDate = (date) => {
 };
 const listCoupons = async(req,res)=>{
     try {
-        console.log('g=====================');
         
     const coupons = await Coupon.find().sort({ createdAt: -1 });
     res.render('coupons', { coupons }); 

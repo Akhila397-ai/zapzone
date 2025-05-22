@@ -240,13 +240,35 @@
             background-color: white;
             border-radius: 50%;
             box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-            color: #e74c3c;
+            color: #ccc;
             transition: all 0.3s;
+        }
+        
+        .wishlist-btn a.in-wishlist {
+            color: #e74c3c;
         }
         
         .wishlist-btn a:hover {
             color: #c0392b;
             transform: scale(1.1);
+        }
+        
+        .offer-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1;
+        }
+        
+        .offer-badge span {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #e74c3c;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
         }
         
         .product-details {
@@ -269,10 +291,25 @@
             font-size: 16px;
             margin-bottom: 15px;
             color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
         .price-box.out-of-stock {
             color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        .original-price {
+            text-decoration: line-through;
+            color: #999;
+            font-size: 14px;
+        }
+        
+        .offer-price {
+            color: #e74c3c;
+            font-size: 16px;
             font-weight: bold;
         }
         
@@ -385,7 +422,7 @@
             position: fixed;
             top: 20px;
             right: 20px;
-            background-color: #28a745; /* Green for success */
+            background-color: #28a745;
             color: white;
             padding: 15px 20px;
             border-radius: 5px;
@@ -400,7 +437,7 @@
         }
 
         .zz-notification.error {
-            background-color: #e74c3c; /* Red for error */
+            background-color: #e74c3c;
         }
 
         .zz-notification.show {
@@ -535,29 +572,40 @@
                     <div class="row product__filter" id="productsContainer">
                         <% if (products && products.length > 0) { %>
                             <% for(let i = 0; i < products.length; i++) { %>
-                                <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4" data-price="<%= products[i].salePrice %>" data-name="<%= products[i].productName %>">
+                                <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4" data-price="<%= products[i].hasOffer ? products[i].offerPrice : products[i].salePrice %>" data-name="<%= products[i].productName %>">
                                     <div class="product-item">
                                         <div class="product-img-wrap">
-                                            <a href="productDetails?id=<%= products[i]._id %>">
+                                            <a href="/productDetails?id=<%= products[i]._id %>">
                                                 <img src="/Uploads/product-images/<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>">
                                             </a>
                                             <div class="wishlist-btn">
-                                                <a href="/addToWishlist?id=<%= products[i]._id %>" aria-label="Add to wishlist">
+                                                <a href="#" class="wishlist-toggle" data-product-id="<%= products[i]._id %>">
                                                     <i class="fa fa-heart"></i>
                                                 </a>
                                             </div>
+                                            <% if (products[i].hasOffer && products[i].offerPercentage > 0) { %>
+                                                <div class="offer-badge">
+                                                    <span><%= products[i].offerPercentage %>% OFF</span>
+                                                </div>
+                                            <% } %>
                                         </div>
                                         <div class="product-details">
-                                            <h6><a href="productDetails?id=<%= products[i]._id %>" class="text-dark text-decoration-none"><%= products[i].productName %></a></h6>
+                                            <h6><a href="/productDetails?id=<%= products[i]._id %>" class="text-dark text-decoration-none"><%= products[i].productName %></a></h6>
                                             <div class="price-box <%= products[i].quantity === 0 ? 'out-of-stock' : '' %>">
                                                 <% if (products[i].quantity > 0) { %>
-                                                    ₹ <%= products[i].salePrice %>
+                                                    <% if (products[i].hasOffer && products[i].offerPrice !== null) { %>
+                                                        <span class="original-price">₹ <%= products[i].salePrice.toLocaleString('en-IN') %></span>
+                                                        <span class="offer-price">₹ <%= products[i].offerPrice.toLocaleString('en-IN') %></span>
+                                                    <% } else { %>
+                                                        ₹ <%= products[i].salePrice.toLocaleString('en-IN') %>
+                                                    <% } %>
                                                 <% } else { %>
                                                     Out of Stock
                                                 <% } %>
                                             </div>
                                             <button class="cart-btn <%= products[i].quantity === 0 ? 'disabled' : '' %>" 
-                                                    data-product-id="<%= products[i]._id %>" 
+                                                    data-product-id="<%= products[i]._id %>"
+                                                    data-offer-price="<%= products[i].hasOffer ? products[i].offerPrice : products[i].salePrice %>"
                                                     <%= products[i].quantity === 0 ? 'disabled' : '' %>>
                                                 <%= products[i].quantity > 0 ? 'ADD TO CART' : 'OUT OF STOCK' %>
                                             </button>
@@ -610,43 +658,39 @@
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const filterForm = document.getElementById('filterForm');
-            const productsContainer = document.getElementById('productsContainer');
-            const paginationContainer = document.getElementById('paginationContainer');
-            const searchCancelBtn = document.querySelector('.zz-search-cancel');
-            const searchInput = document.querySelector('.zz-search-input');
-            const resetFiltersBtn = document.getElementById('resetFilters');
-            const loadingOverlay = document.getElementById('loadingOverlay');
+        $(document).ready(function() {
+            const filterForm = $('#filterForm');
+            const productsContainer = $('#productsContainer');
+            const paginationContainer = $('#paginationContainer');
+            const searchCancelBtn = $('.zz-search-cancel');
+            const searchInput = $('.zz-search-input');
+            const resetFiltersBtn = $('#resetFilters');
+            const loadingOverlay = $('#loadingOverlay');
 
             // Function to show notification
             function showNotification(message, type = 'success') {
-                const notification = document.getElementById('notification');
-                const notificationMessage = document.getElementById('notificationMessage');
+                const notification = $('#notification');
+                const notificationMessage = $('#notificationMessage');
                 
-                notificationMessage.textContent = message;
-                notification.className = `zz-notification ${type} show`;
+                notificationMessage.text(message);
+                notification.removeClass().addClass(`zz-notification ${type} show`);
+                notification.show();
                 
-                // Show notification
-                notification.style.display = 'block';
-                
-                // Auto-hide after 2 seconds
                 setTimeout(() => {
-                    notification.style.animation = 'slideOut 0.3s ease-in-out';
+                    notification.css('animation', 'slideOut 0.3s ease-in-out');
                     setTimeout(() => {
-                        notification.style.display = 'none';
-                        notification.style.animation = 'slideIn 0.3s ease-in-out';
-                        notification.className = 'zz-notification'; // Reset classes
+                        notification.hide().css('animation', 'slideIn 0.3s ease-in-out');
+                        notification.removeClass('show');
                     }, 300);
                 }, 2000);
             }
 
             function showLoading() {
-                if (loadingOverlay) loadingOverlay.style.display = 'flex';
+                loadingOverlay.show();
             }
 
             function hideLoading() {
-                if (loadingOverlay) loadingOverlay.style.display = 'none';
+                loadingOverlay.hide();
             }
 
             function fetchProducts(params = {}, page = 1) {
@@ -654,7 +698,7 @@
                 params.page = page;
 
                 // Collect all filter parameters
-                const formData = new FormData(filterForm);
+                const formData = new FormData(filterForm[0]);
                 const currentParams = {
                     search: formData.get('search') || '',
                     sort: formData.get('sort') || 'newest',
@@ -682,20 +726,19 @@
                         const newProducts = $response.find('#productsContainer').html();
                         const newPagination = $response.find('#paginationContainer').html();
                         
-                        if (productsContainer) {
-                            productsContainer.innerHTML = newProducts || '<div class="col-12 text-center py-5"><h4>No products found</h4><p>Try adjusting your filters or search criteria</p></div>';
-                        }
+                        productsContainer.html(newProducts || '<div class="col-12 text-center py-5"><h4>No products found</h4><p>Try adjusting your filters or search criteria</p></div>');
                         
-                        if (paginationContainer && newPagination) {
-                            paginationContainer.innerHTML = newPagination;
-                        } else if (paginationContainer) {
-                            paginationContainer.innerHTML = '';
+                        if (newPagination) {
+                            paginationContainer.html(newPagination);
+                        } else {
+                            paginationContainer.html('');
                         }
 
                         updateFilterStates(currentParams);
                         hideLoading();
                         attachCartButtonListeners();
                         attachWishlistButtonListeners();
+                        checkWishlistStatus();
                     },
                     error: function() {
                         showNotification('Error fetching products. Please try again.', 'error');
@@ -717,81 +760,142 @@
 
                 $('#sortSelect').val(params.sort || 'newest');
                 $('#priceRange').val(params.priceRange || '');
-                searchInput.value = params.search || '';
+                searchInput.val(params.search || '');
+            }
+
+            function checkWishlistStatus() {
+                const productIds = $('.wishlist-toggle').map(function() {
+                    return $(this).data('product-id');
+                }).get();
+
+                if (productIds.length === 0) return;
+
+                $.ajax({
+                    url: '/checkWishlistStatus',
+                    method: 'POST',
+                    data: { productIds: productIds },
+                    success: function(response) {
+                        if (response.success) {
+                            response.wishlist.forEach(function(item) {
+                                const productId = item.productId;
+                                const inWishlist = item.inWishlist;
+                                const $wishlistBtn = $(`.wishlist-toggle[data-product-id="${productId}"]`);
+                                if (inWishlist) {
+                                    $wishlistBtn.addClass('in-wishlist');
+                                } else {
+                                    $wishlistBtn.removeClass('in-wishlist');
+                                }
+                            });
+                        } else {
+                            console.error('Error checking wishlist status:', response.message);
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('AJAX Error checking wishlist status:', xhr.status, xhr.responseText);
+                    }
+                });
             }
 
             function attachCartButtonListeners() {
-                const cartButtons = document.querySelectorAll('.cart-btn:not(.disabled)');
-                cartButtons.forEach(button => {
-                    button.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        const productId = this.getAttribute('data-product-id');
-                        const quantity = 1;
+                const cartButtons = $('.cart-btn:not(.disabled)');
+                cartButtons.on('click', function(e) {
+                    e.preventDefault();
+                    const $this = $(this);
+                    if ($this.hasClass('disabled')) return;
+                    $this.prop('disabled', true);
+                    const productId = $this.data('product-id');
+                    const offerPrice = $this.data('offer-price');
+                    const quantity = 1;
 
-                        $.ajax({
-                            url: '/addToCart',
-                            type: 'POST',
-                            data: {productId,quantity},
-                            success: function(response) {
-                                if (response.success) {
-                                    showNotification('Product added to cart!', 'success');
-                                } else {
-                                    showNotification('Could not add to cart. Please try again.', 'error');
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                                showNotification('Something went wrong!', 'error');
-                                console.error('AJAX Error:', status, error);
+                    showLoading();
+
+                    $.ajax({
+                        url: '/addToCart',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            productId: productId,
+                            quantity: quantity,
+                            offerPrice: offerPrice,
+                            offerId: null, // Add offerId if needed
+                            flag: false
+                        }),
+                        success: function(response) {
+                            $this.prop('disabled', false);
+                            hideLoading();
+                            if (response.success) {
+                                showNotification('Product added to cart!', 'success');
+                            } else {
+                                showNotification(response.message || 'Could not add to cart. Please log in.', 'error');
                             }
-                        });
+                        },
+                        error: function(xhr) {
+                            $this.prop('disabled', false);
+                            hideLoading();
+                            let errorMessage = 'Something went wrong while adding to cart!';
+                            try {
+                                const response = JSON.parse(xhr.responseText);
+                                errorMessage = response.message || errorMessage;
+                            } catch (e) {
+                                // Non-JSON response
+                            }
+                            if (xhr.status === 401) {
+                                showNotification('Please log in to add items to your cart.', 'error');
+                                setTimeout(() => { window.location.href = '/login'; }, 1000);
+                            } else {
+                                showNotification(errorMessage, 'error');
+                            }
+                        }
                     });
                 });
             }
 
-         function attachWishlistButtonListeners() {
-    const wishlistButtons = document.querySelectorAll('.wishlist-btn a');
-
-    wishlistButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-
-            const href = this.getAttribute('href');
-            const productId = new URLSearchParams(href.split('?')[1]).get('id');
-            console.log('Href:', href);
-            console.log('ProductId:', productId);
-
-            if (!productId) {
-                showNotification('Product ID is missing!', 'error');
-                return;
-            }
-
-            $.ajax({
-                url: '/addToWishlist',
-                type: 'POST',
-                data: { productId: productId },
-                success: function(response) {
-                    if (response.success) {
-                        showNotification('Added to your wishlist!', 'success');
-                    } else {
-                        showNotification(response.message || 'Could not add to wishlist.', 'error');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    showNotification('Something went wrong!', 'error');
-                    console.error('AJAX Error:', status, error, xhr.responseText);
-                }
-            });
-        });
-    });
-}
-
-
-            if (filterForm) {
-                filterForm.addEventListener('submit', function(e) {
+            function attachWishlistButtonListeners() {
+                const wishlistButtons = $('.wishlist-toggle');
+                wishlistButtons.on('click', function(e) {
                     e.preventDefault();
-                    fetchProducts();
+                    const $this = $(this);
+                    if ($this.hasClass('disabled')) return;
+                    $this.addClass('disabled');
+                    const productId = $this.data('product-id');
+                    const isInWishlist = $this.hasClass('in-wishlist');
+                    const url = isInWishlist ? '/removeFromWishlist' : '/addToWishlist';
+
+                    $.ajax({
+                        url: url,
+                        method: 'POST',
+                        data: { productId: productId },
+                        success: function(response) {
+                            $this.removeClass('disabled');
+                            if (response.success) {
+                                if (isInWishlist) {
+                                    $this.removeClass('in-wishlist');
+                                    showNotification('Removed from your wishlist!', 'success');
+                                } else {
+                                    $this.addClass('in-wishlist');
+                                    showNotification('Added to your wishlist!', 'success');
+                                }
+                            } else {
+                                showNotification(response.message || 'Could not update wishlist.', 'error');
+                            }
+                        },
+                        error: function(xhr) {
+                            $this.removeClass('disabled');
+                            if (xhr.status === 401) {
+                                showNotification('Please log in to manage your wishlist.', 'error');
+                                setTimeout(() => { window.location.href = '/login'; }, 1000);
+                            } else {
+                                showNotification('Something went wrong with wishlist!', 'error');
+                            }
+                        }
+                    });
                 });
             }
+
+            filterForm.on('submit', function(e) {
+                e.preventDefault();
+                fetchProducts();
+            });
 
             $('.filter-item').on('click', function(e) {
                 e.preventDefault();
@@ -802,21 +906,17 @@
                 fetchProducts({ [filterType]: filterValue });
             });
 
-            if (searchCancelBtn && searchInput) {
-                searchCancelBtn.addEventListener('click', function() {
-                    searchInput.value = '';
-                    fetchProducts({ search: '' });
-                });
-            }
+            searchCancelBtn.on('click', function() {
+                searchInput.val('');
+                fetchProducts({ search: '' });
+            });
 
-            if (resetFiltersBtn) {
-                resetFiltersBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    filterForm.reset();
-                    $('.filter-item').removeClass('active');
-                    fetchProducts({});
-                });
-            }
+            resetFiltersBtn.on('click', function(e) {
+                e.preventDefault();
+                filterForm[0].reset();
+                $('.filter-item').removeClass('active');
+                fetchProducts({});
+            });
 
             $(document).on('click', '.zz-page-link', function(e) {
                 e.preventDefault();
@@ -826,15 +926,17 @@
                 }
             });
 
-            const sortSelect = document.querySelector('.zz-sort-select');
-            if (sortSelect && productsContainer) {
-                sortSelect.addEventListener('change', function() {
-                    fetchProducts({ sort: this.value });
-                });
-            }
+            $('#sortSelect').on('change', function() {
+                fetchProducts({ sort: this.value });
+            });
+
+            $('#priceRange').on('change', function() {
+                fetchProducts({ priceRange: this.value });
+            });
 
             attachCartButtonListeners();
             attachWishlistButtonListeners();
+            checkWishlistStatus();
         });
     </script>
 </body>

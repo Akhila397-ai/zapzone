@@ -17,7 +17,7 @@ const orderSchema = new Schema({
   orderedItems: [{
     product: {
       type: Schema.Types.ObjectId,
-      ref: "Product",
+      ref: "product",
       required: true,
   
     },
@@ -90,6 +90,13 @@ const orderSchema = new Schema({
     enum: ['COD', 'Razorpay', 'Wallet'],
     default: 'COD'
   },
+  paymentStatus: {
+  type: String,
+  enum: ['Pending', 'Paid', 'Failed', 'Cancelled'],
+  default: 'Pending'
+},
+
+  
 });
 
 const Order = mongoose.model("Order", orderSchema);
