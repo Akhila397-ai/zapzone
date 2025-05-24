@@ -1,4 +1,3 @@
-
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/user/userController");
@@ -89,7 +88,8 @@ router.post('/apply-coupon',userAuth,checkoutContoller.applyCoupon);
 router.post('/remove-coupon',userAuth,checkoutContoller.removeCoupon);
 router.post('/create-razorpay-order',checkoutContoller.createRazorpayOrder);
 router.post('/verify-razorpay-payment',checkoutContoller.verifyRazorpayPayment);
-router.get('/payment-failure', userAuth,checkoutContoller.loadPaymentFailurePage)
+router.get('/payment-failure', userAuth,checkoutContoller.loadPaymentFailurePage);
+router.get('/retry-payment', userAuth, checkoutContoller.retryPayment);
 
 
 
@@ -103,6 +103,22 @@ router.get('/wishlist',userAuth,wishlistController.loadWishlist);
 router.post('/addToWishlist',userAuth,wishlistController.addToWishlist);
 router.patch('/remove-from-wishlist',userAuth,wishlistController.removeFromWishlist)
 
-
+const removeCoupon = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const cart = await Cart.findOne({ userId });
+    if (!cart) {
+      return res.status(404).json({ success: false, message: "Cart not found" });
+    }
+    cart.discount = 0;
+    cart.coupon = { code: "", discount: 0 };
+    cart.total = cart.subtotal + cart.shipping;
+    await cart.save();
+    res.status(200).json({ success: true, message: "Coupon removed successfully" });
+  } catch (error) {
+    console.error("Error removing coupon:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
 
 module.exports = router

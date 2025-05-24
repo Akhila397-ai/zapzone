@@ -17,11 +17,12 @@ const findBestOffer = async (productId) => {
     const offers = await Offer.find({
       isListed: true,
       isDeleted: false,
+
       validFrom: { $lte: currentDate },
       validUpto: { $gte: currentDate },
       $or: [
-        { offerType: 'Product', applicableTo: productId },
-        { offerType: 'Category', applicableTo: product.category._id },
+        { offerType: 'product', applicableTo: productId },
+        { offerType: 'category', applicableTo: product.category._id },
       ],
     });
 
@@ -134,6 +135,7 @@ const addToCart = async (req, res) => {
       return res.status(400).json({ success: false, message: "Invalid quantity" });
     }
 
+
     const product = await Product.findById(productId).populate('category');
     if (!product || typeof product.salePrice !== "number") {
       return res.status(404).json({ success: false, message: "Product not found or price missing" });
@@ -158,8 +160,8 @@ const addToCart = async (req, res) => {
       }
 
       if (
-        (offer.offerType === 'Product' && offer.applicableTo.toString() !== productId) ||
-        (offer.offerType === 'Category' && offer.applicableTo.toString() !== product.category._id.toString())
+        (offer.offerType === 'product' && offer.applicableTo.toString() !== productId) ||
+        (offer.offerType === 'category' && offer.applicableTo.toString() !== product.category._id.toString())
       ) {
         return res.status(400).json({ success: false, message: "Offer is not applicable to this product" });
       }

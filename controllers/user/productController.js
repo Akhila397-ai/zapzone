@@ -3,26 +3,32 @@ const Category = require('../../models/categorySchema');
 const User = require('../../models/userSchema');
 const Offer = require('../../models/offerSchema')
 const mongoose = require('mongoose');
-
 const findBestOffer = async (productId) => {
   try {
-    const product = await Product.findById(productId).populate('category');
-    if (!product) {
-      return { offer: null, discountedPrice: product.salePrice, discount: 0, offers: [] };
+    // Fetch product with category
+    const product = await Product.findById(productId).populate('category').lean();
+    if (!product || !product.category) {
+      return { offer: null, discountedPrice: null, discount: 0, offers: [] };
     }
 
+    // Fetch valid offers for the product or its category
     const currentDate = new Date();
     const offers = await Offer.find({
+      $or: [
+        { offerType: 'product', applicableTo: productId },
+        { offerType: 'category', applicableTo: product.category._id }
+      ],
       isListed: true,
       isDeleted: false,
       validFrom: { $lte: currentDate },
-      validUpto: { $gte: currentDate },
-      $or: [
-        { offerType: 'Product', applicableTo: productId },
-        { offerType: 'Category', applicableTo: product.category._id },
-      ],
-    });
+      validUpto: { $gte: currentDate }
+    }).lean();
 
+    if (!offers || offers.length === 0) {
+      return { offer: null, discountedPrice: product.salePrice, discount: 0, offers: [] };
+    }
+
+    // Calculate the best offer
     let bestOffer = null;
     let maxDiscount = 0;
     let discountedPrice = product.salePrice;
@@ -30,14 +36,13 @@ const findBestOffer = async (productId) => {
     for (const offer of offers) {
       let discount = 0;
       if (offer.discountType === 'percentage') {
-        discount = (product.salePrice * offer.discountAmount) / 100;
+        discount = (product.salePrice * Math.min(offer.discountAmount, 100)) / 100;
       } else if (offer.discountType === 'fixed') {
         discount = offer.discountAmount;
       }
 
-      if (discount > product.salePrice) {
-        discount = product.salePrice;
-      }
+      // Cap discount to prevent negative prices
+      discount = Math.min(discount, product.salePrice);
 
       if (discount > maxDiscount && product.salePrice >= offer.minPurchase) {
         maxDiscount = discount;
@@ -53,24 +58,27 @@ const findBestOffer = async (productId) => {
         discountType: bestOffer.discountType,
         discountAmount: bestOffer.discountAmount,
         minPurchase: bestOffer.minPurchase,
-        offerName: bestOffer.offerName, 
+        offerName: bestOffer.offerName,
+        validUpto: bestOffer.validUpto
       } : null,
-      discountedPrice: discountedPrice < 0 ? 0 : discountedPrice,
-      discount: maxDiscount,
+      discountedPrice: discountedPrice < 0 ? 0 : discountedPrice.toFixed(2),
+      discount: maxDiscount.toFixed(2),
       offers: offers.map(offer => ({
         _id: offer._id,
         code: offer.code,
         discountType: offer.discountType,
         discountAmount: offer.discountAmount,
         minPurchase: offer.minPurchase,
-        offerName: offer.offerName, 
-      })),
+        offerName: offer.offerName,
+        validUpto: offer.validUpto
+      }))
     };
   } catch (error) {
     console.error('Error finding best offer:', error);
     return { offer: null, discountedPrice: null, discount: 0, offers: [] };
   }
 };
+
 
 const productDetails = async (req, res) => {
   try {
@@ -110,7 +118,7 @@ const productDetails = async (req, res) => {
 
     const { offer, discountedPrice, discount, offers } = await findBestOffer(productId);
 
-    return res.render('product-details', {
+    return res.render('user/product-details', {
       product,
       userData,
       findCategory,
@@ -118,11 +126,12 @@ const productDetails = async (req, res) => {
       currentPage: page,
       totalPages,
       bestOffer: offer,
-      offers, 
+      offers,
       discountedPrice,
       discount,
       searchQuery: search || '',
       profilePicture: userData?.profilePicture || null,
+      isLoggedIn: !!userId // Add isLoggedIn based on req.session.user
     });
   } catch (error) {
     console.error('Error fetching product details:', error);

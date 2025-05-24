@@ -313,37 +313,34 @@
             <div class="order-history orders-content">
                 <% if (orders && orders.length > 0) { %>
                     <% orders.forEach(order => { %>
-                        <div class="order-card">
-                            <div class="status-badge <%= order.status === 'Delivered' ? 'status-delivered' : order.status === 'Cancelled' ? 'status-cancelled' : 'status-processing' %>">
-                                <%= order.status %>
-                            </div>
-                            
-                            <div class="order-header">
-                                <div class="order-id">Order #<%= order.orderId %></div>
-                                <div class="order-date"><%= new Date(order.orderDate).toLocaleDateString('en-GB') %></div>
-                            </div>
-                            
-                            <% order.orderedItems.forEach(item => { %>
-                                <div class="order-item">
-                                    <img src="<%= item.product && item.product.productImage && item.product.productImage[0] ? '/Uploads/product-images/' + item.product.productImage[0] : '/images/placeholder.jpg' %>" alt="<%= item.product && item.product.name ? item.product.name : 'Product' %>" />
-                                    <div class="product-details"> 
-                                        <div class="product-name"><%= item.product?.productName || 'Product Name Unavailable' %></div>
-                                        <div class="product-qty">Qty: <%= item.quantity %></div>
-                                        <div class="product-price">₹<%= item.price %></div>
-                                    </div>
-                                </div>
-                            <% }) %>
-                            
-                            <div class="order-total">
-                                <div class="total-label">Total: <span class="total-amount">₹<%= order.totalPrice %></span></div>
-                                <button class="view-details" data-order-id="<%= order.orderId %>">View Details</button>
+                    <div class="order-card">
+                        <div class="status-badge <%= order.status === 'Delivered' ? 'status-delivered' : order.status === 'Cancelled' ? 'status-cancelled' : 'status-processing' %>">
+                        <%= order.status %> (Payment: <%= order.paymentStatus %>)
+                        </div>
+                        <div class="order-header">
+                        <div class="order-id">Order #<%= order.orderId %></div>
+                        <div class="order-date"><%= new Date(order.orderDate || order.createdOn).toLocaleDateString('en-GB') %></div>
+                        </div>
+                        <% order.orderedItems.forEach(item => { %>
+                        <div class="order-item">
+                            <img src="<%= item.product && item.product.productImage && item.product.productImage[0] ? '/Uploads/product-images/' + item.product.productImage[0] : '/images/placeholder.jpg' %>" alt="<%= item.product && item.product.productName ? item.product.productName : 'Product' %>" />
+                            <div class="product-details">
+                            <div class="product-name"><%= item.product?.productName || 'Product Name Unavailable' %></div>
+                            <div class="product-qty">Qty: <%= item.quantity %></div>
+                            <div class="product-price">₹<%= item.price %></div>
                             </div>
                         </div>
+                        <% }) %>
+                        <div class="order-total">
+                        <div class="total-label">Total: <span class="total-amount">₹<%= order.finalAmount %></span></div>
+                        <button class="view-details" data-order-id="<%= order.orderId %>">View Details</button>
+                        </div>
+                    </div>
                     <% }) %>
                 <% } else { %>
                     <div class="no-orders">No orders found.</div>
                 <% } %>
-            </div>
+                </div>
         </div>
     </div>
      <!-- Pagination Section -->

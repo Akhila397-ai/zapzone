@@ -263,10 +263,10 @@
                     <p>Time: <span id="timestamp" class="error-code"></span></p>
                 </div>
                 
-                <div class="payment-action-buttons">
-                    <a href="/checkout" class="zz-btn zz-btn-primary" id="tryAgainBtn">Try Payment Again</a>
-                    <a href="/contact" class="zz-btn zz-btn-secondary">Contact Support</a>
-                </div>
+            <div class="payment-action-buttons">
+  <a href="<%= orderId ? '/retry-payment?orderId=' + orderId : '/checkout' %>" class="zz-btn zz-btn-primary" id="tryAgainBtn">Try Payment Again</a>
+  <a href="/contact" class="zz-btn zz-btn-secondary">Contact Support</a>
+</div>
             </div>
         </div>
     </div>
