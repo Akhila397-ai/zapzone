@@ -1,4 +1,3 @@
-<%- include("../partials/user/header") %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZAPZONE - Payment Failed</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
-    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
-    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <style>
         /* Base Styles */
@@ -258,102 +259,260 @@
                 
                 <div class="payment-error-details">
                     <h3>Error Details</h3>
-                    <p>Order ID: <span class="error-code">ZZ-ORD-78952463</span></p>
-                    <p>Error: <span class="error-code">Payment authorization failed</span></p>
+                    <p>Order ID: <span class="error-code"><%= orderId || 'N/A' %></span></p>
+                    <p>Error: <span id="errorMessage" class="error-code"><%= error || 'N/A' %></span></p>
                     <p>Time: <span id="timestamp" class="error-code"></span></p>
                 </div>
                 
-            <div class="payment-action-buttons">
-  <a href="<%= orderId ? '/retry-payment?orderId=' + orderId : '/checkout' %>" class="zz-btn zz-btn-primary" id="tryAgainBtn">Try Payment Again</a>
-  <a href="/contact" class="zz-btn zz-btn-secondary">Contact Support</a>
-</div>
+                <div class="payment-action-buttons">
+                   <% if (orderId && orderId !== 'null' && orderId !== '') { %>
+    <button class="zz-btn zz-btn-primary" id="tryAgainBtn" data-order-id="<%= orderId %>" aria-label="Retry payment for order">Try Payment Again</button>
+    <button class="btn btn-secondary view-details" data-order-id="<%= orderId %>">
+        <i class="fa fa-eye"></i> View Order Details
+    </button>
+<% } else { %>
+    <a href="/orders" class="zz-btn zz-btn-primary" aria-label="View your orders">View Orders</a>
+<% } %>
+                </div>
             </div>
         </div>
     </div>
 
     <%- include("../partials/user/footer") %>
 
-    <script src="js/jquery-3.3.1.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
     <script>
-        // Set current timestamp
-        document.getElementById('timestamp').textContent = new Date().toLocaleString();
-        
-        // Animations using GSAP
         document.addEventListener('DOMContentLoaded', () => {
-            // Main container animation
-            gsap.to('.payment-failed-box', {
-                opacity: 1,
-                y: 0,
-                duration: 0.6,
-                ease: 'power2.out'
-            });
-            
-            // Circle animation
-            gsap.to('.error-circle', {
-                scale: 1,
-                duration: 0.5,
-                ease: 'back.out(1.7)',
-                delay: 0.2
-            });
-            
-            // Exclamation mark animation
-            gsap.to('.error-exclamation', {
-                opacity: 1,
-                duration: 0.3,
-                delay: 0.6
-            });
-            
-            // Text elements animation
-            gsap.to('.payment-failed-title', {
-                opacity: 1,
-                y: 0,
-                duration: 0.5,
-                delay: 0.7
-            });
-            
-            gsap.to('.payment-failed-text', {
-                opacity: 1,
-                y: 0,
-                duration: 0.5,
-                delay: 0.8
-            });
-            
-            gsap.to('.payment-error-details', {
-                opacity: 1,
-                y: 0,
-                duration: 0.5,
-                delay: 0.9
-            });
-            
-            gsap.to('.payment-action-buttons', {
-                opacity: 1,
-                y: 0,
-                duration: 0.5,
-                delay: 1.0
-            });
-            
-            // Button shake animation when clicked
-            document.getElementById('tryAgainBtn').addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                gsap.to('#tryAgainBtn', {
-                    x: [-5, 5, -5, 5, 0],
-                    duration: 0.4,
-                    onComplete: () => {
-                        // Simulate reload or redirect
-                        gsap.to('.payment-failed-box', {
-                            opacity: 0,
-                            y: -20,
-                            duration: 0.3,
-                            delay: 0.2,
-                            onComplete: () => {
-                                window.location.href = '/checkout';
-                            }
-                        });
-                    }
+    // Existing code...
+
+    document.querySelectorAll('.view-details').forEach(button => {
+        button.addEventListener('click', () => {
+            const orderId = button.getAttribute('data-order-id');
+            if (orderId && orderId !== 'null' && orderId !== '') {
+                window.location.href = `/order-details/${orderId}`;
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Order ID not found. Please try again.',
+                    showConfirmButton: true
                 });
-            });
+            }
+        });
+    });
+});
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set timestamp
+            document.getElementById('timestamp').textContent = new Date().toLocaleString();
+
+            // GSAP animations
+            gsap.to('.payment-failed-box', { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' });
+            gsap.to('.error-circle', { scale: 1, duration: 0.5, ease: 'back.out(1.7)', delay: 0.2 });
+            gsap.to('.error-exclamation', { opacity: 1, duration: 0.3, delay: 0.6 });
+            gsap.to('.payment-failed-title', { opacity: 1, y: 0, duration: 0.5, delay: 0.7 });
+            gsap.to('.payment-failed-text', { opacity: 1, y: 0, duration: 0.5, delay: 0.8 });
+            gsap.to('.payment-error-details', { opacity: 1, y: 0, duration: 0.5, delay: 0.9 });
+            gsap.to('.payment-action-buttons', { opacity: 1, y: 0, duration: 0.5, delay: 1.0 });
+
+            // Map Razorpay error codes to user-friendly messages
+            const errorMessages = {
+                'BAD_REQUEST_ERROR': 'Invalid payment details. Please check your card or account details and try again.',
+                'SERVER_ERROR': 'Payment service is temporarily unavailable. Please try again later.',
+                'GATEWAY_ERROR': 'There was an issue with the payment gateway. Please try again or use a different payment method.',
+                'default': 'An unexpected error occurred. Please try again or contact support.'
+            };
+
+            // Try Payment Again button
+            const tryAgainBtn = document.getElementById('tryAgainBtn');
+            if (tryAgainBtn) {
+                tryAgainBtn.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    const orderId = this.getAttribute('data-order-id');
+                    console.log('Retry Payment for Order:', orderId);
+
+                    // Check if Razorpay SDK is loaded
+                    if (typeof Razorpay === 'undefined') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Payment Error',
+                            text: 'Payment service unavailable. Please try again later.',
+                            showConfirmButton: true
+                        });
+                        return;
+                    }
+
+                    gsap.to('#tryAgainBtn', {
+                        x: [-5, 5, -5, 5, 0],
+                        duration: 0.4,
+                        onComplete: async () => {
+                            try {
+                                // Fetch order details for prefill data
+                                const orderResponse = await fetch(`/order-details/${orderId}`, {
+                                    method: 'GET',
+                                    headers: { 'Content-Type': 'application/json' }
+                                });
+                                const orderDetails = await orderResponse.json();
+                                if (!orderDetails.success || !orderDetails.order) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'Unable to retrieve order details. Please try again or contact support.',
+                                        showConfirmButton: true
+                                    });
+                                    return;
+                                }
+
+                                // Fetch Razorpay key from config endpoint
+                                const configResponse = await fetch('/config', {
+                                    method: 'GET',
+                                    headers: { 'Content-Type': 'application/json' }
+                                });
+                                const config = await configResponse.json();
+                                if (!config.razorpayKeyId) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Configuration Error',
+                                        text: 'Payment configuration is missing. Please contact support.',
+                                        showConfirmButton: true
+                                    });
+                                    return;
+                                }
+
+                                // Create Razorpay order
+                                const response = await fetch('/create-razorpay-order', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ orderId })
+                                });
+                                const result = await response.json();
+                                console.log('Create Razorpay order response:', result);
+
+                                if (!result.success || !result.order) {
+                                    const errorMessage = errorMessages[result.errorCode] || result.message || 'Failed to create payment order.';
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Order Creation Failed',
+                                        text: errorMessage,
+                                        showConfirmButton: true
+                                    });
+                                    document.getElementById('errorMessage').textContent = errorMessage;
+                                    return;
+                                }
+
+                                // Initialize Razorpay modal
+                                const options = {
+                                    key: config.razorpayKeyId,
+                                    amount: result.order.amount,
+                                    currency: result.order.currency || 'INR',
+                                    name: 'ZAPZONE',
+                                    description: `Retry Payment for Order ${orderId}`,
+                                    image: '/img/logo.png',
+                                    order_id: result.order.id,
+                                    handler: async function(response) {
+                                        console.log('Razorpay payment response:', response);
+                                        try {
+                                            const verifyResponse = await fetch('/verify-razorpay-payment', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({
+                                                    razorpay_order_id: response.razorpay_order_id,
+                                                    razorpay_payment_id: response.razorpay_payment_id,
+                                                    razorpay_signature: response.razorpay_signature,
+                                                    orderId
+                                                })
+                                            });
+                                            const verifyResult = await verifyResponse.json();
+                                            console.log('Verify payment response:', verifyResult);
+
+                                            if (verifyResult.success) {
+                                                Swal.fire({
+                                                    icon: 'success',
+                                                    title: 'Payment Successful',
+                                                    text: 'Your payment was successful! Your order is being processed.',
+                                                    timer: 2000,
+                                                    showConfirmButton: false
+                                                }).then(() => {
+                                                    window.location.href = `/order-success?orderId=${encodeURIComponent(orderId)}`;
+                                                });
+                                            } else {
+                                                const errorMessage = errorMessages[verifyResult.errorCode] || verifyResult.message || 'Payment verification failed.';
+                                                Swal.fire({
+                                                    icon: 'error',
+                                                    title: 'Payment Failed',
+                                                    text: errorMessage,
+                                                    showConfirmButton: true
+                                                });
+                                                document.getElementById('errorMessage').textContent = errorMessage;
+                                            }
+                                        } catch (error) {
+                                            console.error('Error verifying payment:', error);
+                                            const errorMessage = 'Failed to verify payment. Please try again.';
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Payment Error',
+                                                text: errorMessage,
+                                                showConfirmButton: true
+                                            });
+                                            document.getElementById('errorMessage').textContent = errorMessage;
+                                        }
+                                    },
+                                    prefill: {
+                                        name: orderDetails.user?.name || '',
+                                        email: orderDetails.user?.email || '',
+                                        contact: orderDetails.address?.phone || ''
+                                    },
+                                    theme: { color: '#e74c3c' },
+                                    modal: {
+                                        ondismiss: function() {
+                                            Swal.fire({
+                                                icon: 'warning',
+                                                title: 'Payment Cancelled',
+                                                text: 'You cancelled the payment. Try again anytime.',
+                                                showConfirmButton: true
+                                            });
+                                        }
+                                    }
+                                };
+
+                                const rzp = new Razorpay(options);
+                                rzp.on('payment.failed', async function(response) {
+                                    console.error('Payment Failed:', response.error);
+                                    const errorMessage = errorMessages[response.error.code] || response.error.description || 'Payment failed.';
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Payment Failed',
+                                        text: errorMessage,
+                                        showConfirmButton: true
+                                    });
+                                    try {
+                                        await fetch('/update-order-status', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ orderId, status: 'Failed' })
+                                        });
+                                        document.getElementById('errorMessage').textContent = errorMessage;
+                                    } catch (error) {
+                                        console.error('Error updating order status:', error);
+                                        document.getElementById('errorMessage').textContent = 'Failed to update order status.';
+                                    }
+                                });
+                                rzp.open();
+                            } catch (error) {
+                                console.error('Error initiating retry payment:', error);
+                                const errorMessage = 'Failed to initiate payment. Please try again or contact support.';
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Payment Initiation Failed',
+                                    text: errorMessage,
+                                    showConfirmButton: true
+                                });
+                                document.getElementById('errorMessage').textContent = errorMessage;
+                            }
+                        }
+                    });
+                });
+            }
         });
     </script>
 </body>

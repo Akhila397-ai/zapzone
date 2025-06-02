@@ -1,5 +1,6 @@
 const User =require('../../models/userSchema')
 const Address = require('../../models/addressSchema')
+const Coupon = require('../../models/couponSchema')
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt');
 const env = require('dotenv').config();
@@ -185,31 +186,42 @@ const resendOtp = async (req,res)=>{
         
     }
  }
- const userProfile = async(req, res) => {
-    try {
-        const userId = req.session.user;
-        const userData = await User.findById(userId).select('name gender email phone profilePicture');
-        const addressData = await Address.findOne({userId : userId})
-        console.log('User Data:', userData);
+const userProfile = async (req, res) => {
+  try {
+    const userId = req.session.user._id; 
+    const userData = await User.findById(userId)
+      .select('name gender email phone profilePicture referralCode redeemedUsers')
+      .populate('redeemedUsers');
+    const addressData = await Address.findOne({ userId: userId });
 
-        if (!userData) {
-            return res.status(404).json({ success: false, message: 'User not found' });
-        }
+    const coupons = await Coupon.find({
+      isActive: true,
+      isDeleted: false,
+      usedBy: { $size: 0 } 
+    });
 
-        res.render('profile', {
-            user:userData,userAddress:addressData,
-            name: userData.name,
-             email: userData.email,
-            phone: userData.phone,
-            profilePicture: userData.profilePicture || null
-        });
-       
-    } catch (error) {
-        console.error('Error while retrieving user profile data:', error);
-        res.status(500).json({ message: 'Server error' });
+    console.log('User Data:', userData);
+
+    if (!userData) {
+      return res.status(404).json({ success: false, message: 'User not found' });
     }
-};
 
+    res.render('profile', {
+      user: userData,
+      userAddress: addressData,
+      name: userData.name,
+      email: userData.email,
+      phone: userData.phone,
+      profilePicture: userData.profilePicture || null,
+      referralCode: userData.referralCode,
+      redeemedUsers: userData.redeemedUsers.length, 
+      coupons 
+    });
+  } catch (error) {
+    console.error('Error while retrieving user profile data:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
  const getEditProfile = async(req,res)=>{
     try {
         const userId = req.session.user;
@@ -240,7 +252,6 @@ const updateProfile = async (req, res) => {
 
         let oldProfilePicture = null;
         if (req.file) {
-            // Get the current user's profile picture to delete later
             const user = await User.findById(userId).select('profilePicture');
             oldProfilePicture = user.profilePicture;
 
@@ -487,11 +498,19 @@ const postAddAddress = async (req, res) => {
             pincode, phone, altPhone, isDefault
         } = req.body;
 
+        // Validate required fields
         if (!addressType || !name || !city || !landMark || !state || !pincode || !phone || !altPhone) {
             return res.status(400).json({ success: false, message: "Missing required address fields" });
         }
 
         const userAddress = await Address.findOne({ userId });
+
+        // Determine if this should be the default address
+        let isDefaultAddress = isDefault === 'on'; // Checkbox value
+        if (!userAddress || userAddress.address.length === 0) {
+            // If no addresses exist, set as default unless explicitly unchecked
+            isDefaultAddress = isDefault !== 'on' ? true : isDefaultAddress;
+        }
 
         const newAddress = {
             addressType,
@@ -502,26 +521,26 @@ const postAddAddress = async (req, res) => {
             pincode,
             phone,
             altPhone,
-            isDefault: isDefault === 'true'
+            isDefault: isDefaultAddress
         };
 
         if (!userAddress) {
+            // Create new address document for user
             const addressDoc = new Address({
                 userId,
                 address: [newAddress]
             });
             await addressDoc.save();
         } else {
-            if (newAddress.isDefault) {
+            // If setting this address as default, unset others
+            if (isDefaultAddress) {
                 userAddress.address.forEach(addr => addr.isDefault = false);
             }
-
             userAddress.address.push(newAddress);
             await userAddress.save();
         }
 
-        return res.status(200).json({ success: true, message: "Address saved successfully" });
-
+        return res.redirect('/addresses');
     } catch (error) {
         console.error("Error in postAddAddress:", error);
         res.redirect('/pageNotFound');

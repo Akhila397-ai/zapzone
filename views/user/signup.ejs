@@ -43,7 +43,7 @@
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             height: 90vh;
-            max-height: 850px; /* Increased to fit all content */
+            max-height: 850px;
         }
         
         .image-side {
@@ -92,48 +92,48 @@
         
         .signup-side {
             flex: 0.8;
-            padding: 20px; /* Reduced from 30px */
+            padding: 20px;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            overflow-y: hidden; /* No scrolling */
+            overflow-y: hidden;
         }
         
         .signup-header {
-            margin-bottom: 10px; /* Reduced from 15px */
+            margin-bottom: 10px;
         }
         
         .signup-header h2 {
             color: var(--dark);
-            font-size: 22px; /* Slightly reduced */
+            font-size: 22px;
             font-weight: 600;
-            margin-bottom: 3px; /* Reduced from 5px */
+            margin-bottom: 3px;
         }
         
         .signup-header p {
             color: #6c757d;
-            font-size: 12px; /* Slightly reduced */
+            font-size: 12px;
         }
         
         .form-group {
-            margin-bottom: 8px; /* Reduced from 10px */
+            margin-bottom: 8px;
             position: relative;
         }
         
         .form-group label {
             display: block;
-            margin-bottom: 3px; /* Reduced from 5px */
+            margin-bottom: 3px;
             color: #495057;
-            font-size: 12px; /* Slightly reduced */
+            font-size: 12px;
             font-weight: 500;
         }
         
         .form-group input {
             width: 100%;
-            padding: 8px 12px; /* Reduced padding */
+            padding: 8px 12px;
             border: 1px solid #ced4da;
-            border-radius: 6px; /* Slightly reduced */
-            font-size: 13px; /* Slightly reduced */
+            border-radius: 6px;
+            font-size: 13px;
             transition: all 0.3s ease;
         }
         
@@ -145,23 +145,23 @@
         
         .error-message {
             color: var(--error);
-            font-size: 11px; /* Slightly reduced */
-            margin-top: 3px; /* Reduced from 5px */
+            font-size: 11px;
+            margin-top: 3px;
             display: none;
         }
         
         .signup-btn {
             width: 100%;
-            padding: 8px; /* Reduced from 10px */
+            padding: 8px;
             background-color: var(--primary);
             color: white;
             border: none;
-            border-radius: 6px; /* Slightly reduced */
-            font-size: 14px; /* Slightly reduced */
+            border-radius: 6px;
+            font-size: 14px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
-            margin-bottom: 6px; /* Reduced from 8px */
+            margin-bottom: 6px;
         }
         
         .signup-btn:hover {
@@ -173,9 +173,9 @@
         .divider {
             display: flex;
             align-items: center;
-            margin: 6px 0; /* Reduced from 8px */
+            margin: 6px 0;
             color: #6c757d;
-            font-size: 12px; /* Slightly reduced */
+            font-size: 12px;
         }
         
         .divider::before,
@@ -187,7 +187,7 @@
         }
         
         .divider span {
-            padding: 0 10px; /* Reduced from 15px */
+            padding: 0 10px;
         }
         
         .google-btn {
@@ -198,13 +198,13 @@
             background-color: white;
             color: #5f6368;
             border: 1px solid #dee2e6;
-            border-radius: 6px; /* Slightly reduced */
-            padding: 6px; /* Reduced from 8px */
-            font-size: 12px; /* Slightly reduced */
+            border-radius: 6px;
+            padding: 6px;
+            font-size: 12px;
             font-weight: 500;
             text-decoration: none;
             transition: all 0.2s ease;
-            margin-bottom: 8px; /* Reduced from 10px */
+            margin-bottom: 8px;
         }
         
         .google-btn:hover {
@@ -213,15 +213,15 @@
         }
         
         .google-icon {
-            width: 16px; /* Reduced from 18px */
-            height: 16px; /* Reduced from 18px */
-            margin-right: 8px; /* Reduced from 10px */
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
         }
         
         .login-link {
             text-align: center;
-            margin-top: 3px; /* Reduced from 5px */
-            font-size: 12px; /* Slightly reduced */
+            margin-top: 3px;
+            font-size: 12px;
             color: #6c757d;
         }
         
@@ -235,7 +235,6 @@
             text-decoration: underline;
         }
         
-        /* Responsive breakpoints */
         @media (max-width: 992px) {
             .container {
                 max-width: 90%;
@@ -254,20 +253,20 @@
             .container {
                 flex-direction: column;
                 width: 95%;
-                height: auto; /* Allow the container to grow */
-                min-height: 80vh; /* Ensure a minimum height */
-                max-height: none; /* Remove max-height constraint */
+                height: auto;
+                min-height: 80vh;
+                max-height: none;
             }
             
             .image-side {
-                height: 120px; /* Reduced from 140px */
+                height: 120px;
                 flex: none;
             }
             
             .signup-side {
-                padding: 15px; /* Reduced from 20px */
+                padding: 15px;
                 flex: 1;
-                overflow-y: hidden; /* No scrolling */
+                overflow-y: hidden;
             }
             
             .brand-overlay {
@@ -280,17 +279,17 @@
             .container {
                 width: 100%;
                 border-radius: 10px;
-                height: auto; /* Allow the container to grow */
-                min-height: 95vh; /* Ensure a minimum height */
+                height: auto;
+                min-height: 95vh;
             }
             
             .image-side {
-                height: 100px; /* Reduced from 120px */
+                height: 100px;
             }
             
             .signup-side {
-                padding: 12px; /* Reduced from 15px */
-                overflow-y: hidden; /* No scrolling */
+                padding: 12px;
+                overflow-y: hidden;
             }
             
             .brand-name {
@@ -302,48 +301,48 @@
             }
             
             .signup-header h2 {
-                font-size: 18px; /* Reduced from 20px */
+                font-size: 18px;
             }
             
             .form-group {
-                margin-bottom: 6px; /* Reduced from 8px */
+                margin-bottom: 6px;
             }
             
             .form-group input {
-                padding: 6px 10px; /* Further reduced */
-                font-size: 12px; /* Further reduced */
+                padding: 6px 10px;
+                font-size: 12px;
             }
             
             .signup-btn {
-                padding: 6px; /* Further reduced */
-                font-size: 13px; /* Further reduced */
+                padding: 6px;
+                font-size: 13px;
             }
         }
         
         @media (max-width: 320px) {
             .container {
-                height: auto; /* Allow the container to grow */
-                min-height: 100vh; /* Ensure a minimum height */
+                height: auto;
+                min-height: 100vh;
                 border-radius: 0;
             }
             
             .image-side {
-                height: 80px; /* Reduced from 100px */
+                height: 80px;
             }
             
             .signup-side {
-                padding: 10px; /* Reduced from 12px */
-                overflow-y: hidden; /* No scrolling */
+                padding: 10px;
+                overflow-y: hidden;
             }
             
             .form-group input {
-                padding: 5px 8px; /* Further reduced */
-                font-size: 11px; /* Further reduced */
+                padding: 5px 8px;
+                font-size: 11px;
             }
             
             .signup-btn {
-                padding: 5px; /* Further reduced */
-                font-size: 12px; /* Further reduced */
+                padding: 5px;
+                font-size: 12px;
             }
             
             .brand-name {
@@ -393,11 +392,17 @@
                     <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password">
                     <div id="error5" class="error-message"></div>
                 </div>
-                <%if(locals.message && message.length>0){%>
+                <!-- Updated: Added referral code field -->
+                <div class="form-group">
+                    <label for="referralCode">Referral Code (Optional)</label>
+                    <input type="text" id="referralCode" name="referralCode" placeholder="Enter referral code">
+                    <div id="error6" class="error-message"></div>
+                </div>
+                <% if (locals.message && message.length > 0) { %>
                     <div class="alert alert-danger text-center">
-                       <%=message%>
+                        <%= message %>
                     </div>
-                <%}%>
+                <% } %>
                 <button type="submit" class="signup-btn">Sign Up</button>
                 
                 <div class="divider">
@@ -427,11 +432,13 @@
         const phoneid = document.getElementById("phone");
         const passid = document.getElementById("password");
         const cpassid = document.getElementById("confirmPassword");
+        const referralCodeid = document.getElementById("referralCode"); // Updated: Added referral code element
         const error1 = document.getElementById("error1");
         const error2 = document.getElementById("error2");
         const error3 = document.getElementById("error3");
         const error4 = document.getElementById("error4");
         const error5 = document.getElementById("error5");
+        const error6 = document.getElementById("error6"); // Updated: Added error element for referral code
         const signform = document.getElementById("signform");
 
         function nameValidateChecking() {
@@ -515,14 +522,31 @@
             }
         }
 
+        // Updated: Added referral code validation
+        function referralCodeValidateChecking() {
+            const referralCodeval = referralCodeid.value.trim();
+            const referralCodepattern = /^[A-Za-z0-9]{6}$/;
+
+            if (referralCodeval !== "" && !referralCodepattern.test(referralCodeval)) {
+                error6.style.display = "block";
+                error6.innerHTML = "Referral code must be 6 alphanumeric characters";
+                return false;
+            } else {
+                error6.style.display = "none";
+                error6.innerHTML = "";
+                return true;
+            }
+        }
+
         document.addEventListener("DOMContentLoaded", function () {
             signform.addEventListener("submit", function (e) {
                 const isNameValid = nameValidateChecking();
                 const isEmailValid = emailValidateChecking();
                 const isPhoneValid = phoneValidateChecking();
                 const isPasswordValid = passValidateChecking();
+                const isReferralCodeValid = referralCodeValidateChecking(); // Updated: Validate referral code
 
-                if (!isNameValid || !isEmailValid || !isPhoneValid || !isPasswordValid) {
+                if (!isNameValid || !isEmailValid || !isPhoneValid || !isPasswordValid || !isReferralCodeValid) {
                     e.preventDefault();
                 }
             });

@@ -71,7 +71,7 @@ router.patch('/set-default-address',userAuth,profileController.setDefaultAddress
 router.get('/cart',userAuth,cartController.loadCart);
 router.post('/addToCart',userAuth,cartController.addToCart);
 router.put('/update-cart',userAuth,cartController.updateCart);
-router.patch('/removeFromCart/:productId', userAuth,cartController.removeFromCart);
+router.patch('/removeFromCart/:productId',userAuth, cartController.removeFromCart);
 
 
 //Checkout management
@@ -79,7 +79,7 @@ router.get('/checkout',userAuth,checkoutContoller.getCheckoutPage);
 router.post('/place-order',userAuth,checkoutContoller.placeOrder);
 router.get('/order-success',userAuth,checkoutContoller.loadOrderSuccessPage)
 router.get('/orders', userAuth,checkoutContoller.loadOrders);
-router.get('/orderdetails',userAuth,checkoutContoller.loadOrderDetails)
+router.get('/order-details/:orderId',userAuth,checkoutContoller.loadOrderDetails);
 router.post('/cancelOrder',userAuth,checkoutContoller.cancelOrder);
 router.post('/cancel-product', userAuth,checkoutContoller.cancelProduct);
 router.post('/request-return',userAuth,checkoutContoller.requestReturn);
@@ -89,7 +89,9 @@ router.post('/remove-coupon',userAuth,checkoutContoller.removeCoupon);
 router.post('/create-razorpay-order',checkoutContoller.createRazorpayOrder);
 router.post('/verify-razorpay-payment',checkoutContoller.verifyRazorpayPayment);
 router.get('/payment-failure', userAuth,checkoutContoller.loadPaymentFailurePage);
-router.get('/retry-payment', userAuth, checkoutContoller.retryPayment);
+router.get('/orders/retryPayment',checkoutContoller.retryPayment);
+router.post('/update-order-status',userAuth,checkoutContoller.updateOrderStatus);
+router.get('/download-invoice/:orderId',userAuth,checkoutContoller.downloadInvoice);
 
 
 
@@ -102,23 +104,6 @@ router.get('/wallet',userAuth,checkoutContoller.loadWallet)
 router.get('/wishlist',userAuth,wishlistController.loadWishlist);
 router.post('/addToWishlist',userAuth,wishlistController.addToWishlist);
 router.patch('/remove-from-wishlist',userAuth,wishlistController.removeFromWishlist)
-
-const removeCoupon = async (req, res) => {
-  try {
-    const { userId } = req.body;
-    const cart = await Cart.findOne({ userId });
-    if (!cart) {
-      return res.status(404).json({ success: false, message: "Cart not found" });
-    }
-    cart.discount = 0;
-    cart.coupon = { code: "", discount: 0 };
-    cart.total = cart.subtotal + cart.shipping;
-    await cart.save();
-    res.status(200).json({ success: true, message: "Coupon removed successfully" });
-  } catch (error) {
-    console.error("Error removing coupon:", error);
-    res.status(500).json({ success: false, message: "Server error" });
-  }
-};
+router.post('/checkWishlistStatus',userAuth,wishlistController.checkWishlistStatus);
 
 module.exports = router

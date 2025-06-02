@@ -15,9 +15,12 @@ const customerInfo = async (req, res) => {
                 { email: { $regex: ".*" + search + ".*", $options: "i" } }
             ],
         })
+        .sort({createdOn:-1})
         .limit(limit)
         .skip((page - 1) * limit)
         .exec();
+       
+        
 
         
         const count = await User.countDocuments({

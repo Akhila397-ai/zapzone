@@ -347,7 +347,7 @@
                         <td><%= order.orderId %></td>
                         <td><%= order.user ? order.user.name : 'Unknown User' %></td>
                         <td><%= order.createdOn.toLocaleDateString() %></td>
-                        <td>₹<%= order.totalPrice %></td>
+                        <td>₹<%= order.finalAmount %></td>
                         <td>
                           <% if (order.status === 'completed') { %>
                             <span class="badge bg-success">Completed</span>

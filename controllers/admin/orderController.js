@@ -84,11 +84,9 @@ const getOrderDetail = async (req, res) => {
       .populate('orderedItems.product');
 
     if (!order) {
-
       return res.status(404).send("Order not found");
     }
 
-    // Log orderedItems to check product fields
     console.log('Ordered Items:', JSON.stringify(order.orderedItems, null, 2));
 
     const addressDoc = await Address.findOne({ userId: order.user._id });
@@ -116,10 +114,25 @@ const getOrderDetail = async (req, res) => {
       }))
     );
 
+    let offerDiscount = order.offerDiscount || 0;
+    if (!offerDiscount) {
+      offerDiscount = order.orderedItems.reduce(
+        (sum, item) => sum + (item.discount || 0) * item.quantity,
+        0
+      );
+    }
+
+    const couponDiscount = order.discount || 0;
+
+    const shippingCharge = 50.00;
+
     res.render('orderDetails', {
       order,
       selectedAddress,
       cancellationReason: order.cancellationReason || null,
+      couponDiscount,
+      offerDiscount,
+      shippingCharge
     });
   } catch (error) {
     console.error('Error fetching order details:', error);
@@ -162,7 +175,6 @@ const getOrderDetail = async (req, res) => {
     const orderId = req.params.id;
     const { itemId } = req.body;
 
-
     const order = await Order.findOne({ orderId });
     if (!order) {
       console.log("Order not found for orderId:", orderId);
@@ -170,13 +182,11 @@ const getOrderDetail = async (req, res) => {
     }
     console.log(order,'111111111');
     
-
     const item = order.orderedItems.find(
       (i) => i.product.toString() === itemId
     );
     console.log(item,'222222222');
     
-
     if (!item || item.status !== "Return Requested") {
       console.log("Invalid return request for itemId:", itemId);
       return res.status(400).json({success:false, message: "Invalid return request" });
@@ -197,7 +207,8 @@ const getOrderDetail = async (req, res) => {
       return sum;
     }, 0);
 
-    const refundAmount = order.finalAmount - newFinalAmount;
+    const deliveryCharge = 50;
+    const refundAmount = order.finalAmount - newFinalAmount - deliveryCharge;
     order.finalAmount = newFinalAmount > 0 ? newFinalAmount : 0;
 
     const allItemsInactive = order.orderedItems.every(
@@ -206,23 +217,20 @@ const getOrderDetail = async (req, res) => {
     if (allItemsInactive) {
       order.status = "Returned";
     }
-
-    // 🟩 Refund to Wallet
     const user = await User.findById(order.user);
-   if (user && refundAmount > 0) {
-  const currentWallet = Number(user.wallet) || 0;
-  user.wallet = currentWallet + refundAmount;
-  await user.save();
+    if (user && refundAmount > 0) {
+      const currentWallet = Number(user.wallet) || 0;
+      user.wallet = currentWallet + refundAmount;
+      await user.save();
 
-  await Wallet.create({
-    userId: user._id,
-    type: 'CREDIT',
-    amount: refundAmount,
-    reason: `Refund for returned item in Order ${order.orderId}`,
-    balanceAfter: user.wallet
-  });
-}
-
+      await Wallet.create({
+        userId: user._id,
+        type: 'CREDIT',
+        amount: refundAmount,
+        reason: `Refund for returned item in Order ${order.orderId} (after deducting delivery charge of ${deliveryCharge})`,
+        balanceAfter: user.wallet
+      });
+    }
 
     await order.save();
 

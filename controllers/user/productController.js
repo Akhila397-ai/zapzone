@@ -5,13 +5,11 @@ const Offer = require('../../models/offerSchema')
 const mongoose = require('mongoose');
 const findBestOffer = async (productId) => {
   try {
-    // Fetch product with category
     const product = await Product.findById(productId).populate('category').lean();
     if (!product || !product.category) {
       return { offer: null, discountedPrice: null, discount: 0, offers: [] };
     }
 
-    // Fetch valid offers for the product or its category
     const currentDate = new Date();
     const offers = await Offer.find({
       $or: [
@@ -28,7 +26,6 @@ const findBestOffer = async (productId) => {
       return { offer: null, discountedPrice: product.salePrice, discount: 0, offers: [] };
     }
 
-    // Calculate the best offer
     let bestOffer = null;
     let maxDiscount = 0;
     let discountedPrice = product.salePrice;
@@ -41,10 +38,9 @@ const findBestOffer = async (productId) => {
         discount = offer.discountAmount;
       }
 
-      // Cap discount to prevent negative prices
       discount = Math.min(discount, product.salePrice);
 
-      if (discount > maxDiscount && product.salePrice >= offer.minPurchase) {
+      if (discount > maxDiscount) {
         maxDiscount = discount;
         bestOffer = offer;
         discountedPrice = product.salePrice - discount;
@@ -57,7 +53,6 @@ const findBestOffer = async (productId) => {
         code: bestOffer.code,
         discountType: bestOffer.discountType,
         discountAmount: bestOffer.discountAmount,
-        minPurchase: bestOffer.minPurchase,
         offerName: bestOffer.offerName,
         validUpto: bestOffer.validUpto
       } : null,
@@ -68,7 +63,6 @@ const findBestOffer = async (productId) => {
         code: offer.code,
         discountType: offer.discountType,
         discountAmount: offer.discountAmount,
-        minPurchase: offer.minPurchase,
         offerName: offer.offerName,
         validUpto: offer.validUpto
       }))
@@ -78,7 +72,6 @@ const findBestOffer = async (productId) => {
     return { offer: null, discountedPrice: null, discount: 0, offers: [] };
   }
 };
-
 
 const productDetails = async (req, res) => {
   try {
@@ -131,7 +124,7 @@ const productDetails = async (req, res) => {
       discount,
       searchQuery: search || '',
       profilePicture: userData?.profilePicture || null,
-      isLoggedIn: !!userId // Add isLoggedIn based on req.session.user
+      isLoggedIn: !!userId 
     });
   } catch (error) {
     console.error('Error fetching product details:', error);

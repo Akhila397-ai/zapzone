@@ -9,11 +9,11 @@ const brandController = require('../controllers/admin/brandController')
 const orderController =require('../controllers/admin/orderController')
 const couponController=require('../controllers/admin/couponController')
 const offerController = require('../controllers/admin/offerController')
+const salesController = require('../controllers/admin/salesController')
 const {upload} = require('../helpers/multer');
 router.get('/pagenotfound',adminController.pagenotfound)
 router.get('/login', adminController.loadLogin);  
 router.post('/login', adminController.login);     
-router.get('/dashboard',adminAuth, adminController.loadDashboard); 
 router.get('/logout', adminController.logout); 
 //customer management
 router.get('/users',adminAuth,customerController.customerInfo);
@@ -55,12 +55,12 @@ router.post("/orders/:id/reject-return", adminAuth,orderController.rejectReturn)
 
 
 //coupon management
-router.get('/coupons',adminAuth,couponController.listCoupons);
-router.post('/addCoupon',adminAuth,couponController.addCoupon);
-router.patch('/editCoupon/:id',adminAuth,couponController.editCoupon);
-router.get('/activateCoupon',adminAuth,couponController.activateCoupon);
-router.get('/deactivateCoupon',adminAuth,couponController.deactivateCoupon);
-router.patch('/deleteCoupon/:id',adminAuth,couponController.deleteCoupon);
+router.get('/coupons', adminAuth, couponController.listCoupons);
+router.post('/addCoupon', adminAuth, couponController.addCoupon);
+router.patch('/editCoupon/:id', adminAuth, couponController.editCoupon);
+router.get('/activateCoupon', adminAuth, couponController.activateCoupon);
+router.get('/deactivateCoupon', adminAuth, couponController.deactivateCoupon);
+router.patch('/deleteCoupon/:id', adminAuth, couponController.deleteCoupon);
 
 //offer management
 
@@ -77,4 +77,8 @@ router.get('/sales-report',adminAuth,adminController.getSalesReport);
 router.get('/sales-report/pdf',adminAuth,adminController.downloadSalesReportPDF);
 router.get('/sales-report/excel',adminAuth,adminController.downloadSalesReportExcel);
 
+//Dashboard management
+router.get('/dashboard/data/:filter',adminAuth,salesController.getDashboardData); // Main dashboard data
+router.get('/orderdetails',adminAuth,salesController.getOrderDetails); // Order details for modal
+router.get('/dashboard',adminAuth,salesController.loadDashboard);
 module.exports=router;

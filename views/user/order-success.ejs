@@ -6,58 +6,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZAPZONE - Order Success</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
-    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
-    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
-        /* Base Styles */
+        /* [Previous styles unchanged] */
         body {
             background-color: #f9fafb;
             font-family: 'Nunito Sans', sans-serif;
             color: #1f2937;
         }
-
-        /* Breadcrumb Styles */
         .zz-breadcrumb-area {
             background-color: #ffffff;
             padding: 15px 0;
             border-bottom: 1px solid #e5e7eb;
             margin-bottom: 30px;
         }
-
         .zz-breadcrumb {
             margin-bottom: 0;
             padding: 0;
             background: none;
         }
-
         .zz-breadcrumb-item a {
             color: #4b5563;
             text-decoration: none;
             transition: color 0.3s;
         }
-
         .zz-breadcrumb-item a:hover {
             color: #f97316;
         }
-
         .zz-breadcrumb-item.active {
             color: #14b8a6;
         }
-
-        /* Order Container Styles */
         .zz-order-container {
             padding: 30px 0;
         }
-
         .order-container {
             background-color: #ffffff;
             border-radius: 12px;
             padding: 24px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
-
         .success-header {
             background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
             color: #ffffff;
@@ -66,7 +56,6 @@
             position: relative;
             border-radius: 12px 12px 0 0;
         }
-
         .success-icon {
             background-color: #ffffff;
             color: #14b8a6;
@@ -82,11 +71,9 @@
             font-weight: 700;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-
         .order-content {
             padding: 24px;
         }
-
         .order-detail {
             display: flex;
             justify-content: space-between;
@@ -95,11 +82,9 @@
             font-size: 15px;
             color: #374151;
         }
-
         .order-detail span:first-child {
             font-weight: 600;
         }
-
         .order-info-box {
             background-color: #f1f5f9;
             border: 2px solid #14b8a6;
@@ -107,19 +92,15 @@
             padding: 16px;
             margin: 16px 0;
         }
-
         .order-status {
             margin: 32px 0;
         }
-
         .order-status h3 {
             font-size: 20px;
             font-weight: 700;
             margin-bottom: 16px;
             color: #1f2937;
         }
-
-        /* Status Bar Styles */
         .status-timeline {
             position: relative;
             display: flex;
@@ -127,7 +108,6 @@
             align-items: center;
             padding: 1.5rem 0;
         }
-
         .status-timeline::before {
             content: '';
             position: absolute;
@@ -139,7 +119,6 @@
             z-index: 1;
             border-radius: 3px;
         }
-
         .status-progress {
             position: absolute;
             top: 50%;
@@ -150,7 +129,6 @@
             transition: width 0.5s ease-in-out;
             border-radius: 3px;
         }
-
         .status-step {
             width: 2.75rem;
             height: 2.75rem;
@@ -164,19 +142,16 @@
             color: #6b7280;
             transition: all 0.3s ease;
         }
-
         .status-step.completed {
             background-color: #14b8a6;
             color: #ffffff;
         }
-
         .status-step.active {
             background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
             color: #ffffff;
             transform: scale(1.2);
             box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.2);
         }
-
         .status-label {
             position: absolute;
             top: 3.5rem;
@@ -188,44 +163,35 @@
             text-align: center;
             font-weight: 500;
         }
-
-        /* Order Items Table */
         .order-items table {
             width: 100%;
             border-collapse: collapse;
             margin: 24px 0;
         }
-
         .order-items th, .order-items td {
             padding: 14px;
             text-align: left;
             border-bottom: 1px solid #e5e7eb;
             font-size: 15px;
         }
-
         .order-items th {
             background-color: #f1f5f9;
             font-weight: 600;
             color: #1f2937;
         }
-
         .order-items .total-row {
             font-weight: 700;
             color: #1f2937;
         }
-
         .order-items .discount-row {
             color: #6b7280;
         }
-
-        /* Action Buttons */
         .action-buttons {
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
             margin-top: 24px;
         }
-
         .btn {
             padding: 12px 20px;
             border-radius: 8px;
@@ -238,27 +204,21 @@
             text-decoration: none;
             transition: all 0.3s ease;
         }
-
         .btn-primary {
             background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
             color: #ffffff;
         }
-
         .btn-secondary {
             background-color: #6b7280;
             color: #ffffff;
         }
-
         .btn:hover {
             transform: translateY(-2px);
             filter: brightness(1.1);
         }
-
         .btn i {
             margin-right: 8px;
         }
-
-        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -272,7 +232,6 @@
             align-items: center;
             transition: opacity 0.3s ease;
         }
-
         .modal-content {
             background-color: #ffffff;
             padding: 24px;
@@ -285,11 +244,9 @@
             transition: transform 0.3s ease;
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
-
         .modal.active .modal-content {
             transform: scale(1);
         }
-
         .close-btn {
             position: absolute;
             right: 20px;
@@ -299,47 +256,39 @@
             color: #6b7280;
             transition: color 0.2s;
         }
-
         .close-btn:hover {
             color: #f97316;
         }
-
         .invoice-header {
             font-size: 22px;
             font-weight: 700;
             margin-bottom: 12px;
             color: #1f2937;
         }
-
         .invoice-meta {
             font-size: 13px;
             color: #6b7280;
             margin-bottom: 24px;
         }
-
         .billed-to {
             margin-bottom: 24px;
         }
-
         .billed-to h4 {
             font-size: 16px;
             font-weight: 700;
             margin-bottom: 8px;
             color: #1f2937;
         }
-
         .billed-to p {
             margin: 4px 0;
             font-size: 13px;
             color: #374151;
         }
-
         .invoice-table {
             width: 100%;
             border-collapse: collapse;
             margin: 24px 0;
         }
-
         .invoice-table th,
         .invoice-table td {
             padding: 10px;
@@ -347,28 +296,23 @@
             border-bottom: 1px solid #e5e7eb;
             font-size: 13px;
         }
-
         .invoice-table th {
             font-weight: 700;
             background-color: #f1f5f9;
             color: #1f2937;
         }
-
         .invoice-table .amount {
             text-align: right;
         }
-
         .invoice-summary {
             margin: 24px 0;
             font-size: 13px;
         }
-
         .invoice-summary div {
             display: flex;
             justify-content: space-between;
             margin-bottom: 8px;
         }
-
         .invoice-summary .total {
             font-weight: 700;
             font-size: 15px;
@@ -376,14 +320,12 @@
             padding-top: 8px;
             color: #1f2937;
         }
-
         .modal-buttons {
             display: flex;
             justify-content: center;
             gap: 12px;
             margin: 24px 0;
         }
-
         .download-btn {
             background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
             color: #ffffff;
@@ -396,11 +338,9 @@
             gap: 8px;
             transition: all 0.3s ease;
         }
-
         .download-btn:hover {
             filter: brightness(1.1);
         }
-
         .print-btn {
             background-color: transparent;
             color: #6b7280;
@@ -410,32 +350,26 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-
         .print-btn:hover {
             background-color: #6b7280;
             color: #ffffff;
         }
-
         .footer-note {
             text-align: center;
             font-size: 11px;
             color: #6b7280;
             margin-top: 24px;
         }
-
-        /* Responsive Styles */
         @media (max-width: 767px) {
             .order-container {
                 padding: 16px;
             }
-
             .status-timeline {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 2.5rem;
                 padding-left: 2.5rem;
             }
-
             .status-timeline::before {
                 width: 6px;
                 height: 100%;
@@ -443,7 +377,6 @@
                 left: 1.375rem;
                 border-radius: 3px;
             }
-
             .status-progress {
                 width: 6px;
                 height: var(--progress-height);
@@ -451,40 +384,32 @@
                 left: 1.375rem;
                 border-radius: 3px;
             }
-
             .status-step {
                 margin-left: 1rem;
             }
-
             .status-label {
                 top: 0;
                 left: 4.5rem;
                 transform: none;
                 text-align: left;
             }
-
             .order-detail {
                 flex-direction: column;
                 gap: 6px;
             }
-
             .action-buttons {
                 flex-direction: column;
                 align-items: stretch;
             }
-
             .btn {
                 width: 100%;
                 justify-content: center;
             }
-
             .order-info-box {
                 padding: 12px;
                 margin: 12px 0;
             }
         }
-
-        /* Notification Styles */
         .zz-notification {
             position: fixed;
             top: 24px;
@@ -502,11 +427,12 @@
             max-width: 320px;
             animation: slideIn 0.3s ease-in-out;
         }
-
+        .zz-notification.error {
+            background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+        }
         .zz-notification.show {
             display: flex;
         }
-
         @keyframes slideIn {
             from {
                 transform: translateX(100%);
@@ -517,7 +443,6 @@
                 opacity: 1;
             }
         }
-
         @keyframes slideOut {
             from {
                 transform: translateX(0);
@@ -559,7 +484,7 @@
                         <div class="order-content">
                             <div class="order-detail">
                                 <span>Order ID:</span>
-                                <span><%= order.orderId %></span>
+                                <span><%= order.orderId || 'N/A' %></span>
                             </div>
                             <div class="order-info-box">
                                 <div class="order-detail">
@@ -572,7 +497,7 @@
                                 </div>
                                 <div class="order-detail">
                                     <span>Payment Method:</span>
-                                    <span><%= order.paymentMethod || 'kkkkk' %></span>
+                                    <span><%= order.paymentMethod || 'Cash on Delivery' %></span>
                                 </div>
                             </div>
 
@@ -614,10 +539,10 @@
                                         <% if (order.orderedItems && order.orderedItems.length > 0) { %>
                                             <% order.orderedItems.forEach(item => { %>
                                                 <tr>
-                                                    <td><%= item.product.productName %></td>
-                                                    <td><%= item.quantity %></td>
-                                                    <td>₹<%= item.price.toFixed(2) %></td>
-                                                    <td>₹<%= (item.price * item.quantity).toFixed(2) %></td>
+                                                    <td><%= item.product && item.product.productName ? item.product.productName : 'Unknown' %></td>
+                                                    <td><%= item.quantity || 0 %></td>
+                                                    <td>₹<%= item.price ? item.price.toFixed(2) : '0.00' %></td>
+                                                    <td>₹<%= item.price && item.quantity ? (item.price * item.quantity).toFixed(2) : '0.00' %></td>
                                                 </tr>
                                             <% }) %>
                                             <tr class="discount-row">
@@ -626,11 +551,11 @@
                                             </tr>
                                             <tr class="discount-row">
                                                 <td colspan="3">Coupon Discount:</td>
-                                                <td>₹<%= order.couponApplied && order.discount ? order.discount.toFixed(2) : '0.00' %></td>
+                                                <td>₹<%= couponDiscount ? couponDiscount.toFixed(2) : '0.00' %></td>
                                             </tr>
                                             <tr class="discount-row">
                                                 <td colspan="3">Offer Discount:</td>
-                                                <td>₹<%= order.discount && !order.couponApplied ? order.discount.toFixed(2) : '0.00' %></td>
+                                                <td>₹<%= offerDiscount ? offerDiscount.toFixed(2) : '0.00' %></td>
                                             </tr>
                                             <tr class="discount-row">
                                                 <td colspan="3">Shipping Charge:</td>
@@ -638,7 +563,7 @@
                                             </tr>
                                             <tr class="total-row">
                                                 <td colspan="3">Total:</td>
-                                                <td>₹<%= order.finalAmount ? (order.finalAmount + 50).toFixed(2) : '50.00' %></td>
+                                                <td>₹<%= order.finalAmount ? order.finalAmount.toFixed(2) : '0.00' %></td>
                                             </tr>
                                         <% } else { %>
                                             <tr>
@@ -650,15 +575,15 @@
                             </div>
 
                             <div class="action-buttons">
-                                <a href="javascript:void(0)" onclick="showInvoiceModal()" class="btn btn-primary">
+                                <a href="javascript:void(0)" onclick="downloadInvoice(); console.log('Download button clicked');" class="btn btn-primary">
                                     <i class="fa fa-download"></i> Download Invoice
                                 </a>
                                 <a href="/shop" class="btn btn-secondary">
                                     <i class="fa fa-shopping-cart"></i> Continue Shopping
                                 </a>
-                                <a href="/orderdetails?orderId=<%= order.orderId %>" class="btn btn-secondary">
-                                    <i class="fa fa-eye"></i> View Order Details
-                                </a>
+                               <a href="/order-details/<%= order.orderId %>" class="btn btn-secondary">
+                                 <i class="fa fa-eye"></i> View Order Details
+                                 </a>
                             </div>
                         </div>
                     </div>
@@ -673,19 +598,19 @@
             <span class="close-btn" onclick="closeInvoiceModal()">×</span>
             <div class="invoice-header">INVOICE</div>
             <div class="invoice-meta">
-                <div>Order ID: <%= order.orderId %></div>
+                <div>Order ID: <%= order.orderId || 'N/A' %></div>
                 <div>Date: <%= order.createdOn ? new Date(order.createdOn).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A' %></div>
             </div>
             <div class="billed-to">
                 <h4>BILLED TO</h4>
-                <p><%= userName %></p>
-                <% if (deliveryAddress) { %>
+                <p><%= userName || 'Customer Name' %></p>
+                <% if (deliveryAddress && deliveryAddress.city && deliveryAddress.state && deliveryAddress.pincode) { %>
                     <p><%= deliveryAddress.addressType ? deliveryAddress.addressType + ': ' : '' %><%= deliveryAddress.city %>, <%= deliveryAddress.state %> <%= deliveryAddress.pincode %></p>
                     <p><%= deliveryAddress.landMark || 'No landmark provided' %></p>
-                    <p>Email: <%= order.user.email || 'customer@example.com' %></p>
+                    <p>Email: <%= order.user && order.user.email ? order.user.email : 'customer@example.com' %></p>
                 <% } else { %>
-                    <p>Address not available (deliveryAddress is <%= deliveryAddress %>)</p>
-                    <p>Email: <%= order.user.email || 'customer@example.com' %></p>
+                    <p>Address not available</p>
+                    <p>Email: <%= order.user && order.user.email ? order.user.email : 'customer@example.com' %></p>
                 <% } %>
             </div>
             <table class="invoice-table">
@@ -701,10 +626,10 @@
                     <% if (order.orderedItems && order.orderedItems.length > 0) { %>
                         <% order.orderedItems.forEach(item => { %>
                             <tr>
-                                <td><%= item.product.productName %></td>
-                                <td><%= item.quantity %></td>
-                                <td>₹<%= item.price.toFixed(2) %></td>
-                                <td class="amount">₹<%= (item.price * item.quantity).toFixed(2) %></td>
+                                <td><%= item.product && item.product.productName ? item.product.productName : 'Unknown' %></td>
+                                <td><%= item.quantity || 0 %></td>
+                                <td>₹<%= item.price ? item.price.toFixed(2) : '0.00' %></td>
+                                <td class="amount">₹<%= item.price && item.quantity ? (item.price * item.quantity).toFixed(2) : '0.00' %></td>
                             </tr>
                         <% }) %>
                     <% } else { %>
@@ -716,12 +641,13 @@
             </table>
             <div class="invoice-summary">
                 <div><span>Subtotal</span><span>₹<%= order.totalPrice ? order.totalPrice.toFixed(2) : '0.00' %></span></div>
-                <div><span>Tax</span><span>₹<%= order.couponApplied && order.discount ? order.discount.toFixed(2) : '0.00' %></span></div>
+                <div><span>Coupon Discount</span><span>₹<%= couponDiscount ? couponDiscount.toFixed(2) : '0.00' %></span></div>
+                <div><span>Offer Discount</span><span>₹<%= offerDiscount ? offerDiscount.toFixed(2) : '0.00' %></span></div>
                 <div><span>Shipping</span><span>₹50.00</span></div>
                 <div class="total"><span>TOTAL</span><span>₹<%= order.finalAmount ? (order.finalAmount + 50).toFixed(2) : '50.00' %></span></div>
             </div>
             <div class="modal-buttons">
-                <button class="download-btn" onclick="downloadInvoice()">
+                <button class="download-btn" onclick="downloadInvoice(); console.log('Modal download button clicked');">
                     <span><i class="fa fa-download"></i></span> Download Invoice
                 </button>
                 <button class="print-btn" onclick="printInvoice()">Print</button>
@@ -740,58 +666,64 @@
 
     <%- include("../partials/user/footer") %>
 
-    <script src="js/jquery-3.3.1.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Trigger confetti effect on page load
+        document.addEventListener('DOMContentLoaded', function () {
             confetti({
                 particleCount: 120,
                 spread: 80,
                 origin: { y: 0.6 },
                 colors: ['#14b8a6', '#0d9488', '#f97316', '#1f2937'],
-                duration: 3000
+                duration: 3000,
             });
 
-            // Calculate progress height for mobile view
             const statusSteps = document.querySelectorAll('.status-step');
             const activeStep = document.querySelector('.status-step.active');
             if (window.innerWidth <= 767 && activeStep) {
                 const activeIndex = Array.from(statusSteps).indexOf(activeStep);
-                const progressHeight = (activeIndex + 1) * 2.75 * 16; // 2.5rem gap + 2.75rem step height
+                const progressHeight = (activeIndex + 1) * 2.75 * 16;
                 document.querySelector('.status-progress').style.setProperty('--progress-height', `${progressHeight}px`);
-            }
-
-            // Show notification
-            function showNotification(message, type = 'success') {
-                const notification = document.getElementById('notification');
-                const notificationMessage = document.getElementById('notificationMessage');
-                
-                notificationMessage.textContent = message;
-                notification.className = `zz-notification ${type} show`;
-                
-                notification.style.display = 'flex';
-                
-                setTimeout(() => {
-                    notification.style.animation = 'slideOut 0.3s ease-in-out';
-                    setTimeout(() => {
-                        notification.style.display = 'none';
-                        notification.style.animation = 'slideIn 0.3s ease-in-out';
-                        notification.className = 'zz-notification';
-                    }, 300);
-                }, 2000);
             }
         });
 
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const notificationMessage = document.getElementById('notificationMessage');
+
+            if (!notification || !notificationMessage) {
+                console.error('Notification elements not found');
+                alert(message);
+                return;
+            }
+
+            notificationMessage.textContent = message;
+            notification.className = `zz-notification ${type} show`;
+            notification.style.display = 'flex';
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-in-out';
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                    notification.style.animation = 'slideIn 0.3s ease-in-out';
+                    notification.className = 'zz-notification';
+                }, 300);
+            }, 3000);
+        }
+
+        window.showNotification = showNotification;
+
         function showInvoiceModal() {
+            console.log('Opening invoice modal');
             const modal = document.getElementById('invoiceModal');
             modal.style.display = 'flex';
             modal.classList.add('active');
         }
 
         function closeInvoiceModal() {
+            console.log('Closing invoice modal');
             const modal = document.getElementById('invoiceModal');
             modal.classList.remove('active');
             setTimeout(() => {
@@ -799,276 +731,190 @@
             }, 300);
         }
 
-        function downloadInvoice() {
-            closeInvoiceModal();
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+       function downloadInvoice() {
+    console.log('downloadInvoice function called');
+    showInvoiceModal();
 
-            // Set font to helvetica
-            doc.setFont('helvetica', 'normal');
+    if (!window.jspdf || !window.jspdf.jsPDF) {
+        console.error('jsPDF library is not loaded.');
+        showNotification('Error: Unable to generate invoice. Please check your internet connection.', 'error');
+        return;
+    }
 
-            // Parse order data from JSON
-            const order = JSON.parse('<%- JSON.stringify(order) %>');
-            const userName = '<%= userName %>';
-            const deliveryAddress = <%- JSON.stringify(deliveryAddress) || 'null' %>;
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.setFont('helvetica', 'normal');
 
-            // Default values to prevent undefined errors
-            const defaults = {
-                orderId: 'N/A',
-                createdOn: 'N/A',
-                status: 'Pending',
-                paymentMethod: 'Cash on Delivery',
-                totalPrice: 0.00,
-                couponApplied: false,
-                discount: 0.00,
-                finalAmount: 0.00,
-                orderedItems: [],
-                user: { email: 'customer@example.com' }
-            };
-            const safeOrder = { ...defaults, ...order };
+    try {
+        const orderRaw = '<%- JSON.stringify(order) %>';
+        console.log('Raw order data:', orderRaw);
 
-            // Format order date
-            const orderDate = safeOrder.createdOn
-                ? new Date(safeOrder.createdOn).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                  })
-                : 'N/A';
+        let order;
+        try {
+            order = JSON.parse(orderRaw);
+        } catch (parseError) {
+            console.error('JSON parse error:', parseError);
+            throw new Error('Invalid order data format');
+        }
 
-            // Helper function to sanitize and format currency
-            const formatCurrency = (value) => {
-                const num = parseFloat(value) || 0;
-                return `INR ${num.toFixed(2)}`;
-            };
+        const userName = '<%= userName || "Customer Name" %>';
+        const deliveryAddress = <%- JSON.stringify(deliveryAddress) || 'null' %>;
+        const couponDiscount = parseFloat('<%= couponDiscount || 0 %>');
+        const offerDiscount = parseFloat('<%= offerDiscount || 0 %>');
+        console.log('Parsed order:', order);
+        console.log('User:', userName);
+        console.log('Address:', deliveryAddress);
+        console.log('Discounts:', { couponDiscount, offerDiscount });
 
-            // Header
-            doc.setFillColor(20, 184, 166);
-            doc.rect(0, 0, 210, 40, 'F');
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(20);
-            doc.text('Invoice', 105, 20, { align: 'center' });
-            doc.setFontSize(12);
-            doc.text(`Order ID: ${safeOrder.orderId}`, 105, 30, { align: 'center' });
+        const defaults = {
+            orderId: 'N/A',
+            createdOn: new Date().toISOString(),
+            status: 'Pending',
+            paymentMethod: 'Unknown',
+            totalPrice: 0.00,
+            couponApplied: false,
+            discount: 0.00,
+            finalAmount: 0.00,
+            orderedItems: [],
+            user: { email: 'customer@example.com', name: 'Customer Name' },
+            address: null,
+        };
+        const safeOrder = { ...defaults, ...order };
 
-            // Order Details
-            doc.setTextColor(31, 41, 55);
-            doc.setFontSize(14);
-            doc.text('Order Details', 20, 50);
-            doc.setFontSize(10);
-            doc.text(`Order Date: ${orderDate}`, 20, 60);
-            doc.text(`Status: ${safeOrder.status}`, 20, 70);
-            doc.text(`Payment Method: ${safeOrder.paymentMethod}`, 20, 80);
+        const orderDate = safeOrder.createdOn
+            ? new Date(safeOrder.createdOn).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+              })
+            : 'N/A';
 
-            // Billed To
-            doc.setFontSize(14);
-            doc.text('Billed To', 20, 110);
-            doc.setFontSize(10);
-            doc.text(userName, 20, 120);
-            if (deliveryAddress) {
-                doc.text(`${deliveryAddress.addressType ? deliveryAddress.addressType + ': ' : ''}${deliveryAddress.city}, ${deliveryAddress.state} ${deliveryAddress.pincode}`, 20, 130);
-                doc.text(deliveryAddress.landMark || '', 20, 140);
-                doc.text(`Email: ${safeOrder.user.email || 'customer@example.com'}`, 20, 150);
-            } else {
-                doc.text('Address not available', 20, 130);
-                doc.text(`Email: ${safeOrder.user.email || 'customer@example.com'}`, 20, 140);
-            }
+        const formatCurrency = (value) => {
+            const num = parseFloat(value) || 0;
+            return `INR ${num.toFixed(2)}`;
+        };
 
-            // Order Items Table
-            doc.setFontSize(14);
-            doc.text('Order Items', 20, 170);
-            doc.setFontSize(10);
+        // Header
+        doc.setFillColor(20, 184, 166);
+        doc.rect(0, 0, 210, 40, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(20);
+        doc.text('Invoice', 105, 20, { align: 'center' });
+        doc.setFontSize(12);
+        doc.text(`Order ID: ${safeOrder.orderId}`, 105, 30, { align: 'center' });
 
-            // Table headers
-            const headers = ['Product', 'Quantity', 'Price', 'Total'];
-            const colWidths = [100, 30, 30, 30];
-            let x = 20;
-            headers.forEach((header, i) => {
-                doc.text(header, x, 180, { align: i > 0 ? 'right' : 'left' });
-                x += colWidths[i];
+        // Order Details
+        doc.setTextColor(31, 41, 55);
+        doc.setFontSize(14);
+        doc.text('Order Details', 20, 50);
+        doc.setFontSize(10);
+        doc.text(`Order Date: ${orderDate}`, 20, 60);
+        doc.text(`Status: ${safeOrder.status}`, 20, 70);
+        doc.text(`Payment Method: ${safeOrder.paymentMethod}`, 20, 80);
+
+        // Billed To
+        doc.setFontSize(14);
+        doc.text('Billed To', 20, 100);
+        doc.setFontSize(10);
+        doc.text(userName, 20, 110);
+        if (deliveryAddress && deliveryAddress.city && deliveryAddress.state && deliveryAddress.pincode) {
+            const addressLine = `${
+                deliveryAddress.addressType ? deliveryAddress.addressType + ': ' : ''
+            }${deliveryAddress.name ? deliveryAddress.name + ', ' : ''}${deliveryAddress.city}, ${
+                deliveryAddress.state
+            } ${deliveryAddress.pincode}`;
+            doc.text(addressLine, 20, 120, { maxWidth: 100 });
+            doc.text(deliveryAddress.landMark || 'No landmark', 20, 130, { maxWidth: 100 });
+            doc.text(`Phone: ${deliveryAddress.phone || 'N/A'}`, 20, 140);
+            doc.text(`Alt Phone: ${deliveryAddress.altPhone || 'N/A'}`, 20, 150);
+            doc.text(`Email: ${safeOrder.user.email || 'customer@example.com'}`, 20, 160);
+        } else {
+            doc.text('Address not available', 20, 120);
+            doc.text(`Email: ${safeOrder.user.email || 'customer@example.com'}`, 20, 130);
+        }
+
+        // Order Items
+        doc.setFontSize(14);
+        doc.text('Order Items', 20, 180);
+        doc.setFontSize(10);
+
+        const headers = ['Product', 'Quantity', 'Price', 'Total'];
+        const colWidths = [100, 30, 30, 30];
+        let x = 20;
+        headers.forEach((header, i) => {
+            doc.text(header, x, 190, { align: i > 0 ? 'right' : 'left' });
+            x += colWidths[i];
+        });
+        doc.setLineWidth(0.5);
+        doc.line(20, 192, 190, 192);
+
+        let y = 200;
+        if (safeOrder.orderedItems && safeOrder.orderedItems.length > 0) {
+            safeOrder.orderedItems.forEach((item) => {
+                const productName = item.product && item.product.productName ? item.product.productName : 'Unknown';
+                const quantity = item.quantity || 0;
+                const price = formatCurrency(item.price || 0);
+                const total = formatCurrency((item.price || 0) * (item.quantity || 0));
+
+                x = 20;
+                doc.text(productName, x, y, { maxWidth: colWidths[0] });
+                doc.text(quantity.toString(), x + colWidths[0], y, { align: 'right' });
+                doc.text(price, x + colWidths[0] + colWidths[1], y, { align: 'right' });
+                doc.text(total, x + colWidths[0] + colWidths[1] + colWidths[2], y, { align: 'right' });
+                y += 10;
             });
+        } else {
+            doc.text('No items found in this order.', 20, y);
+            y += 10;
+        }
 
-            // Table rows
-            let y = 190;
-            if (safeOrder.orderedItems && safeOrder.orderedItems.length > 0) {
-                safeOrder.orderedItems.forEach(item => {
-                    const productName = item.product && item.product.productName ? item.product.productName : 'Unknown';
-                    const quantity = item.quantity || 0;
-                    const price = formatCurrency(item.price || 0);
-                    const total = formatCurrency((item.price || 0) * (item.quantity || 0));
+        // Invoice Summary
+        y += 10;
+        doc.text('Subtotal:', 140, y, { align: 'right' });
+        doc.text(formatCurrency(safeOrder.totalPrice), 190, y, { align: 'right' });
+        y += 10;
+        doc.text('Coupon Discount:', 140, y, { align: 'right' });
+        doc.text(formatCurrency(couponDiscount), 190, y, { align: 'right' });
+        y += 10;
+        doc.text('Offer Discount:', 140, y, { align: 'right' });
+        doc.text(formatCurrency(offerDiscount), 190, y, { align: 'right' });
+        y += 10;
+        doc.text('Shipping:', 140, y, { align: 'right' });
+        doc.text(formatCurrency(50), 190, y, { align: 'right' });
+        y += 10;
+        doc.setFont('helvetica', 'bold');
+        doc.text('Total:', 140, y, { align: 'right' });
+        // Use safeOrder.finalAmount directly, assuming it includes shipping
+        doc.text(formatCurrency(safeOrder.finalAmount), 190, y, { align: 'right' });
 
-                    x = 20;
-                    doc.text(productName, x, y, { maxWidth: colWidths[0] });
-                    doc.text(quantity.toString(), x + colWidths[0], y, { align: 'right' });
-                    doc.text(price, x + colWidths[0] + colWidths[1], y, { align: 'right' });
-                    doc.text(total, x + colWidths[0] + colWidths[1] + colWidths[2], y, { align: 'right' });
-                    y += 10;
-                });
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(20, 184, 166);
+        doc.setFontSize(10);
+        doc.text('Thank you for your business!', 105, y + 20, { align: 'center' });
 
-                // Summary
-                y += 10;
-                doc.text('Subtotal:', 140, y, { align: 'right' });
-                doc.text(formatCurrency(safeOrder.totalPrice), 180, y, { align: 'right' });
-                y += 10;
-                doc.text('Tax:', 140, y, { align: 'right' });
-                doc.text(formatCurrency(safeOrder.couponApplied && safeOrder.discount ? safeOrder.discount : 0), 180, y, { align: 'right' });
-                y += 10;
-                doc.text('Shipping:', 140, y, { align: 'right' });
-                doc.text(formatCurrency(50), 180, y, { align: 'right' });
-                y += 10;
-                doc.setFont('helvetica', 'bold');
-                doc.text('Total:', 140, y, { align: 'right' });
-                doc.text(formatCurrency(safeOrder.finalAmount + 50), 180, y, { align: 'right' });
-            } else {
-                doc.text('No items found in this order.', 20, y);
-            }
-
-            // Footer
-            doc.setFont('helvetica', 'normal');
-            doc.setTextColor(20, 184, 166);
-            doc.setFontSize(10);
-            doc.text('Thank you for your business!', 105, y + 20, { align: 'center' });
-            doc.text('If you have any questions about this invoice, please contact our customer support.', 105, y + 30, { align: 'center' });
-
-            // Save the PDF
+        try {
+            const pdfBlob = doc.output('blob');
+            const url = window.URL.createObjectURL(pdfBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `invoice_${safeOrder.orderId}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            showNotification('Invoice downloaded successfully!', 'success');
+        } catch (downloadError) {
+            console.error('Download failed:', downloadError);
             doc.save(`invoice_${safeOrder.orderId}.pdf`);
+            showNotification('Invoice downloaded using fallback method!', 'success');
         }
+    } catch (e) {
+        console.error('Error generating invoice:', e);
+        showNotification('Error: Failed to generate invoice. Please try again.', 'error');
+    }
 
-        function printInvoice() {
-            closeInvoiceModal();
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-
-            // Set font to helvetica
-            doc.setFont('helvetica', 'normal');
-
-            // Parse order data from JSON
-            const order = JSON.parse('<%- JSON.stringify(order) %>');
-            const userName = '<%= userName %>';
-            const deliveryAddress = <%- JSON.stringify(deliveryAddress) || 'null' %>;
-
-            // Default values to prevent undefined errors
-            const defaults = {
-                orderId: 'N/A',
-                createdOn: 'N/A',
-                status: 'Pending',
-                paymentMethod: 'Cash on Delivery',
-                totalPrice: 0.00,
-                couponApplied: false,
-                discount: 0.00,
-                finalAmount: 0.00,
-                orderedItems: [],
-                user: { email: 'customer@example.com' }
-            };
-            const safeOrder = { ...defaults, ...order };
-
-            // Format order date
-            const orderDate = safeOrder.createdOn
-                ? new Date(safeOrder.createdOn).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                  })
-                : 'N/A';
-
-            // Helper function to sanitize and format currency
-            const formatCurrency = (value) => {
-                const num = parseFloat(value) || 0;
-                return `INR ${num.toFixed(2)}`;
-            };
-
-            // Header
-            doc.setFillColor(20, 184, 166);
-            doc.rect(0, 0, 210, 40, 'F');
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(20);
-            doc.text('Invoice', 105, 20, { align: 'center' });
-            doc.setFontSize(12);
-            doc.text(`Order ID: ${safeOrder.orderId}`, 105, 30, { align: 'center' });
-
-            // Order Details
-            doc.setTextColor(31, 41, 55);
-            doc.setFontSize(14);
-            doc.text('Order Details', 20, 50);
-            doc.setFontSize(10);
-            doc.text(`Order Date: ${orderDate}`, 20, 60);
-            doc.text(`Status: ${safeOrder.status}`, 20, 70);
-            doc.text(`Payment Method: ${safeOrder.paymentMethod}`, 20, 80);
-
-            // Billed To
-            doc.setFontSize(14);
-            doc.text('Billed To', 20, 110);
-            doc.setFontSize(10);
-            doc.text(userName, 20, 120);
-            if (deliveryAddress) {
-                doc.text(`${deliveryAddress.addressType ? deliveryAddress.addressType + ': ' : ''}${deliveryAddress.city}, ${deliveryAddress.state} ${deliveryAddress.pincode}`, 20, 130);
-                doc.text(deliveryAddress.landMark || '', 20, 140);
-                doc.text(`Email: ${safeOrder.user.email || 'customer@example.com'}`, 20, 150);
-            } else {
-                doc.text('Address not available', 20, 130);
-                doc.text(`Email: ${safeOrder.user.email || 'customer@example.com'}`, 20, 140);
-            }
-
-            // Order Items Table
-            doc.setFontSize(14);
-            doc.text('Order Items', 20, 170);
-            doc.setFontSize(10);
-
-            // Table headers
-            const headers = ['Product', 'Quantity', 'Price', 'Total'];
-            const colWidths = [100, 30, 30, 30];
-            let x = 20;
-            headers.forEach((header, i) => {
-                doc.text(header, x, 180, { align: i > 0 ? 'right' : 'left' });
-                x += colWidths[i];
-            });
-
-            // Table rows
-            let y = 190;
-            if (safeOrder.orderedItems && safeOrder.orderedItems.length > 0) {
-                safeOrder.orderedItems.forEach(item => {
-                    const productName = item.product && item.product.productName ? item.product.productName : 'Unknown';
-                    const quantity = item.quantity || 0;
-                    const price = formatCurrency(item.price || 0);
-                    const total = formatCurrency((item.price || 0) * (item.quantity || 0));
-
-                    x = 20;
-                    doc.text(productName, x, y, { maxWidth: colWidths[0] });
-                    doc.text(quantity.toString(), x + colWidths[0], y, { align: 'right' });
-                    doc.text(price, x + colWidths[0] + colWidths[1], y, { align: 'right' });
-                    doc.text(total, x + colWidths[0] + colWidths[1] + colWidths[2], y, { align: 'right' });
-                    y += 10;
-                });
-
-                // Summary
-                y += 10;
-                doc.text('Subtotal:', 140, y, { align: 'right' });
-                doc.text(formatCurrency(safeOrder.totalPrice), 180, y, { align: 'right' });
-                y += 10;
-                doc.text('Tax:', 140, y, { align: 'right' });
-                doc.text(formatCurrency(safeOrder.couponApplied && safeOrder.discount ? safeOrder.discount : 0), 180, y, { align: 'right' });
-                y += 10;
-                doc.text('Shipping:', 140, y, { align: 'right' });
-                doc.text(formatCurrency(50), 180, y, { align: 'right' });
-                y += 10;
-                doc.setFont('helvetica', 'bold');
-                doc.text('Total:', 140, y, { align: 'right' });
-                doc.text(formatCurrency(safeOrder.finalAmount + 50), 180, y, { align: 'right' });
-            } else {
-                doc.text('No items found in this order.', 20, y);
-            }
-
-            // Footer
-            doc.setFont('helvetica', 'normal');
-            doc.setTextColor(20, 184, 166);
-            doc.setFontSize(10);
-            doc.text('Thank you for your business!', 105, y + 20, { align: 'center' });
-            doc.text('If you have any questions about this invoice, please contact our customer support.', 105, y + 30, { align: 'center' });
-
-            // Print the PDF
-            doc.autoPrint();
-            window.open(doc.output('bloburl'), '_blank');
-        }
+    closeInvoiceModal();
+}
     </script>
 </body>
 </html>

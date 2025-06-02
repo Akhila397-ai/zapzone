@@ -6,40 +6,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZAPZONE - Product Details</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
-    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
-    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         .product-unavailable {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          min-height: 60vh;
-          text-align: center;
-          background-color: #f8f9fa;
-          padding: 40px 20px;
-          border-radius: 12px;
-          box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            text-align: center;
+            background-color: #f8f9fa;
+            padding: 40px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.05);
         }
 
         .product-unavailable h2 {
-          font-size: 2rem;
-          color: #dc3545;
-          margin-bottom: 10px;
+            font-size: 2rem;
+            color: #dc3545;
+            margin-bottom: 10px;
         }    
 
         .product-unavailable p {
-         font-size: 1.1rem;
-         color: #555;
-         margin-bottom: 20px;
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 20px;
         }
 
         .product-unavailable .btn {
-         padding: 10px 20px;
-         font-size: 1rem;
-         border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 8px;
         }
 
         body {
@@ -310,26 +310,33 @@
             color: #666;
         }
         
-        .zz-add-to-wishlist {
-            flex: 1;
-            background-color: #f8f9fa;
-            border: 1px solid #ddd;
-            color: #e74c3c;
-            padding: 12px 20px;
-            border-radius: 5px;
-            font-weight: 600;
-            cursor: pointer;
+        .zz-wishlist-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+            color: #ccc;
             transition: all 0.3s;
-            text-align: center;
             text-decoration: none;
-            display: block;
         }
         
-        .zz-add-to-wishlist:hover {
-            background-color: #e74c3c;
-            border-color: #e74c3c;
-            color: white;
+        .zz-wishlist-btn.in-wishlist {
+            color: #e74c3c;
+        }
+        
+        .zz-wishlist-btn:hover {
+            color: #c0392b;
+            transform: scale(1.1);
             text-decoration: none;
+        }
+        
+        .zz-wishlist-btn.disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
         }
         
         .zz-product-tabs {
@@ -457,8 +464,12 @@
             background-color: white;
             border-radius: 50%;
             box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-            color: #e74c3c;
+            color: #ccc;
             transition: all 0.3s;
+        }
+        
+        .wishlist-btn a.in-wishlist {
+            color: #e74c3c;
         }
         
         .wishlist-btn a:hover {
@@ -507,31 +518,6 @@
             background-color: #333;
             color: white;
             text-decoration: none;
-        }
-        
-        @media (max-width: 991px) {
-            .zz-product-info {
-                margin-top: 30px;
-            }
-        }
-        
-        @media (max-width: 767px) {
-            .zz-main-image {
-                height: 300px;
-            }
-            
-            .zz-thumbnail {
-                width: 60px;
-                height: 60px;
-            }
-            
-            .zz-product-info h1 {
-                font-size: 20px;
-            }
-            
-            .zz-product-price {
-                font-size: 18px;
-            }
         }
         
         .zz-offer-wrapper {
@@ -675,8 +661,6 @@
             border-radius: 5px;
         }
         
-       
-        
         .zz-no-offers {
             font-size: 14px;
             color: #6c757d;
@@ -688,7 +672,78 @@
             border-radius: 6px;
         }
         
+        .zz-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #28a745;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 2000;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            max-width: 300px;
+            animation: slideIn 0.3s ease-in-out;
+        }
+
+        .zz-notification.error {
+            background-color: #e74c3c;
+        }
+
+        .zz-notification.show {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        
+        @media (max-width: 991px) {
+            .zz-product-info {
+                margin-top: 30px;
+            }
+        }
+        
         @media (max-width: 767px) {
+            .zz-main-image {
+                height: 300px;
+            }
+            
+            .zz-thumbnail {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .zz-product-info h1 {
+                font-size: 20px;
+            }
+            
+            .zz-product-price {
+                font-size: 18px;
+            }
+            
             .zz-offer-list {
                 grid-template-columns: 1fr;
             }
@@ -752,22 +807,22 @@
                                     <span class="zz-original-price">₹ <%= product.salePrice %></span>
                                 <% } %>
                             </div>
+                            <div class="wishlist-btn" style="margin-bottom: 15px;">
+                                <a href="#" class="zz-wishlist-btn wishlist-toggle" data-product-id="<%= product._id %>">
+                                    <i class="fa fa-heart"></i>
+                                </a>
+                            </div>
                             <div class="zz-offer-wrapper">
                                 <span class="zz-offer-label">Available Offers</span>
                                 <div class="zz-offer-list">
                                     <% if (offers && offers.length > 0) { %>
                                         <% offers.forEach(offer => { %>
-                                            <% 
-                                                const totalPrice = product.salePrice;
-                                                const isValidOffer = totalPrice >= offer.minPurchase && new Date(offer.validUpto) >= new Date();
-                                                if (isValidOffer) { 
-                                            %>
+                                            <% if (new Date(offer.validUpto) >= new Date()) { %>
                                                 <div class="zz-offer-card <%= bestOffer && bestOffer._id.toString() === offer._id.toString() ? 'active' : '' %>"
                                                      data-offer-id="<%= offer._id %>"
                                                      data-code="<%= offer.code %>"
                                                      data-discount-type="<%= offer.discountType %>"
                                                      data-discount-amount="<%= offer.discountAmount %>"
-                                                     data-min-purchase="<%= offer.minPurchase %>"
                                                      data-valid-upto="<%= offer.validUpto %>">
                                                     <i class="fas fa-tag zz-offer-icon"></i>
                                                     <div class="zz-offer-details">
@@ -785,10 +840,10 @@
                                     <% } %>
                                 </div>
                                 <small id="offerError" class="zz-offer-error">
-                                    Please meet the minimum purchase requirement to apply this offer.
+                                    Offer is not applicable.
                                 </small>
                                 <div id="offerPricePreview" class="zz-offer-price-preview d-none"></div>
-                                <% if (!offers || offers.length === 0 || offers.every(offer => product.salePrice < offer.minPurchase || new Date(offer.validUpto) < new Date())) { %>
+                                <% if (!offers || offers.length === 0 || offers.every(offer => new Date(offer.validUpto) < new Date())) { %>
                                     <div class="zz-no-offers">No offers available at the moment</div>
                                 <% } %>
                             </div>
@@ -827,7 +882,7 @@
                                     <input type="number" id="quantityInput" class="zz-quantity-input" 
                                            value="<%= product.quantity === 0 ? 0 : 1 %>" 
                                            min="1" 
-                                           max="<%= product.quantity || 10 %>" 
+                                           max="<%= Math.min(product.quantity, 5) || 5 %>" 
                                            <%= product.quantity === 0 ? 'disabled' : '' %>>
                                     <button type="button" class="zz-quantity-btn" id="increaseQty" <%= product.quantity === 0 ? 'disabled' : '' %>>
                                         <i class="fa fa-plus"></i>
@@ -836,14 +891,12 @@
                             </div>
     
                             <div class="zz-action-buttons">
-                                <button id="addToCartBtn" class="zz-add-to-cart <%= product.quantity === 0 ? 'disabled' : '' %>" 
+                                <button id="addToCartBtn" 
+                                        class="zz-add-to-cart <%= product.quantity === 0 ? 'disabled' : '' %>" 
                                         data-product-id="<%= product._id %>" 
                                         <%= product.quantity === 0 ? 'disabled' : '' %>>
                                     <%= product.quantity > 0 ? 'ADD TO CART' : 'OUT OF STOCK' %>
                                 </button>
-                                <a href="/addToWishlist?id=<%= product._id %>" class="zz-add-to-wishlist">
-                                    <i class="fa fa-heart"></i>
-                                </a>
                             </div>
                         </div>
                     </div>
@@ -912,17 +965,17 @@
                             <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
                                 <div class="product-item">
                                     <div class="product-img-wrap">
-                                        <a href="productDetails?id=<%= relatedProduct._id %>">
+                                        <a href="/productDetails?id=<%= relatedProduct._id %>">
                                             <img src="/Uploads/product-images/<%= relatedProduct.productImage[0] %>" alt="<%= relatedProduct.productName %>">
                                         </a>
                                         <div class="wishlist-btn">
-                                            <a href="/addToWishlist?id=<%= relatedProduct._id %>" aria-label="Add to wishlist">
+                                            <a href="#" class="wishlist-toggle" data-product-id="<%= relatedProduct._id %>" aria-label="Add to wishlist">
                                                 <i class="fa fa-heart"></i>
                                             </a>
                                         </div>
                                     </div>
                                     <div class="product-details">
-                                        <h6><a href="productDetails?id=<%= relatedProduct._id %>" class="text-dark text-decoration-none"><%= relatedProduct.productName %></a></h6>
+                                        <h6><a href="/productDetails?id=<%= relatedProduct._id %>" class="text-dark text-decoration-none"><%= relatedProduct.productName %></a></h6>
                                         <div class="price-box">₹ <%= relatedProduct.salePrice %></div>
                                         <a href="/addToCart?id=<%= relatedProduct._id %>" class="cart-btn">ADD TO CART</a>
                                     </div>
@@ -938,12 +991,16 @@
             </div>
         </div>
     
+        <div class="zz-notification" id="notification" style="display: none;">
+            <span id="notificationMessage"></span>
+        </div>
+    
         <%- include("../partials/user/footer") %>
     
     <% } %>
     
-    <script src="js/jquery-3.3.1.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -956,9 +1013,107 @@
             const offerError = document.getElementById('offerError');
             const offerPricePreview = document.getElementById('offerPricePreview');
             const productPrice = <%= product.salePrice %>;
-            const isOutOfStock = <%= product.quantity === 0 %>;
+            const isOutOfStock = <%= product.quantity === 0 ? true : false %>;
             let selectedOffer = null;
-            
+            const notification = $('#notification');
+            const notificationMessage = $('#notificationMessage');
+            const wishlistButtons = $('.wishlist-toggle');
+
+            // Notification Function
+            function showNotification(message, type = 'success') {
+                notificationMessage.text(message);
+                notification.removeClass().addClass(`zz-notification ${type} show`);
+                notification.show();
+                
+                setTimeout(() => {
+                    notification.css('animation', 'slideOut 0.3s ease-in-out');
+                    setTimeout(() => {
+                        notification.hide().css('animation', 'slideIn 0.3s ease-in-out');
+                        notification.removeClass('show');
+                    }, 300);
+                }, 2000);
+            }
+
+            // Wishlist Functionality
+            function checkWishlistStatus() {
+                const productIds = wishlistButtons.map(function() {
+                    return $(this).data('product-id');
+                }).get();
+
+                if (productIds.length === 0) return;
+
+                $.ajax({
+                    url: '/checkWishlistStatus',
+                    method: 'POST',
+                    data: { productIds: productIds },
+                    success: function(response) {
+                        if (response.success) {
+                            response.wishlist.forEach(function(item) {
+                                const productId = item.productId;
+                                const inWishlist = item.inWishlist;
+                                const $wishlistBtn = $(`.wishlist-toggle[data-product-id="${productId}"]`);
+                                if (inWishlist) {
+                                    $wishlistBtn.addClass('in-wishlist');
+                                } else {
+                                    $wishlistBtn.removeClass('in-wishlist');
+                                }
+                            });
+                        } else {
+                            console.error('Error checking wishlist status:', response.message);
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('AJAX Error checking wishlist status:', xhr.status, xhr.responseText);
+                    }
+                });
+            }
+
+            function attachWishlistButtonListeners() {
+                wishlistButtons.on('click', function(e) {
+                    e.preventDefault();
+                    const $this = $(this);
+                    if ($this.hasClass('disabled')) return;
+                    $this.addClass('disabled');
+                    const productId = $this.data('product-id');
+                    const isInWishlist = $this.hasClass('in-wishlist');
+                    const url = isInWishlist ? '/removeFromWishlist' : '/addToWishlist';
+
+                    $.ajax({
+                        url: url,
+                        method: 'POST',
+                        data: { productId: productId },
+                        success: function(response) {
+                            $this.removeClass('disabled');
+                            if (response.success) {
+                                if (isInWishlist) {
+                                    $this.removeClass('in-wishlist');
+                                    showNotification('Removed from your wishlist!', 'success');
+                                } else {
+                                    $this.addClass('in-wishlist');
+                                    showNotification('Added to your wishlist!', 'success');
+                                }
+                            } else {
+                                showNotification(response.message || 'Could not update wishlist.', 'error');
+                            }
+                        },
+                        error: function(xhr) {
+                            $this.removeClass('disabled');
+                            if (xhr.status === 401) {
+                                showNotification('Please log in to manage your wishlist.', 'error');
+                                setTimeout(() => { window.location.href = '/login'; }, 1000);
+                            } else {
+                                showNotification('Something went wrong with wishlist!', 'error');
+                            }
+                        }
+                    });
+                });
+            }
+
+            // Initialize Wishlist
+            checkWishlistStatus();
+            attachWishlistButtonListeners();
+
+            // Thumbnail Handling
             thumbnails.forEach(thumb => {
                 thumb.addEventListener('click', function() {
                     mainImage.src = this.getAttribute('data-image');
@@ -966,7 +1121,8 @@
                     this.classList.add('active');
                 });
             });
-            
+
+            // Quantity Handling
             if (!isOutOfStock) {
                 decreaseBtn.addEventListener('click', function() {
                     const currentValue = parseInt(quantityInput.value);
@@ -975,21 +1131,21 @@
                         updateOfferValidation();
                     }
                 });
-                
+
                 increaseBtn.addEventListener('click', function() {
                     const currentValue = parseInt(quantityInput.value);
-                    const maxValue = parseInt(quantityInput.getAttribute('max'));
+                    const maxValue = Math.min(parseInt(quantityInput.getAttribute('max')), 5);
                     if (currentValue < maxValue) {
                         quantityInput.value = currentValue + 1;
                         updateOfferValidation();
                     }
                 });
-                
+
                 quantityInput.addEventListener('change', function() {
                     const value = parseInt(this.value);
                     const min = parseInt(this.getAttribute('min'));
-                    const max = parseInt(this.getAttribute('max'));
-                    
+                    const max = Math.min(parseInt(this.getAttribute('max')), 5);
+
                     if (value < min || isNaN(value)) {
                         this.value = min;
                     } else if (value > max) {
@@ -998,81 +1154,63 @@
                     updateOfferValidation();
                 });
             }
-            
+
+            // Offer Validation
             function updateOfferValidation() {
                 const quantity = parseInt(quantityInput.value);
                 const totalPrice = productPrice * quantity;
-                
-                // Get all possible offers from the server-rendered data
+
                 const offers = [
                     <% if (offers && offers.length > 0) { %>
-                        <% offers.forEach(offer => { %>
+                        <% offers.forEach((offer, index) => { %>
                             {
                                 id: "<%= offer._id %>",
                                 code: "<%= offer.code %>",
                                 name: "<%= offer.offerName %>",
                                 discountType: "<%= offer.discountType %>",
                                 discountAmount: <%= offer.discountAmount %>,
-                                minPurchase: <%= offer.minPurchase %>,
                                 validUpto: "<%= offer.validUpto %>"
-                            },
+                            }<%= index < offers.length - 1 ? ',' : '' %>
                         <% }) %>
                     <% } %>
                 ];
-                
-                // Filter valid offers (min purchase met and not expired)
+
                 const validOffers = offers.filter(offer => {
-                    return totalPrice >= offer.minPurchase && new Date(offer.validUpto) >= new Date();
+                    return new Date(offer.validUpto) >= new Date();
                 });
-                
-                // Calculate discount value for sorting
+
                 validOffers.forEach(offer => {
                     offer.discountValue = offer.discountType === 'percentage'
                         ? (totalPrice * Math.min(offer.discountAmount, 100)) / 100
                         : Math.min(offer.discountAmount, totalPrice);
                 });
-                
-                // Sort offers by discount value (descending)
+
                 validOffers.sort((a, b) => b.discountValue - a.discountValue);
-                
-                // Update offer cards visibility and active state
+
                 const offerCards = document.querySelectorAll('.zz-offer-card');
                 offerCards.forEach(card => {
                     const offerId = card.getAttribute('data-offer-id');
                     const isValid = validOffers.some(offer => offer.id === offerId);
-                    card.style.display = isValid ? 'block' : 'none';
+                    card.style.display = isValid ? 'flex' : 'none';
                     card.classList.remove('active');
                 });
-                
-                // Select the best offer (first valid offer after sorting) or none
+
                 selectedOffer = validOffers.length > 0 ? validOffers[0] : null;
-                
-                // Highlight the best offer card
+
                 if (selectedOffer) {
                     const bestOfferCard = document.querySelector(`.zz-offer-card[data-offer-id="${selectedOffer.id}"]`);
                     if (bestOfferCard) {
                         bestOfferCard.classList.add('active');
                     }
                 }
-                
-                // Update price display
+
                 offerError.style.display = 'none';
                 offerPricePreview.classList.add('d-none');
-                
+
                 if (selectedOffer) {
                     const discountType = selectedOffer.discountType;
                     const discountAmount = parseFloat(selectedOffer.discountAmount);
-                    const minPurchase = parseFloat(selectedOffer.minPurchase);
-                    
-                    if (minPurchase > 0 && totalPrice < minPurchase) {
-                        offerError.style.display = 'block';
-                        offerError.textContent = `Minimum purchase of ₹${minPurchase.toFixed(2)} required for this offer.`;
-                        selectedOffer = null;
-                        document.querySelector('.zz-product-price').innerHTML = `₹${totalPrice.toFixed(2)}`;
-                        console.log('Offer reset due to insufficient purchase amount');
-                        return;
-                    }
-                    
+
                     let discount = 0;
                     if (discountType === 'percentage') {
                         discount = (totalPrice * Math.min(discountAmount, 100)) / 100;
@@ -1088,15 +1226,14 @@
                     document.querySelector('.zz-product-price').innerHTML = `₹${totalPrice.toFixed(2)}`;
                     console.log('No offer applied, using base price');
                 }
-                
-                // Show "No offers available" if no valid offers
+
                 const noOffersDiv = document.querySelector('.zz-no-offers');
                 if (noOffersDiv) {
                     noOffersDiv.style.display = validOffers.length === 0 ? 'block' : 'none';
                 }
             }
-            
-            // Add click event listeners to offer cards
+
+            // Offer Card Click Handling
             const offerCards = document.querySelectorAll('.zz-offer-card');
             offerCards.forEach(card => {
                 card.addEventListener('click', function() {
@@ -1106,17 +1243,17 @@
                         id: this.getAttribute('data-offer-id'),
                         code: this.getAttribute('data-code'),
                         discountType: this.getAttribute('data-discount-type'),
-                        discountAmount: parseFloat(this.getAttribute('data-discount-amount')),
-                        minPurchase: parseFloat(this.getAttribute('data-min-purchase'))
+                        discountAmount: parseFloat(this.getAttribute('data-discount-amount'))
                     };
                     updateOfferValidation();
                 });
             });
-            
+
             if (!isOutOfStock) {
                 updateOfferValidation();
             }
-            
+
+            // Add to Cart Handling
             if (addToCartBtn && !addToCartBtn.classList.contains('disabled')) {
                 addToCartBtn.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -1124,25 +1261,15 @@
                     const quantity = parseInt(quantityInput.value);
                     let offerId = '';
                     let offerCode = '';
-                    
+
                     if (selectedOffer) {
-                        const totalPrice = productPrice * quantity;
-                        if (selectedOffer.minPurchase > 0 && totalPrice < selectedOffer.minPurchase) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Invalid Offer',
-                                text: `Minimum purchase of ₹${selectedOffer.minPurchase.toFixed(2)} required for this offer.`,
-                            });
-                            return;
-                        }
-                        
                         offerId = selectedOffer.id;
                         offerCode = selectedOffer.code;
                         console.log(`Adding to cart with Offer ID: ${offerId}, Code: ${offerCode}`);
                     } else {
                         console.log('Adding to cart with no offer');
                     }
-                    
+
                     $.ajax({
                         url: '/addToCart',
                         type: 'POST',
@@ -1180,26 +1307,28 @@
                     });
                 });
             }
-            
+
+            // Tab Handling
             const tabLinks = document.querySelectorAll('.zz-nav-link');
             const tabContents = document.querySelectorAll('.zz-tab-pane');
-            
+
             tabLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
-                    
+
                     tabLinks.forEach(tab => tab.classList.remove('active'));
                     tabContents.forEach(content => {
                         content.classList.remove('show', 'active');
                         content.classList.add('fade');
                     });
-                    
+
                     this.classList.add('active');
                     const target = document.querySelector(this.getAttribute('href'));
                     target.classList.add('show', 'active');
                 });
             });
 
+            // Zoom Handling
             document.querySelectorAll('.zoom-container').forEach(container => {
                 const img = container.querySelector('.zoom-image');
                 const lens = container.querySelector('.zoom-lens');

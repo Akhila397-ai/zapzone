@@ -54,11 +54,6 @@ const offerSchema = new Schema({
     unique: true,
     trim: true,
   },
-  minPurchase: {
-    type: Number,
-    required: true,
-    min: 0,
-  },
   createdAt: {
     type: Date,
     default: Date.now,

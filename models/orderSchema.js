@@ -1,12 +1,17 @@
 const { status } = require('init');
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const { v4: uuidv4 } = require('uuid');
+
+
+const generateOrderId = () => {
+  const randomNum = Math.floor(10000000 + Math.random() * 90000000); // 8-digit random number
+  return `ZZ-ORD-${randomNum}`;
+};
 
 const orderSchema = new Schema({
   orderId: {
     type: String,
-    default: () => uuidv4(),
+    default: generateOrderId,
     unique: true
   },
   user: {
@@ -31,7 +36,7 @@ const orderSchema = new Schema({
     },
    status: {
   type: String,
-  enum: ["pending", "Cancelled", "Return Requested", "Returned", "Return Rejected"],
+  enum: ["pending", "Cancelled","Failed", "Return Requested", "Returned", "Return Rejected","processing"],
   default: "pending"
 }
   }],
@@ -64,7 +69,7 @@ const orderSchema = new Schema({
   status: {
     type: String,
     required: true,
-    enum: ["pending", "processing","Shipped", "Delivered", "Cancelled", "Return Requested", "Returned","Return Rejected"]
+    enum: ["pending", "processing","Shipped","Failed" ,"Delivered", "Cancelled", "Return Requested", "Returned","Return Rejected"]
   },
   createdOn: {
     type: Date,

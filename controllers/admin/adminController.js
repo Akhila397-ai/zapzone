@@ -54,16 +54,7 @@ const login = async (req, res) => {
 
 
 
-const loadDashboard=async(req,res)=>{
-    if(req.session.admin){
-        try {
-            res.render('dashboard')
-        } catch (error) {
-            res.redirect('/pagenotfound')
-            
-        }
-    }
-}
+
 
 const logout = async (req, res) => {
     try {
@@ -83,57 +74,16 @@ const logout = async (req, res) => {
 
 const getSalesReport = async (req, res) => {
   try {
-    const { startDate, endDate, page = 1 } = req.query;
+    const { startDate, endDate, reportType = 'daily', page = 1 } = req.query;
     const currentPage = parseInt(page);
     const limit = 5;
     const skip = (currentPage - 1) * limit;
 
-    let dateFilter = {};
-    if (startDate && endDate) {
-      const start = new Date(startDate);
-      const end = new Date(endDate);
-      if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-        return res.status(400).send('Invalid date format');
-      }
-      end.setHours(23, 59, 59, 999);
-      if (end < start) {
-        return res.status(400).send('End date cannot be earlier than start date');
-      }
-      dateFilter.createdOn = {
-        $gte: start,
-        $lte: end,
-      };
-    }
+    const salesData = await getSalesData(startDate, endDate, reportType);
+    const { orders, grossSales, couponsRedeemed, discounts, netSales, totalOrders, calculatedStartDate, calculatedEndDate } = salesData;
 
-    const totalOrdersCount = await Order.countDocuments(dateFilter);
-    const totalPages = Math.ceil(totalOrdersCount / limit);
-
-    const orders = await Order.find(dateFilter)
-      .populate('user', 'name')
-      .sort({ createdOn: -1 }) 
-      .skip(skip)
-      .limit(limit);
-
-    const allOrders = await Order.find(dateFilter);
-    const grossSales = allOrders.reduce((sum, order) => sum + (order.totalPrice || 0), 0);
-    const couponsRedeemed = allOrders.reduce((sum, order) => sum + (order.couponApplied ? order.discount : 0), 0);
-    const discounts = allOrders.reduce((sum, order) => sum + (order.discount || 0), 0);
-    const netSales = grossSales - discounts;
-    const totalOrders = totalOrdersCount;
-
-    const formattedOrders = orders.map(order => ({
-      orderId: order.orderId || 'N/A',
-      amount: order.totalPrice || 0,
-      coupon: order.couponApplied ? order.discount : 0,
-      finalAmount: order.finalAmount || (order.totalPrice || 0) - (order.discount || 0),
-      paymentMethod: order.paymentMethod || 'N/A',
-      date: order.createdOn ? order.createdOn.toLocaleDateString('en-US', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-      }) : 'N/A',
-      status: order.status || 'N/A',
-    }));
+    const totalPages = Math.ceil(totalOrders / limit);
+    const paginatedOrders = orders.slice(skip, skip + limit);
 
     res.render('sales-report', {
       grossSales,
@@ -141,38 +91,41 @@ const getSalesReport = async (req, res) => {
       discounts,
       netSales,
       totalOrders,
-      orders: formattedOrders,
-      startDate: startDate || '',
-      endDate: endDate || '',
+      orders: paginatedOrders,
+      startDate: reportType === 'custom' ? startDate : calculatedStartDate.toISOString().split('T')[0],
+      endDate: reportType === 'custom' ? endDate : calculatedEndDate.toISOString().split('T')[0],
+      reportType,
       currentPage,
       totalPages,
     });
   } catch (error) {
-    console.error('Error fetching sales report:', error);
+    console.error('Error fetching sales report:', error.message, error.stack);
     res.status(500).send('Server Error');
   }
 };
 const downloadSalesReportPDF = async (req, res) => {
   try {
-   
-    const salesData = await getSalesData(req.query.startDate, req.query.endDate);
-
-    const { orders, grossSales, couponsRedeemed, discounts, netSales, totalOrders } = salesData;
+    const { startDate, endDate, reportType = 'daily' } = req.query;
+    const salesData = await getSalesData(startDate, endDate, reportType);
+    const { orders, grossSales, couponsRedeemed, discounts, netSales, totalOrders, calculatedStartDate, calculatedEndDate } = salesData;
 
     const doc = new PDFDocument({ size: 'A4', margin: 50 });
-    
     res.setHeader('Content-Disposition', 'attachment; filename="sales-report.pdf"');
     res.setHeader('Content-Type', 'application/pdf');
-
     doc.pipe(res);
 
     doc.fontSize(20).text('Sales Report', { align: 'center' });
     doc.moveDown();
 
-    if (req.query.startDate && req.query.endDate) {
-      doc.fontSize(12).text(`Date Range: ${req.query.startDate} to ${req.query.endDate}`, { align: 'center' });
-      doc.moveDown();
+    if (reportType === 'custom' && startDate && endDate) {
+      doc.fontSize(12).text(`Date Range: ${startDate} to ${endDate}`, { align: 'center' });
+    } else {
+      doc.fontSize(12).text(
+        `Date Range: ${calculatedStartDate.toLocaleDateString('en-US')} to ${calculatedEndDate.toLocaleDateString('en-US')}`,
+        { align: 'center' }
+      );
     }
+    doc.moveDown();
 
     doc.fontSize(14).text('Summary', { underline: true });
     doc.moveDown(0.5);
@@ -188,13 +141,13 @@ const downloadSalesReportPDF = async (req, res) => {
     const tableTop = doc.y;
     const tableLeft = 50;
     const colWidths = [80, 80, 80, 80, 80, 80, 80];
-    
+
     doc.font('Helvetica-Bold');
     const headers = ['Order ID', 'Amount', 'Coupon', 'Final Amount', 'Payment', 'Date', 'Status'];
     headers.forEach((header, i) => {
       doc.text(header, tableLeft + colWidths.slice(0, i).reduce((a, b) => a + b, 0), tableTop, {
         width: colWidths[i],
-        align: 'center'
+        align: 'center',
       });
     });
     doc.font('Helvetica');
@@ -205,16 +158,28 @@ const downloadSalesReportPDF = async (req, res) => {
       doc.text(order.orderId.slice(0, 13), tableLeft, y, { width: colWidths[0], align: 'center' });
       doc.text(`₹${order.amount.toLocaleString('en-IN')}`, tableLeft + colWidths[0], y, { width: colWidths[1], align: 'center' });
       doc.text(`₹${order.coupon.toLocaleString('en-IN')}`, tableLeft + colWidths[0] + colWidths[1], y, { width: colWidths[2], align: 'center' });
-      doc.text(`₹${order.finalAmount.toLocaleString('en-IN')}`, tableLeft + colWidths[0] + colWidths[1] + colWidths[2], y, { width: colWidths[3], align: 'center' });
-      doc.text(order.paymentMethod, tableLeft + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3], y, { width: colWidths[4], align: 'center' });
-      doc.text(order.date, tableLeft + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3] + colWidths[4], y, { width: colWidths[5], align: 'center' });
-      doc.text(order.status, tableLeft + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3] + colWidths[4] + colWidths[5], y, { width: colWidths[6], align: 'center' });
+      doc.text(`₹${order.finalAmount.toLocaleString('en-IN')}`, tableLeft + colWidths[0] + colWidths[1] + colWidths[2], y, {
+        width: colWidths[3],
+        align: 'center',
+      });
+      doc.text(order.paymentMethod, tableLeft + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3], y, {
+        width: colWidths[4],
+        align: 'center',
+      });
+      doc.text(order.date, tableLeft + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3] + colWidths[4], y, {
+        width: colWidths[5],
+        align: 'center',
+      });
+      doc.text(order.status, tableLeft + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3] + colWidths[4] + colWidths[5], y, {
+        width: colWidths[6],
+        align: 'center',
+      });
       doc.moveDown(1);
     });
 
     doc.end();
   } catch (error) {
-    console.error('Error generating PDF:', error);
+    console.error('Error generating PDF:', error.message, error.stack);
     res.status(500).send('Error generating PDF');
   }
 };
@@ -224,8 +189,9 @@ const downloadSalesReportPDF = async (req, res) => {
 
 const downloadSalesReportExcel = async (req, res) => {
   try {
-    const salesData = await getSalesData(req.query.startDate, req.query.endDate);
-    const { orders, grossSales, couponsRedeemed, discounts, netSales, totalOrders } = salesData;
+    const { startDate, endDate, reportType = 'daily' } = req.query;
+    const salesData = await getSalesData(startDate, endDate, reportType);
+    const { orders, grossSales, couponsRedeemed, discounts, netSales, totalOrders, calculatedStartDate, calculatedEndDate } = salesData;
 
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Sales Report');
@@ -233,10 +199,14 @@ const downloadSalesReportExcel = async (req, res) => {
     worksheet.addRow(['Sales Report']).getCell(1).font = { size: 16, bold: true };
     worksheet.addRow([]);
 
-    if (req.query.startDate && req.query.endDate) {
-      worksheet.addRow([`Date Range: ${req.query.startDate} to ${req.query.endDate}`]);
-      worksheet.addRow([]);
+    if (reportType === 'custom' && startDate && endDate) {
+      worksheet.addRow([`Date Range: ${startDate} to ${endDate}`]);
+    } else {
+      worksheet.addRow([
+        `Date Range: ${calculatedStartDate.toLocaleDateString('en-US')} to ${calculatedEndDate.toLocaleDateString('en-US')}`,
+      ]);
     }
+    worksheet.addRow([]);
 
     worksheet.addRow(['Summary']).getCell(1).font = { bold: true };
     worksheet.addRow(['Gross Sales', `₹${grossSales.toLocaleString('en-IN')}`]);
@@ -260,7 +230,7 @@ const downloadSalesReportExcel = async (req, res) => {
         `₹${order.finalAmount.toLocaleString('en-IN')}`,
         order.paymentMethod,
         order.date,
-        order.status
+        order.status,
       ]).eachCell(cell => {
         cell.alignment = { horizontal: 'center' };
         cell.border = { top: { style: 'thin' }, bottom: { style: 'thin' }, left: { style: 'thin' }, right: { style: 'thin' } };
@@ -279,7 +249,7 @@ const downloadSalesReportExcel = async (req, res) => {
     res.setHeader('Content-Disposition', 'attachment; filename="sales-report.xlsx"');
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 
-    const buffer = await workbook.xlsx.writeBuffer(); 
+    const buffer = await workbook.xlsx.writeBuffer();
     const stream = new Readable();
     stream.push(buffer);
     stream.push(null);
@@ -290,18 +260,111 @@ const downloadSalesReportExcel = async (req, res) => {
   }
 };
 
-async function getSalesData(startDate, endDate) {
-  return {
-    orders: [
-      { orderId: 'ORD1234567890', amount: 5000, coupon: 500, finalAmount: 4500, paymentMethod: 'Credit Card', date: '2025-05-17', status: 'Delivered' },
-    ],
-    grossSales: 5000,
-    couponsRedeemed: 500,
-    discounts: 500,
-    netSales: 4500,
-    totalOrders: 1
-  };
-}
+const getSalesData = async (startDate, endDate, reportType = 'daily') => {
+  try {
+    let dateFilter = {};
+    let calculatedStartDate = '';
+    let calculatedEndDate = '';
+
+    const now = new Date();
+    now.setHours(23, 59, 59, 999);
+
+    // Validate reportType
+    const validReportTypes = ['daily', 'weekly', 'yearly', 'custom'];
+    if (!validReportTypes.includes(reportType)) {
+      throw new Error('Invalid report type');
+    }
+
+    // Set date filters
+    if (reportType === 'daily') {
+      calculatedStartDate = new Date(now);
+      calculatedStartDate.setHours(0, 0, 0, 0);
+      calculatedEndDate = new Date(now);
+    } else if (reportType === 'weekly') {
+      calculatedStartDate = new Date(now);
+      calculatedStartDate.setDate(now.getDate() - now.getDay());
+      calculatedStartDate.setHours(0, 0, 0, 0);
+      calculatedEndDate = new Date(now);
+    } else if (reportType === 'yearly') {
+      calculatedStartDate = new Date(now.getFullYear(), 0, 1);
+      calculatedStartDate.setHours(0, 0, 0, 0);
+      calculatedEndDate = new Date(now);
+    } else if (reportType === 'custom') {
+      if (!startDate || !endDate) {
+        throw new Error('Start date and end date are required for custom reports');
+      }
+      calculatedStartDate = new Date(startDate);
+      calculatedEndDate = new Date(endDate);
+      calculatedEndDate.setHours(23, 59, 59, 999);
+      if (isNaN(calculatedStartDate.getTime()) || isNaN(calculatedEndDate.getTime())) {
+        throw new Error('Invalid date format');
+      }
+      if (calculatedEndDate < calculatedStartDate) {
+        throw new Error('End date cannot be earlier than start date');
+      }
+    } else {
+      calculatedStartDate = new Date(now);
+      calculatedStartDate.setHours(0, 0, 0, 0);
+      calculatedEndDate = new Date(now);
+    }
+
+    dateFilter.createdOn = {
+      $gte: calculatedStartDate,
+      $lte: calculatedEndDate,
+    };
+    dateFilter.status = { $nin: ['Cancelled', 'Returned'] }; // Exclude cancelled/returned orders
+
+    console.log('Date filter:', dateFilter);
+
+    // Fetch orders, populating user name and email
+    const allOrders = await Order.find(dateFilter)
+      .populate('user', 'name') // Populate both name and email
+      .sort({ createdOn: -1 })
+      .lean();
+
+    console.log('Fetched orders:', allOrders.length);
+
+    // Calculate metrics
+    const grossSales = allOrders.reduce((sum, order) => sum + (order.totalPrice || 0), 0);
+    const couponsRedeemed = allOrders.reduce((sum, order) => sum + (order.couponApplied ? order.discount || 0 : 0), 0);
+    const discounts = allOrders.reduce((sum, order) => sum + (order.discount || 0), 0);
+    const netSales = grossSales - discounts;
+    const totalOrders = allOrders.length;
+
+    // Format orders with user details
+    const formattedOrders = allOrders.map(order => ({
+      orderId: order.orderId || 'N/A',
+      amount: order.totalPrice || 0,
+      coupon: order.couponApplied ? order.discount || 0 : 0,
+      finalAmount: order.finalAmount || (order.totalPrice || 0) - (order.discount || 0),
+      paymentMethod: order.paymentMethod || 'N/A',
+      date: order.createdOn
+        ? new Date(order.createdOn).toLocaleDateString('en-US', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+          })
+        : 'N/A',
+      status: order.status || 'N/A',
+      userName: order.user?.name || 'N/A', // Add user name
+      userEmail: order.user?.email || 'N/A', // Add user email
+    }));
+
+    return {
+      orders: formattedOrders,
+      grossSales,
+      couponsRedeemed,
+      discounts,
+      netSales,
+      totalOrders,
+      calculatedStartDate,
+      calculatedEndDate,
+    };
+  } catch (error) {
+    console.error('Error in getSalesData:', error.message, error.stack);
+    throw error;
+  }
+};
 
 
 
@@ -312,11 +375,10 @@ async function getSalesData(startDate, endDate) {
 module.exports = {
     loadLogin,
     login,
-    loadDashboard,
     pagenotfound,
     logout,
     getSalesReport,
-    getSalesReport ,
+    getSalesData ,
     downloadSalesReportExcel,
     downloadSalesReportPDF ,
 

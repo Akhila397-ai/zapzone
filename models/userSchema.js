@@ -58,9 +58,10 @@ const userSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    referalCode: {
-        type: String
-    },
+    referralCode: { 
+    type: String,
+    unique: true
+  },
     walletTransactions: [
   {
     amount: Number,
@@ -90,6 +91,7 @@ const userSchema = new Schema({
         }
     }]
 });
+
 
 const User = mongoose.model("User", userSchema);
 

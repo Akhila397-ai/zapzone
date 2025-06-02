@@ -17,7 +17,6 @@ const findBestOffer = async (productId) => {
     const offers = await Offer.find({
       isListed: true,
       isDeleted: false,
-
       validFrom: { $lte: currentDate },
       validUpto: { $gte: currentDate },
       $or: [
@@ -42,7 +41,7 @@ const findBestOffer = async (productId) => {
         discount = product.salePrice;
       }
 
-      if (discount > maxDiscount && product.salePrice >= offer.minPurchase) {
+      if (discount > maxDiscount) {
         maxDiscount = discount;
         bestOffer = offer;
         discountedPrice = product.salePrice - discount;
@@ -73,7 +72,6 @@ const loadCart = async (req, res) => {
     let cart = await Cart.findOne({ userId }).populate('items.productId');
 
     if (cart) {
-      // Filter out invalid items
       cart.items = cart.items.filter(
         (item) =>
           item.productId &&
@@ -88,28 +86,27 @@ const loadCart = async (req, res) => {
       for (const item of cart.items) {
         const { offer, originalPrice, discountedPrice, discount } = await findBestOffer(item.productId._id);
 
-        item.price = originalPrice; // Original sale price
-        item.discount = discount; // Non-negative discount per unit
-        item.totalPrice = discountedPrice * item.quantity; // Total after discount
+        item.price = originalPrice; 
+        item.discount = discount; 
+        item.totalPrice = discountedPrice * item.quantity;
         item.offerId = offer ? offer._id : null;
         item.offerCode = offer ? offer.code : '';
 
-        subtotal += originalPrice * item.quantity; // Subtotal uses original price
-        totalDiscount += discount * item.quantity; // Sum of discounts
+        subtotal += originalPrice * item.quantity; 
+        totalDiscount += discount * item.quantity; 
       }
 
       cart.subtotal = subtotal;
-      cart.discount = totalDiscount; // Store as positive
+      cart.discount = totalDiscount; 
       cart.shipping = cart.items.length > 0 ? 50 : 0;
-      cart.total = cart.subtotal - cart.discount + cart.shipping; // Subtract positive discount
+      cart.total = cart.subtotal - cart.discount + cart.shipping;
 
       await cart.save();
     }
 
-    // Create a display version of discount for frontend
     const cartDisplay = cart ? {
       ...cart._doc,
-      displayDiscount: cart.discount ? -cart.discount : 0 // Negative for frontend
+      displayDiscount: cart.discount ? -cart.discount : 0 
     } : null;
 
     res.render('cart', {
@@ -134,7 +131,6 @@ const addToCart = async (req, res) => {
     if (isNaN(quantity) || quantity <= 0) {
       return res.status(400).json({ success: false, message: "Invalid quantity" });
     }
-
 
     const product = await Product.findById(productId).populate('category');
     if (!product || typeof product.salePrice !== "number") {
@@ -164,14 +160,6 @@ const addToCart = async (req, res) => {
         (offer.offerType === 'category' && offer.applicableTo.toString() !== product.category._id.toString())
       ) {
         return res.status(400).json({ success: false, message: "Offer is not applicable to this product" });
-      }
-
-      const totalPrice = product.salePrice * quantity;
-      if (offer.minPurchase > totalPrice) {
-        return res.status(400).json({
-          success: false,
-          message: `Minimum purchase of ₹${offer.minPurchase} required for this offer`,
-        });
       }
 
       if (offer.discountType === 'percentage') {
@@ -259,7 +247,7 @@ const addToCart = async (req, res) => {
       message: "Product added to cart",
       cart: {
         ...cart._doc,
-        displayDiscount: cart.discount ? -cart.discount : 0 // Negative for frontend
+        displayDiscount: cart.discount ? -cart.discount : 0
       }
     });
   } catch (error) {
@@ -287,24 +275,27 @@ const updateCart = async (req, res) => {
     }
 
     const errors = [];
-    updates.forEach((update) => {
+    const MAX_CART_QTY = 5;
+
+    for (const update of updates) {
       if (!mongoose.Types.ObjectId.isValid(update.productId)) {
         errors.push({
           productId: update.productId,
           message: 'Invalid product ID',
         });
-        return;
+        continue;
       }
 
       const item = cart.items.find(
         (i) => i.productId._id.toString() === update.productId
       );
+
       if (!item) {
         errors.push({
           productId: update.productId,
           message: 'Product not found in cart',
         });
-        return;
+        continue;
       }
 
       if (item.productId.quantity < update.quantity) {
@@ -312,15 +303,27 @@ const updateCart = async (req, res) => {
           productId: update.productId,
           message: `Only ${item.productId.quantity} items available in stock for ${item.productId.productName}`,
         });
-      } else if (update.quantity < 1) {
+        continue;
+      }
+
+      if (update.quantity > MAX_CART_QTY) {
+        errors.push({
+          productId: update.productId,
+          message: `You can only add up to ${MAX_CART_QTY} units of ${item.productId.productName}`,
+        });
+        continue;
+      }
+
+      if (update.quantity < 1) {
         errors.push({
           productId: update.productId,
           message: `Quantity must be at least 1 for ${item.productId.productName}`,
         });
-      } else {
-        item.quantity = update.quantity;
+        continue;
       }
-    });
+
+      item.quantity = update.quantity;
+    }
 
     if (errors.length > 0) {
       return res.json({ success: false, message: 'Cart update failed', errors });
@@ -367,7 +370,7 @@ const updateCart = async (req, res) => {
       success: true, 
       cart: {
         ...cart._doc,
-        displayDiscount: cart.discount ? -cart.discount : 0 // Negative for frontend
+        displayDiscount: cart.discount ? -cart.discount : 0
       }
     });
   } catch (error) {
@@ -423,7 +426,7 @@ const removeFromCart = async (req, res) => {
       message: "Item removed successfully", 
       cart: {
         ...cart._doc,
-        displayDiscount: cart.discount ? -cart.discount : 0 // Negative for frontend
+        displayDiscount: cart.discount ? -cart.discount : 0 
       }
     });
   } catch (error) {
@@ -431,7 +434,6 @@ const removeFromCart = async (req, res) => {
     return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
-
 
 module.exports = {
   loadCart,

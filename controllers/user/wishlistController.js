@@ -138,9 +138,43 @@ const removeFromWishlist = async (req, res) => {
         return res.status(500).json({ success: false, message: 'Server error' });
     }
 };
+const checkWishlistStatus = async (req, res) => {
+  try {
+    const { productIds } = req.body;
+    const userId = req.session.user;
+
+    if (!userId) {
+      return res.json({
+        success: true,
+        wishlist: productIds.map(productId => ({
+          productId,
+          inWishlist: false,
+        })),
+      });
+    }
+
+    if (!Array.isArray(productIds) || productIds.some(id => !mongoose.isValidObjectId(id))) {
+      return res.status(400).json({ success: false, message: 'Invalid product IDs' });
+    }
+
+    const wishlist = await Wishlist.findOne({ userId }).lean();
+    const wishlistProductIds = wishlist ? wishlist.products.map(p => p.productId.toString()) : [];
+
+    const response = productIds.map(productId => ({
+      productId,
+      inWishlist: wishlistProductIds.includes(productId),
+    }));
+
+    res.json({ success: true, wishlist: response });
+  } catch (error) {
+    console.error('Error in checkWishlistStatus:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
 
 module.exports={
     loadWishlist,
     addToWishlist,
     removeFromWishlist,
+    checkWishlistStatus,
 }

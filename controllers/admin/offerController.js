@@ -66,10 +66,9 @@ const addOffer = async (req, res) => {
       offerType,
       applicableTo,
       code,
-      minPurchase
     } = req.body;
 
-    if (!offerName || !description || !discountType || !discountAmount || !validFrom || !validUpto || !offerType || !applicableTo || !code || !minPurchase) {
+    if (!offerName || !description || !discountType || !discountAmount || !validFrom || !validUpto || !offerType || !applicableTo || !code ) {
       return res.status(400).json({ success: false, message: 'All fields are required' });
     }
 
@@ -87,12 +86,8 @@ const addOffer = async (req, res) => {
     }
 
     const discountAmt = parseFloat(discountAmount);
-    const minPurch = parseFloat(minPurchase);
     if (discountAmt <= 0) {
       return res.status(400).json({ success: false, message: 'Discount amount must be greater than 0' });
-    }
-    if (minPurch < 0) {
-      return res.status(400).json({ success: false, message: 'Minimum purchase cannot be negative' });
     }
     if (discountType === 'percentage' && discountAmt > 100) {
       return res.status(400).json({ success: false, message: 'Percentage discount cannot exceed 100%' });
@@ -137,7 +132,6 @@ const addOffer = async (req, res) => {
       applicableTo: applicableToRef,
       offerTypeRef: offerType, 
       code: code.trim().toUpperCase(),
-      minPurchase: minPurch,
       isListed: true,
       isDeleted: false
     });
@@ -172,10 +166,9 @@ const editOffer = async (req, res) => {
       offerType,
       applicableTo,
       code,
-      minPurchase
     } = req.body;
 
-    if (!id || !offerName || !description || !discountType || !discountAmount || !validFrom || !validUpto || !offerType || !applicableTo || !code || !minPurchase) {
+    if (!id || !offerName || !description || !discountType || !discountAmount || !validFrom || !validUpto || !offerType || !applicableTo || !code ) {
       return res.status(400).json({ success: false, message: 'All fields are required' });
     }
 
@@ -190,12 +183,8 @@ const editOffer = async (req, res) => {
     }
 
     const discountAmt = parseFloat(discountAmount);
-    const minPurch = parseFloat(minPurchase);
     if (discountAmt <= 0) {
       return res.status(400).json({ success: false, message: 'Discount amount must be greater than 0' });
-    }
-    if (minPurch < 0) {
-      return res.status(400).json({ success: false, message: 'Minimum purchase cannot be negative' });
     }
     if (discountType === 'percentage' && discountAmt > 100) {
       return res.status(400).json({ success: false, message: 'Percentage discount cannot exceed 100%' });
@@ -214,13 +203,13 @@ const editOffer = async (req, res) => {
     }
 
     let applicableToRef;
-    if (offerType === 'category') { // Already correct
+    if (offerType === 'category') { 
       const category = await Category.findOne({ name: applicableTo, isDeleted: false });
       if (!category) {
         return res.status(400).json({ success: false, message: 'Invalid category selected' });
       }
       applicableToRef = category._id;
-    } else if (offerType === 'product') { // Changed 'Product' to 'product'
+    } else if (offerType === 'product') {
       const product = await Product.findOne({ productName: applicableTo, isDeleted: false });
       if (!product) {
         return res.status(400).json({ success: false, message: 'Invalid product selected' });
@@ -243,7 +232,6 @@ const editOffer = async (req, res) => {
         applicableTo: applicableToRef,
         offerTypeRef: offerType,
         code: code.trim().toUpperCase(),
-        minPurchase: minPurch
       },
       { new: true, runValidators: true }
     );

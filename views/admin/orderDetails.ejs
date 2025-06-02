@@ -383,16 +383,17 @@
               <div class="status-header">Order Status</div>
               <form id="update-status-form">
                 <input type="hidden" name="orderId" value="<%= order.orderId %>">
-                <select name="status" class="status-dropdown">
+               <select name="status" class="status-dropdown">
                   <option value="pending" <%= order.status === 'pending' ? 'selected' : '' %>>Pending</option>
                   <option value="processing" <%= order.status === 'processing' ? 'selected' : '' %>>Processing</option>
                   <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
                   <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
-                  <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
-                  <option value="Return Requested" <%= order.status === 'Return Requested' ? 'selected' : '' %>>Return Requested</option>
-                  <option value="Returned" <%= order.status === 'Returned' ? 'selected' : '' %>>Returned</option>
-                  <option value="Return Rejected" <%= order.status === 'Return Rejected' ? 'selected' : '' %>>Return Rejected</option>
-                </select>
+                  <option value="Failed" <%= order.status === 'Failed' ? 'selected' : '' %>>Failed</option>
+                  <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %> disabled>Cancelled</option>
+                  <option value="Return Requested" <%= order.status === 'Return Requested' ? 'selected' : '' %> disabled>Return Requested</option>
+                  <option value="Returned" <%= order.status === 'Returned' ? 'selected' : '' %> disabled>Returned</option>
+                  <option value="Return Rejected" <%= order.status === 'Return Rejected' ? 'selected' : '' %> disabled>Return Rejected</option>
+              </select>
                 <button type="submit" class="btn-update-status">Update Status</button>
               </form>
             </div>
@@ -432,7 +433,7 @@
                  </td>
                   <td><%= item.product ? item.product.productName : 'Unknown Product' %></td>
                   <td><%= item.quantity %></td>
-                  <td>₹<%= item.price %></td>
+                  <td>₹<%= order.finalAmount %></td>
                   <td><%= item.status || 'N/A' %></td>
                   <td><%= item.returnReason || 'N/A' %></td>
                   <td>
@@ -451,24 +452,10 @@
           </table>
         </div>
 
-        <!-- Payment Summary -->
-        <div class="payment-summary">
-          <div class="summary-header">Payment Summary</div>
-          <div class="summary-row">
-            <div class="summary-label">Items Total</div>
-            <div class="summary-value">₹<%= order.orderedItems.reduce((total, item) => total + item.price * item.quantity, 0) %></div>
-          </div>
-          <div class="summary-row">
-            <div class="summary-label">Discount</div>
-            <div class="summary-value discount">-₹<%= order.discount %></div>
-          </div>
-          <div class="summary-row">
-            <div class="summary-label">Order Total</div>
-            <div class="summary-value">₹<%= order.totalPrice %></div>
-          </div>
+     
         </div>
       </div>
-    </div>
+    
   </section>
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>

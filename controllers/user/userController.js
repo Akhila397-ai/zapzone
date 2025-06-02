@@ -8,6 +8,11 @@ const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 const Cart = require("../../models/cartSchema");
 const Offer =require('../../models/offerSchema')
+const Coupon = require('../../models/couponSchema')
+const Wallet = require('../../models/walletSchema')
+const Wishlist = require('../../models/wishlistSchema')
+const { generateReferralCode } = require('../../utils/referral')
+
 
 const pageNotFound = async (req,res) => {
     try {
@@ -37,25 +42,22 @@ const loadHomePage = async (req, res) => {
       .limit(4)
       .lean();
 
-    // Fetch active percentage-based offers
     const currentDate = new Date();
     const offers = await Offer.find({
       isListed: true,
       isDeleted: false,
       validFrom: { $lte: currentDate },
       validUpto: { $gte: currentDate },
-      discountType: 'percentage', // You may want to include 'fixed' discounts too
+      discountType: 'percentage',
     })
       .populate('applicableTo', 'name productName')
       .lean();
 
-    // Map products to include the highest offer percentage and calculated offer price
     const productsWithOffers = products.map(product => {
       let offerPercentage = product.productOffer || 0;
       let offerPrice = product.salePrice;
       let appliedOffer = null;
 
-      // Check for product-specific offer
       const productOffer = offers.find(
         offer =>
           offer.offerType === 'product' &&
@@ -63,7 +65,6 @@ const loadHomePage = async (req, res) => {
           offer.applicableTo._id.toString() === product._id.toString()
       );
 
-      // Check for category-specific offer
       const categoryOffer = offers.find(
         offer =>
           offer.offerType === 'category' &&
@@ -72,7 +73,6 @@ const loadHomePage = async (req, res) => {
           offer.applicableTo._id.toString() === product.category._id.toString()
       );
 
-      // Use the highest percentage discount and calculate offer price
       if (productOffer && (!categoryOffer || productOffer.discountAmount > categoryOffer.discountAmount)) {
         offerPercentage = productOffer.discountAmount;
         appliedOffer = productOffer;
@@ -81,22 +81,20 @@ const loadHomePage = async (req, res) => {
         appliedOffer = categoryOffer;
       }
 
-      // Calculate offer price if there's an applicable offer
       if (appliedOffer) {
         if (appliedOffer.discountType === 'percentage') {
           offerPrice = product.salePrice * (1 - offerPercentage / 100);
         } else if (appliedOffer.discountType === 'fixed') {
           offerPrice = product.salePrice - offerPercentage;
         }
-        // Ensure offer price is not negative and round to nearest integer
         offerPrice = Math.max(0, Math.round(offerPrice));
       }
 
       return {
         ...product,
         offerPercentage: Math.round(offerPercentage),
-        offerPrice: appliedOffer ? offerPrice : null, // Only include offerPrice if there's an offer
-        hasOffer: !!appliedOffer, // Boolean to indicate if an offer is applied
+        offerPrice: appliedOffer ? offerPrice : null, 
+        hasOffer: !!appliedOffer,
       };
     });
 
@@ -206,95 +204,125 @@ async function sendVerificationEmail(email,otp){
         
     }
 }
- const signup = async(req,res)=>{
-    try {
-        const {name,phone,email,password,confirmPassword}=req.body
-        if(password!==confirmPassword){
-            return res.render("signup",{message:"password do not match"})
- }
- const findUser=await User.findOne({email});
-        if(findUser){
-            return res.render('signup',({message:"User with this email already exist"}));
+ const signup = async (req, res) => {
+  try {
+    const { name, phone, email, password, confirmPassword, referralCode } = req.body;
+    if (password !== confirmPassword) {
+      return res.render("signup", { message: "Passwords do not match" });
+    }
 
-        }
-  const otp = generateotp()
-  const emailSent= await sendVerificationEmail(email,otp);
-  if(!emailSent){
-    return res.json("email-error")
-  }
-    req.session.userOtp=otp;
+    const findUser = await User.findOne({ email });
+    if (findUser) {
+      return res.render('signup', { message: "User with this email already exists" });
+    }
+
+    let referredBy = null;
+    if (referralCode) {
+      const referrer = await User.findOne({ referralCode });
+      if (!referrer) {
+        return res.render('signup', { message: 'Invalid referral code' });
+      }
+      if (referrer.email === email) {
+        return res.render('signup', { message: 'Cannot use your own referral code' });
+      }
+      referredBy = referrer._id;
+    }
+
+    const otp = generateotp();
+    const emailSent = await sendVerificationEmail(email, otp);
+    if (!emailSent) {
+      return res.json("email-error");
+    }
+
+    req.session.userOtp = otp;
     req.session.otpExpires = Date.now() + 60 * 1000;
-    req.session.userData={name,phone,email,password};
+    req.session.userData = { name, phone, email, password, referralCode, referredBy };
     res.render('verify-otp');
-    console.log("OTP Sent",otp);
-
-    } catch (error) {
-        console.log("sign up error",error);
-        res.redirect("/pageNotFound")
-        
-        
-    }
- }
-
- const securePassword = async(password)=>{
-    try {
-        
-        const passwordHash = await bcrypt.hash(password,10);
-
-        return passwordHash;
-
-    } catch (error) {
-        
-    }
- }
-
- const verifyOtp = async (req, res) => {
-    try {
-        const { otp } = req.body;
-
-        if (!otp) {
-            return res.status(400).json({ success: false, message: "OTP is required" });
-        }
-
-        if (req.session.otpExpires && Date.now() > req.session.otpExpires) {
-            return res.json({success:false,message:"OTP Timout"})
-        }
-        if (otp == req.session.userOtp) {
-            const user = req.session.userData;
-            const passwordHash = await securePassword(user.password);
-
-            const saveUserData = new User({
-                name: user.name,
-                email: user.email,
-                phone: user.phone,
-                password: passwordHash,
-            });
-
-            await saveUserData.save();
-
-            // Set user session
-            req.session.user = {
-                _id: saveUserData._id,
-                name: saveUserData.name,
-                email: saveUserData.email,
-                isAdmin: saveUserData.isAdmin
-              };
-              
-           
-            req.session.userOtp = null;
-            req.session.userData = null;
-
-            return res.json({ success: true, redirectUrl: "/" });
-        } else {
-            return res.status(400).json({ success: false, message: "Invalid OTP, please try again" });
-        }
-    } catch (error) {
-        console.error("Error Verifying OTP:", error);
-        return res.status(500).json({ success: false, message: "An error occurred" });
-    }
+    console.log("OTP Sent", otp);
+  } catch (error) {
+    console.log("sign up error", error);
+    res.redirect("/pageNotFound");
+  }
 };
+ const verifyOtp = async (req, res) => {
+  try {
+    const { otp } = req.body;
 
+    if (!otp) {
+      return res.status(400).json({ success: false, message: "OTP is required" });
+    }
 
+    if (req.session.otpExpires && Date.now() > req.session.otpExpires) {
+      return res.json({ success: false, message: "OTP Timeout" });
+    }
+
+    if (otp == req.session.userOtp) {
+      const { name, phone, email, password, referralCode, referredBy } = req.session.userData;
+
+      const newReferralCode = await generateReferralCode();
+
+      const saveUserData = new User({
+        name,
+        email,
+        phone,
+        password: await bcrypt.hash(password, 10),
+        referralCode: newReferralCode,
+        referredBy,
+        redeemed: !!referredBy,
+        wallet: referredBy ? 250 : 0 
+      });
+
+      await saveUserData.save();
+
+      if (referredBy) {
+        const walletTransaction = new Wallet({
+          userId: saveUserData._id,
+          type: 'CREDIT',
+          amount: 250,
+          reason: 'Referral signup reward',
+          balanceAfter: saveUserData.wallet 
+        });
+        await walletTransaction.save();
+      }
+
+      // Reward referrer with ₹500 wallet credit
+      if (referredBy) {
+        const referrer = await User.findById(referredBy);
+        if (referrer) {
+          referrer.redeemedUsers.push(saveUserData._id);
+          referrer.wallet = (referrer.wallet || 0) + 500; 
+          await referrer.save();
+
+          const walletTransaction = new Wallet({
+            userId: referrer._id,
+            type: 'CREDIT',
+            amount: 500,
+            reason: 'Referral reward for new user signup',
+            balanceAfter: referrer.wallet 
+          });
+          await walletTransaction.save();
+        }
+      }
+
+      req.session.user = {
+        _id: saveUserData._id,
+        name: saveUserData.name,
+        email: saveUserData.email,
+        isAdmin: saveUserData.isAdmin
+      };
+
+      req.session.userOtp = null;
+      req.session.userData = null;
+
+      return res.json({ success: true, redirectUrl: "/" });
+    } else {
+      return res.status(400).json({ success: false, message: "Invalid OTP, please try again" });
+    }
+  } catch (error) {
+    console.error("Error Verifying OTP:", error);
+    return res.status(500).json({ success: false, message: "An error occurred" });
+  }
+};
 
  const resendOtp = async (req,res)=>{
     try {
@@ -349,18 +377,22 @@ const loadShoppingPage = async (req, res) => {
 
     let userData = null;
     let cart = null;
+   let wishlistProductIds = [];
     if (userId) {
-      userData = await User.findById(userId);
-      cart = await Cart.findOne({ userId });
+      userData = await User.findById(userId).lean();
+      cart = await Cart.findOne({ userId }).lean();
+      const wishlist = await Wishlist.findOne({ userId }).lean();
+      wishlistProductIds = wishlist ? wishlist.products.map(p => p._id.toString()) : [];
     }
 
     const categories = await Category.find({ isListed: true }).lean();
     const brands = await Brand.find({ isListed: true }).lean();
 
+    
+
     const query = {
       isBlocked: false,
       isDeleted: false,
-      // quantity: { $gt: 0 } // Removed to allow out-of-stock products to show
     };
 
     const products = await Product.find(query)
@@ -370,7 +402,6 @@ const loadShoppingPage = async (req, res) => {
       .limit(limit)
       .lean();
 
-    // Fetch active offers
     const currentDate = new Date();
     const offers = await Offer.find({
       isListed: true,
@@ -381,13 +412,11 @@ const loadShoppingPage = async (req, res) => {
       .populate('applicableTo', 'name productName')
       .lean();
 
-    // Map products to include offer details
     const productsWithOffers = products.map((product) => {
       let offerPercentage = product.productOffer || 0;
       let offerPrice = product.salePrice;
       let appliedOffer = null;
 
-      // Check for product-specific offer
       const productOffer = offers.find(
         (offer) =>
           offer.offerType === 'product' &&
@@ -395,7 +424,6 @@ const loadShoppingPage = async (req, res) => {
           offer.applicableTo._id.toString() === product._id.toString()
       );
 
-      // Check for category-specific offer
       const categoryOffer = offers.find(
         (offer) =>
           offer.offerType === 'category' &&
@@ -404,7 +432,6 @@ const loadShoppingPage = async (req, res) => {
           offer.applicableTo._id.toString() === product.category._id.toString()
       );
 
-      // Use the highest discount
       if (productOffer && (!categoryOffer || productOffer.discountAmount > categoryOffer.discountAmount)) {
         offerPercentage = productOffer.discountAmount;
         appliedOffer = productOffer;
@@ -413,7 +440,6 @@ const loadShoppingPage = async (req, res) => {
         appliedOffer = categoryOffer;
       }
 
-      // Calculate offer price if there's an applicable offer
       if (appliedOffer) {
         if (appliedOffer.discountType === 'percentage') {
           offerPrice = product.salePrice * (1 - offerPercentage / 100);
@@ -450,6 +476,7 @@ const loadShoppingPage = async (req, res) => {
       search: '',
       req,
       profilePicture: userData?.profilePicture || null,
+      wishlistProductIds,
     });
   } catch (error) {
     console.error('Error in loadShoppingPage:', error);
@@ -459,62 +486,76 @@ const loadShoppingPage = async (req, res) => {
 
 const filterProduct = async (req, res) => {
     try {
-        const userId = req.session.user;
+        const userId = req.session.user?._id; 
         const { cat, brand, search, sort = 'newest', priceRange, page = 1 } = req.query;
         const itemsPerPage = 6;
 
         const query = {
             isBlocked: false,
-            quantity: { $gt: 0 }
+            quantity: { $gt: 0 },
+            isDeleted: false, 
         };
 
+       
         let userData = null;
+        let cart = null;
+        let wishlistProductIds = [];
         if (userId) {
-            userData = await User.findById(userId);
+            userData = await User.findById(userId).lean();
+            cart = await Cart.findOne({ userId }).lean();
+            const wishlist = await Wishlist.findOne({ userId }).lean();
+            wishlistProductIds = wishlist ? wishlist.products.map(p => p.productId.toString()) : [];
         }
 
-        const categories = await Category.find({ isListed: true });
-        const brands = await Brand.find({ isListed: true });
+        const categories = await Category.find({ isListed: true }).lean();
+        const brands = await Brand.find({ isListed: true }).lean();
 
         if (cat) {
-            const findCategory = await Category.findById(cat);
+            const findCategory = await Category.findById(cat).lean();
             if (!findCategory) {
                 return res.status(400).render('shop', {
                     user: userData,
                     products: [],
                     category: categories,
                     brands,
+                    cart,
                     totalPages: 0,
                     currentPage: parseInt(page) || 1,
                     selectedCategory: null,
-                    selectedBrand: null,
+                    selectedBrand: brand || null,
                     sort: sort || 'newest',
                     priceRange: priceRange || '',
                     search: search || '',
                     req,
                     message: 'Invalid category selected',
-                    profilePicture: userData?.profilePicture || null
+                    profilePicture: userData?.profilePicture || null,
+                    wishlistProductIds,
+                    isLoggedIn: !!userId,
                 });
             }
             query.category = findCategory._id;
 
-            if (userData) {
-                userData.searchHistory.push({
-                    category: findCategory._id,
-                    searchedOn: new Date()
+            if (userData && userId) {
+                await User.findByIdAndUpdate(userId, {
+                    $push: {
+                        searchHistory: {
+                            category: findCategory._id,
+                            searchedOn: new Date(),
+                        },
+                    },
                 });
-                await userData.save();
             }
         }
 
         if (brand) {
-            const findBrand = await Brand.findById(brand);
+            const findBrand = await Brand.findById(brand).lean();
             if (!findBrand) {
                 return res.status(400).render('shop', {
                     user: userData,
                     products: [],
                     category: categories,
                     brands,
+                    cart,
                     totalPages: 0,
                     currentPage: parseInt(page) || 1,
                     selectedCategory: cat || null,
@@ -524,28 +565,33 @@ const filterProduct = async (req, res) => {
                     search: search || '',
                     req,
                     message: 'Invalid brand selected',
-                    profilePicture: userData?.profilePicture || null
+                    profilePicture: userData?.profilePicture || null,
+                    wishlistProductIds,
+                    isLoggedIn: !!userId,
                 });
             }
             query.brand = findBrand._id;
 
-            if (userData) {
-                userData.searchHistory.push({
-                    brand: findBrand._id,
-                    searchedOn: new Date()
+            if (userData && userId) {
+                await User.findByIdAndUpdate(userId, {
+                    $push: {
+                        searchHistory: {
+                            brand: findBrand._id,
+                            searchedOn: new Date(),
+                        },
+                    },
                 });
-                await userData.save();
             }
         }
 
         if (search?.trim()) {
             const matchingCategories = await Category.find({
-                name: { $regex: search.trim(), $options: 'i' }
-            }).select('_id');
+                name: { $regex: search.trim(), $options: 'i' },
+            }).select('_id').lean();
             const categoryIds = matchingCategories.map(cat => cat._id);
             query.$or = [
                 { productName: { $regex: search.trim(), $options: 'i' } },
-                { description: { $regex: search.trim(), $options: 'i' } }
+                { description: { $regex: search.trim(), $options: 'i' } },
             ];
             if (categoryIds.length > 0) {
                 query.$or.push({ category: { $in: categoryIds } });
@@ -585,17 +631,75 @@ const filterProduct = async (req, res) => {
         const totalPages = Math.ceil(totalProducts / itemsPerPage);
         const skip = (parseInt(page) - 1) * itemsPerPage;
 
-        const products = await Product.find(query)
+        let products = await Product.find(query)
+            .populate('category', 'name')
             .sort(sortOptions)
             .skip(skip)
             .limit(itemsPerPage)
             .lean();
+
+        const currentDate = new Date();
+        const offers = await Offer.find({
+            isListed: true,
+            isDeleted: false,
+            validFrom: { $lte: currentDate },
+            validUpto: { $gte: currentDate },
+        })
+            .populate('applicableTo', 'name productName')
+            .lean();
+
+        products = products.map((product) => {
+            let offerPercentage = product.productOffer || 0;
+            let offerPrice = product.salePrice;
+            let appliedOffer = null;
+
+            const productOffer = offers.find(
+                (offer) =>
+                    offer.offerType === 'product' &&
+                    offer.applicableTo &&
+                    offer.applicableTo._id.toString() === product._id.toString()
+            );
+
+            const categoryOffer = offers.find(
+                (offer) =>
+                    offer.offerType === 'category' &&
+                    offer.applicableTo &&
+                    product.category &&
+                    offer.applicableTo._id.toString() === product.category._id.toString()
+            );
+
+            if (productOffer && (!categoryOffer || productOffer.discountAmount > categoryOffer.discountAmount)) {
+                offerPercentage = productOffer.discountAmount;
+                appliedOffer = productOffer;
+            } else if (categoryOffer) {
+                offerPercentage = categoryOffer.discountAmount;
+                appliedOffer = categoryOffer;
+            }
+
+            if (appliedOffer) {
+                if (appliedOffer.discountType === 'percentage') {
+                    offerPrice = product.salePrice * (1 - offerPercentage / 100);
+                } else if (appliedOffer.discountType === 'fixed') {
+                    offerPrice = product.salePrice - offerPercentage;
+                }
+                offerPrice = Math.max(0, Math.round(offerPrice));
+            }
+
+            return {
+                ...product,
+                offerPercentage: Math.round(offerPercentage),
+                offerPrice: appliedOffer ? offerPrice : null,
+                hasOffer: !!appliedOffer,
+            };
+        });
 
         res.render('shop', {
             user: userData,
             products,
             category: categories,
             brands,
+            cart,
+            totalProducts,
             totalPages,
             currentPage: parseInt(page) || 1,
             selectedCategory: cat || null,
@@ -604,7 +708,9 @@ const filterProduct = async (req, res) => {
             priceRange: priceRange || '',
             search: search || '',
             req,
-            profilePicture: userData?.profilePicture || null
+            profilePicture: userData?.profilePicture || null,
+            wishlistProductIds, 
+            isLoggedIn: !!userId,
         });
     } catch (error) {
         console.error('Error in filterProduct:', error);

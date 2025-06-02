@@ -579,8 +579,8 @@
                                                 <img src="/Uploads/product-images/<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>">
                                             </a>
                                             <div class="wishlist-btn">
-                                                <a href="#" class="wishlist-toggle" data-product-id="<%= products[i]._id %>">
-                                                    <i class="fa fa-heart"></i>
+                                                <a href="#" class="wishlist-toggle <%= wishlistProductIds.includes(products[i]._id.toString()) ? 'in-wishlist' : '' %>" data-product-id="<%= products[i]._id %>">
+                                                <i class="fa fa-heart"></i>
                                                 </a>
                                             </div>
                                             <% if (products[i].hasOffer && products[i].offerPercentage > 0) { %>
@@ -763,38 +763,42 @@
                 searchInput.val(params.search || '');
             }
 
-            function checkWishlistStatus() {
-                const productIds = $('.wishlist-toggle').map(function() {
-                    return $(this).data('product-id');
-                }).get();
+           function checkWishlistStatus() {
+    const productIds = $('.wishlist-toggle').map(function() {
+        return $(this).data('product-id').toString();
+    }).get();
 
-                if (productIds.length === 0) return;
+    if (productIds.length === 0) return;
 
-                $.ajax({
-                    url: '/checkWishlistStatus',
-                    method: 'POST',
-                    data: { productIds: productIds },
-                    success: function(response) {
-                        if (response.success) {
-                            response.wishlist.forEach(function(item) {
-                                const productId = item.productId;
-                                const inWishlist = item.inWishlist;
-                                const $wishlistBtn = $(`.wishlist-toggle[data-product-id="${productId}"]`);
-                                if (inWishlist) {
-                                    $wishlistBtn.addClass('in-wishlist');
-                                } else {
-                                    $wishlistBtn.removeClass('in-wishlist');
-                                }
-                            });
-                        } else {
-                            console.error('Error checking wishlist status:', response.message);
-                        }
-                    },
-                    error: function(xhr) {
-                        console.error('AJAX Error checking wishlist status:', xhr.status, xhr.responseText);
+    $.ajax({
+        url: '/checkWishlistStatus',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ productIds: productIds }),
+        success: function(response) {
+            if (response.success && Array.isArray(response.wishlist)) {
+                response.wishlist.forEach(function(item) {
+                    const productId = item.productId.toString();
+                    const inWishlist = item.inWishlist;
+                    const $wishlistBtn = $(`.wishlist-toggle[data-product-id="${productId}"]`);
+                    if ($wishlistBtn.length) {
+                        $wishlistBtn.toggleClass('in-wishlist', inWishlist);
                     }
                 });
+            } else {
+                console.warn('Invalid wishlist response:', response);
             }
+        },
+        error: function(xhr) {
+            console.error('AJAX Error checking wishlist status:', xhr.status, xhr.responseText);
+            if (xhr.status === 401) {
+                // User not logged in, rely on EJS-initialized state
+            } else {
+                console.warn('Error loading wishlist status:', xhr.status);
+            }
+        }
+    });
+}
 
             function attachCartButtonListeners() {
                 const cartButtons = $('.cart-btn:not(.disabled)');

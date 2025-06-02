@@ -5,69 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="ZAPZONE Order History">
     <title>ZAPZONE - Order History</title>
-
-    <!-- Include external CSS dependencies from the profile page -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
-    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
-    <link rel="stylesheet" href="css/elegant-icons.css" type="text/css">
-    <link rel="stylesheet" href="css/magnific-popup.css" type="text/css">
-    <link rel="stylesheet" href="css/nice-select.css" type="text/css">
-    <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
-    <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
-    <link rel="stylesheet" href="css/style.css" type="text/css">
-
+    <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="/css/magnific-popup.css" type="text/css">
+    <link rel="stylesheet" href="/css/nice-select.css" type="text/css">
+    <link rel="stylesheet" href="/css/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/slicknav.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         /* Pagination container */
-.zz-pagination {
-  display: flex;
-  list-style: none;
-  padding: 0;
-  margin: 20px auto;
-  justify-content: center;
-}
+        .zz-pagination {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 20px auto;
+            justify-content: center;
+        }
 
-/* Pagination items */
-.zz-page-item {
-  margin: 0 5px;
-}
+        /* Pagination items */
+        .zz-page-item {
+            margin: 0 5px;
+        }
 
-/* Pagination links */
-.zz-page-link {
-  display: block;
-  padding: 8px 14px;
-  border-radius: 8px;
-  background-color: #f0f0f0;
-  color: #333;
-  text-decoration: none;
-  border: 1px solid #ddd;
-  transition: background-color 0.3s, color 0.3s;
-}
+        /* Pagination links */
+        .zz-page-link {
+            display: block;
+            padding: 8px 14px;
+            border-radius: 8px;
+            background-color: #f0f0f0;
+            color: #333;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            transition: background-color 0.3s, color 0.3s;
+        }
 
-/* Hover effect */
-.zz-page-link:hover {
-  background-color: #007bff;
-  color: #fff;
-  border-color: #007bff;
-}
+        /* Hover effect */
+        .zz-page-link:hover {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
 
-/* Active page */
-.zz-page-item.active .zz-page-link {
-  background-color: #007bff;
-  color: white;
-  border-color: #007bff;
-  font-weight: bold;
-  pointer-events: none;
-}
+        /* Active page */
+        .zz-page-item.active .zz-page-link {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+            font-weight: bold;
+            pointer-events: none;
+        }
 
-/* Disabled state */
-.zz-page-item.disabled .zz-page-link {
-  background-color: #e9ecef;
-  color: #6c757d;
-  cursor: not-allowed;
-  pointer-events: none;
-  border-color: #dee2e6;
-}
+        /* Disabled state */
+        .zz-page-item.disabled .zz-page-link {
+            background-color: #e9ecef;
+            color: #6c757d;
+            cursor: not-allowed;
+            pointer-events: none;
+            border-color: #dee2e6;
+        }
 
         /* Scope styles to avoid overriding header */
         .orders-content {
@@ -78,7 +76,6 @@
         
         body {
             background-color: #f5f5f5;
-
         }
         
         .profile-container {
@@ -153,7 +150,7 @@
             right: 20px;
             padding: 8px 20px;
             border-radius: 20px;
-            width: 115px;
+            width: 140px;
             font-size: 13px;
             font-weight: 600;
             text-align: center;
@@ -171,6 +168,11 @@
         }
         
         .status-cancelled {
+            background-color: #e53e3e;
+            color: white;
+        }
+        
+        .status-failed {
             background-color: #e53e3e;
             color: white;
         }
@@ -313,85 +315,122 @@
             <div class="order-history orders-content">
                 <% if (orders && orders.length > 0) { %>
                     <% orders.forEach(order => { %>
-                    <div class="order-card">
-                        <div class="status-badge <%= order.status === 'Delivered' ? 'status-delivered' : order.status === 'Cancelled' ? 'status-cancelled' : 'status-processing' %>">
-                        <%= order.status %> (Payment: <%= order.paymentStatus %>)
+                    <div class="order-card" data-order-id="<%= order.orderId %>">
+                        <div class="status-badge <%= 
+                            order.paymentStatus === 'Failed' ? 'status-failed' :
+                            order.status === 'Delivered' ? 'status-delivered' :
+                            order.status === 'Cancelled' ? 'status-cancelled' :
+                            'status-processing' %>">
+                            <%= order.paymentStatus === 'Failed' ? 'Failed' : order.status %> (Payment: <%= order.paymentStatus %>)
                         </div>
                         <div class="order-header">
-                        <div class="order-id">Order #<%= order.orderId %></div>
-                        <div class="order-date"><%= new Date(order.orderDate || order.createdOn).toLocaleDateString('en-GB') %></div>
+                            <div class="order-id">Order #<%= order.orderId %></div>
+                            <div class="order-date"><%= new Date(order.orderDate || order.createdOn).toLocaleDateString('en-GB') %></div>
                         </div>
                         <% order.orderedItems.forEach(item => { %>
                         <div class="order-item">
-                            <img src="<%= item.product && item.product.productImage && item.product.productImage[0] ? '/Uploads/product-images/' + item.product.productImage[0] : '/images/placeholder.jpg' %>" alt="<%= item.product && item.product.productName ? item.product.productName : 'Product' %>" />
+                            
+                                <img src="<%= item.product && item.product.productImage && item.product.productImage[0] ? '/Uploads/product-images/' + item.product.productImage[0] : '/images/placeholder.jpg' %>" alt="<%= item.product && item.product.productName ? item.product.productName : 'Product' %>" />
+                    
                             <div class="product-details">
-                            <div class="product-name"><%= item.product?.productName || 'Product Name Unavailable' %></div>
-                            <div class="product-qty">Qty: <%= item.quantity %></div>
-                            <div class="product-price">₹<%= item.price %></div>
+                                <div class="product-name"><%= item.product?.productName || 'Product Name Unavailable' %></div>
+                                <div class="product-qty">Qty: <%= item.quantity %></div>
+                                <div class="product-price">₹<%= item.price %></div>
                             </div>
                         </div>
                         <% }) %>
                         <div class="order-total">
-                        <div class="total-label">Total: <span class="total-amount">₹<%= order.finalAmount %></span></div>
-                        <button class="view-details" data-order-id="<%= order.orderId %>">View Details</button>
+                            <div class="total-label">Total: <span class="total-amount">₹<%= order.finalAmount %></span></div>
+                            <button class="view-details" data-order-id="<%= order.orderId %>">View Details</button>
                         </div>
                     </div>
                     <% }) %>
                 <% } else { %>
                     <div class="no-orders">No orders found.</div>
                 <% } %>
-                </div>
+            </div>
+
+            <% if (totalPages >= 1) { %>
+                <nav aria-label="Product navigation">
+                    <ul class="pagination zz-pagination">
+                        <li class="page-item zz-page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                            <a class="page-link zz-page-link" href="/orders?page=<%= currentPage - 1 %>" aria-label="Previous">
+                                <span aria-hidden="true">«</span>
+                            </a>
+                        </li>
+                        <% for(let i = 1; i <= totalPages; i++) { %>
+                            <li class="page-item zz-page-item <%= currentPage === i ? 'active' : '' %>">
+                                <a class="page-link zz-page-link" href="/orders?page=<%= i %>"><%= i %></a>
+                            </li>
+                        <% } %>
+                        <li class="page-item zz-page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                            <a class="page-link zz-page-link" href="/orders?page=<%= currentPage + 1 %>" aria-label="Next">
+                                <span aria-hidden="true">»</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            <% } %>
         </div>
     </div>
-     <!-- Pagination Section -->
-           <% if (totalPages >= 1) { %>
-                        <nav aria-label="Product navigation">
-                            <ul class="pagination zz-pagination" id="paginationContainer">
-                              
-                                <li class="page-item zz-page-item <%= currentPage === 1 ? 'disabled' : '' %>">
-                                    <a class="page-link zz-page-link" href="#" data-page="<%= currentPage - 1 %>" aria-label="Previous">
-                                        <span aria-hidden="true">«</span>
-                                    </a>
-                                </li>
-                         
-                                <% for(let i = 1; i <= totalPages; i++) { %>
-                                    <li class="page-item zz-page-item <%= currentPage === i ? 'active' : '' %>">
-                                         <a class="page-link zz-page-link" href="/orders?page=<%= i %>" data-page="<%= i %>"><%= i %></a>
-                                    </li>
-                                <% } %>
-
-                                
-                           
-                                <li class="page-item zz-page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
-                                    <a class="page-link zz-page-link" href="#" data-page="<%= currentPage + 1 %>" aria-label="Next">
-                                        <span aria-hidden="true">»</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    <% } %>
-                </div>
     
     <%- include("../partials/user/footer") %>
     
-    <!-- Include external JS dependencies from the profile page -->
-    <script src="js/jquery-3.3.1.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.nice-select.min.js"></script>
-    <script src="js/jquery.nicescroll.min.js"></script>
-    <script src="js/jquery.magnific-popup.min.js"></script>
-    <script src="js/jquery.countdown.min.js"></script>
-    <script src="js/jquery.slicknav.js"></script>
-    <script src="js/mixitup.min.js"></script>
-    <script src="js/owl.carousel.min.js"></script>
-    <script src="js/main.js"></script>
-    
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/jquery.nice-select.min.js"></script>
+    <script src="/js/jquery.nicescroll.min.js"></script>
+    <script src="/js/jquery.magnific-popup.min.js"></script>
+    <script src="/js/jquery.countdown.min.js"></script>
+    <script src="/js/jquery.slicknav.js"></script>
+    <script src="/js/mixitup.min.js"></script>
+    <script src="/js/owl.carousel.min.js"></script>
+    <script src="/js/main.js"></script>
+
     <script>
-        document.querySelectorAll('.view-details').forEach(button => {
-            button.addEventListener('click', function() {
-                const orderId = this.getAttribute('data-order-id');
-                // Navigate to order details page
-                window.location.href = `/orderdetails?id=${orderId}`;
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.view-details').forEach(button => {
+                button.addEventListener('click', function() {
+                    const orderId = this.getAttribute('data-order-id');
+                    console.log('Navigating to order details:', orderId);
+                    window.location.href = `/order-details/${orderId}`;
+                });
+            });
+
+            const orderCards = document.querySelectorAll('.order-card');
+            orderCards.forEach(card => {
+                const orderId = card.getAttribute('data-order-id');
+                fetch(`/order-status/${orderId}?t=${Date.now()}`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success && data.order) {
+                            const statusBadge = card.querySelector('.status-badge');
+                            if (data.order.paymentStatus === 'Failed') {
+                                statusBadge.className = 'status-badge status-failed';
+                                statusBadge.textContent = `Failed (Payment: ${data.order.paymentStatus})`;
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Payment Failed',
+                                    text: `Order #${orderId} has a failed payment. Please retry payment.`,
+                                    showConfirmButton: true,
+                                    confirmButtonColor: '#e53e3e'
+                                });
+                            } else {
+                                const statusClass = data.order.status === 'Delivered' ? 'status-delivered' :
+                                                  data.order.status === 'Cancelled' ? 'status-cancelled' :
+                                                  'status-processing';
+                                statusBadge.className = `status-badge ${statusClass}`;
+                                statusBadge.textContent = `${data.order.status} (Payment: ${data.order.paymentStatus})`;
+                            }
+                        }
+                    })
+                    .catch(error => console.error('Error fetching order status:', error));
             });
         });
     </script>
