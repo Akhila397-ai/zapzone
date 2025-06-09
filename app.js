@@ -1,5 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
+dotenv.config();
 const path = require('path');
 const mongoose = require('mongoose');
 const session = require('express-session');
@@ -9,7 +10,7 @@ const userRouter = require('./routes/userRouter');
 const adminRouter = require('./routes/adminRouter');
 const userMiddleware = require('./middlewares/userMiddleware'); 
 
-dotenv.config(); 
+
 
 const app = express();
 

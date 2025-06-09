@@ -10,6 +10,7 @@ passport.use(new GoogleStrategy({
     callbackURL:'/auth/google/callback'
 },
 
+
     async(accessToken,refreshToken,profile,done)=>{
         console.log("Google Profile", profile); 
         try {
@@ -35,6 +36,9 @@ passport.use(new GoogleStrategy({
     }
 
 ))
+console.log("Client ID:", process.env.GOOGLE_CLIENT_ID);
+console.log("Client Secret:", process.env.GOOGLE_CLIENT_SECRET);
+
 
 
 passport.serializeUser((user,done)=>{
