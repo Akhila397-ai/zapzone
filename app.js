@@ -4,12 +4,12 @@ dotenv.config();
 const path = require('path');
 const mongoose = require('mongoose');
 const session = require('express-session');
-const passport = require('./config/passport');
 const db = require('./config/db');
 const userRouter = require('./routes/userRouter');
 const adminRouter = require('./routes/adminRouter');
 const userMiddleware = require('./middlewares/userMiddleware'); 
 
+const passport = require('./config/passport');
 
 
 const app = express();
