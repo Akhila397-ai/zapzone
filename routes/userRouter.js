@@ -36,6 +36,7 @@ router.get('/',userAuth,userController.loadHomePage);
 router.get('/shop',userAuth,userController.loadShoppingPage);
 router.get('/filter',userAuth,userController.filterProduct);
 router.get("/logout",userController.logout);
+router.get('/about',userAuth,userController.loadAboutPage);
 
 //product management
 router.get('/productDetails',userAuth,productController.productDetails);

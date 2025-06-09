@@ -717,6 +717,28 @@ const filterProduct = async (req, res) => {
         res.status(500).render('error', { message: 'An error occurred while filtering products.' });
     }
 };
+
+const loadAboutPage = async (req, res) => {
+    try {
+        const user = req.session.user;
+        if (user) {
+            const userData = await User.findOne({ _id: user._id });
+            const  profilePicture = userData?.profilePicture || '/img/default-profile.png';
+            res.render('about', { 
+                user: userData,
+                currentPage: "about",
+                message: "",
+                profilePicture: userData?.profilePicture || null,
+            });
+        } else {
+            res.render('about');
+        }
+    } catch (error) {
+        console.error('Load About Page Error:', error.message, error.stack);
+        res.redirect('/pageNotFound');
+    }
+};
+
 module.exports = {
     loadHomePage,
     pageNotFound,
@@ -729,5 +751,6 @@ module.exports = {
     logout,
     loadShoppingPage,
     filterProduct,
+    loadAboutPage,
 }
 

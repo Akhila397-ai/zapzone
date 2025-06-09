@@ -10,6 +10,7 @@
   "description": "",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "chart.js": "^4.4.9",
     "connect-flash": "^0.1.1",
     "dotenv": "^16.4.7",
     "ejs": "^3.1.10",

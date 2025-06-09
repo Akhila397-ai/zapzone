@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="About ZapZone - Your Premium Laptop Destination">
+    <meta name="keywords" content="premium laptops, zapzone, technology, about">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>About Us - ZapZone</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+
+    <style>
+        :root {
+            --primary-color: #00a8e8; /* Brighter blue for vibrancy */
+            --secondary-color: #1e2a44; /* Darker navy for contrast */
+            --accent-color: #ff4757; /* Coral for highlights */
+            --bg-light: #f9fafb; /* Softer light background */
+            --text-light: #d1d5db; /* Light text for dark backgrounds */
+            --card-bg: #ffffff;
+            --shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Nunito Sans', sans-serif;
+        }
+
+        body {
+            color: #2d3748;
+            background-color: var(--bg-light);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* Preloader */
+        #preloder {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 999999;
+            background: var(--card-bg);
+        }
+        .loader {
+            width: 48px;
+            height: 48px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -24px;
+            margin-left: -24px;
+            border: 3px solid var(--secondary-color);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            animation: loader-spin 0.8s linear infinite;
+        }
+        @keyframes loader-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            position: relative;
+            height: 70vh;
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            overflow: hidden;
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 168, 232, 0.7), rgba(30, 42, 68, 0.7)), url('/api/placeholder/1200/500');
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+            animation: subtle-zoom 15s ease-in-out infinite alternate;
+        }
+        @keyframes subtle-zoom {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.03); }
+        }
+        .hero-content {
+            max-width: 650px;
+            padding: 40px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 12px;
+            animation: slide-up 0.8s ease-out;
+        }
+        .hero-content h1 {
+            font-size: 40px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .hero-content p {
+            font-size: 18px;
+            color: var(--text-light);
+            margin-bottom: 30px;
+        }
+        .hero-content .primary-btn {
+            padding: 12px 30px;
+            background: var(--primary-color);
+            color: white;
+            font-weight: 700;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .hero-content .primary-btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+        .hero-content .primary-btn i {
+            font-size: 16px;
+        }
+        @keyframes slide-up {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Section Title */
+        .section-title {
+            text-align: center;
+            font-size: 34px;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 50px;
+            position: relative;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            width: 60px;
+            height: 4px;
+            background: var(--primary-color);
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        /* Services Section */
+        .services-section {
+            padding: 60px 0;
+            background: var(--card-bg);
+        }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        .service-card {
+            background: var(--card-bg);
+            border: none;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s ease;
+        }
+        .service-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow);
+        }
+        .service-icon {
+            font-size: 44px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+        .service-card:hover .service-icon {
+            transform: scale(1.1);
+        }
+        .service-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+        }
+        .service-card p {
+            font-size: 15px;
+            color: #4b5563;
+        }
+
+        /* About Section */
+        .about-section {
+            padding: 60px 0;
+            background: var(--bg-light);
+        }
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .about-card {
+            background: var(--card-bg);
+            border: none;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s ease;
+        }
+        .about-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow);
+        }
+        .about-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+        }
+        .about-card p {
+            font-size: 15px;
+            color: #4b5563;
+            margin-bottom: 12px;
+        }
+        .about-card p strong {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            padding: 60px 0;
+            background: linear-gradient(135deg, var(--secondary-color), #2c3e50);
+            color: white;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 30px;
+            text-align: center;
+        }
+        .stat-item {
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+        .stat-item:hover {
+            transform: scale(1.05);
+        }
+        .stat-number {
+            font-size: 40px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: var(--primary-color);
+        }
+        .stat-title {
+            font-size: 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-light);
+        }
+
+        /* Team Section */
+        .team-section {
+            padding: 60px 0;
+            background: var(--card-bg);
+        }
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 30px;
+            justify-items: center;
+        }
+        .team-card {
+            background: var(--card-bg);
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+            max-width: 300px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s ease;
+        }
+        .team-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow);
+        }
+        .team-image {
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .team-image img {
+            width: 100%;
+            height: auto;
+            max-width: 300px;
+            object-fit: contain;
+            transition: transform 0.4s ease;
+        }
+        .team-card:hover .team-image img {
+            transform: scale(1.05);
+        }
+        .team-info {
+            padding: 25px;
+            text-align: center;
+        }
+        .team-info h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+        .team-info p {
+            font-size: 15px;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            background: rgba(0, 168, 232, 0.15);
+            color: var(--primary-color);
+            border-radius: 50%;
+            margin: 0 6px;
+            transition: all 0.3s ease;
+        }
+        .social-links a:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* Timeline Section */
+        .timeline-section {
+            padding: 60px 0;
+            background: var(--bg-light);
+        }
+        .timeline {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            width: 6px;
+            background: linear-gradient(to bottom, var(--primary-color), var(--accent-color));
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 3px;
+        }
+        .timeline-item {
+            padding: 20px 40px;
+            position: relative;
+            width: 50%;
+            margin-bottom: 30px;
+            animation: slide-in 0.8s ease-out;
+        }
+        .timeline-item:nth-child(odd) { animation-delay: 0.2s; }
+        .timeline-item:nth-child(even) { animation-delay: 0.4s; }
+        @keyframes slide-in {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: var(--card-bg);
+            border: 3px solid var(--primary-color);
+            border-radius: 50%;
+            top: 20px;
+            z-index: 1;
+            transition: background 0.3s ease;
+        }
+        .timeline-item:hover::before {
+            background: var(--primary-color);
+        }
+        .left { left: 0; }
+        .right { left: 50%; }
+        .left::before { right: -9px; }
+        .right::before { left: -9px; }
+        .timeline-content {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        .timeline-content:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow);
+        }
+        .timeline-content h3 {
+            font-size: 19px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 12px;
+        }
+        .timeline-content p {
+            font-size: 15px;
+            color: #4b5563;
+        }
+        .timeline-year {
+            position: absolute;
+            top: -40px;
+            font-size: 15px;
+            font-weight: 700;
+            color: white;
+            background: var(--secondary-color);
+            padding: 6px 18px;
+            border-radius: 20px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        .left .timeline-year { right: 20px; }
+        .right .timeline-year { left: 20px; }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 60px 0;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            text-align: center;
+        }
+        .cta-content h2 {
+            font-size: 34px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            animation: slide-up 0.8s ease-out;
+        }
+        .cta-content p {
+            font-size: 17px;
+            color: var(--text-light);
+            margin-bottom: 30px;
+        }
+        .cta-btn {
+            padding: 12px 30px;
+            background: var(--card-bg);
+            color: var(--primary-color);
+            font-weight: 700;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .cta-btn i {
+            font-size: 16px;
+        }
+        .cta-btn:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 991px) {
+            .hero-section {
+                height: 60vh;
+                min-height: 400px;
+            }
+            .hero-content h1 {
+                font-size: 32px;
+            }
+            .hero-content p {
+                font-size: 16px;
+            }
+            .section-title {
+                font-size: 30px;
+            }
+        }
+        @media (max-width: 767px) {
+            .hero-section {
+                height: 50vh;
+                min-height: 350px;
+            }
+            .hero-content {
+                padding: 25px;
+            }
+            .hero-content h1 {
+                font-size: 26px;
+            }
+            .hero-content p {
+                font-size: 15px;
+            }
+            .section-title {
+                font-size: 28px;
+            }
+            .timeline::before {
+                left: 20px;
+            }
+            .timeline-item {
+                width: 100%;
+                padding-left: 60px;
+                padding-right: 20px;
+            }
+            .timeline-item::before {
+                left: 11px;
+            }
+            .right {
+                left: 0;
+            }
+            .left .timeline-year, .right .timeline-year {
+                left: 0;
+            }
+            .services-grid, .about-grid, .stats-grid, .team-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 575px) {
+            .hero-section {
+                min-height: 300px;
+            }
+            .hero-content h1 {
+                font-size: 22px;
+            }
+            .hero-content p {
+                font-size: 14px;
+            }
+            .section-title {
+                font-size: 26px;
+            }
+            .team-image img {
+                max-width: 150px;
+                height: auto;
+                object-fit: contain;
+            }
+            .stat-number {
+                font-size: 32px;
+            }
+            .service-card, .about-card, .team-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <%- include("../partials/user/header") %>
+
+    <!-- Preloader -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1>About ZapZone</h1>
+            <p>Discover our passion for premium laptops and the team dedicated to powering your productivity.</p>
+            <a href="/shop" class="primary-btn">Explore L volunteaptops <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services-section">
+        <div class="container">
+            <h2 class="section-title">Our Services</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <i class="fas fa-truck service-icon"></i>
+                    <h3>Express Shipping</h3>
+                    <p>Get your premium laptop delivered swiftly and securely, right to your door.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-headset service-icon"></i>
+                    <h3>Expert Support</h3>
+                    <p>Our team of laptop specialists is available 24/7 to guide you through your purchase and beyond.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-lock service-icon"></i>
+                    <h3>Secure Payments</h3>
+                    <p>Shop with confidence using our encrypted and trusted payment systems.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section">
+        <div class="container">
+            <h2 class="section-title">Our Story</h2>
+            <div class="about-grid">
+                <div class="about-card">
+                    <h3>Who We Are</h3>
+                    <p>ZapZone was founded with a vision to redefine the laptop buying experience. We specialize in curating premium laptops that combine performance, style, and innovation.</p>
+                    <p>From professionals to creators, we empower our customers with devices that match their ambitions. Our team is dedicated to providing exceptional service and expertise.</p>
+                    <p><strong>ZapZone: Powering your potential with premium laptops.</strong></p>
+                </div>
+                <div class="about-card">
+                    <h3>Our Mission</h3>
+                    <p>We strive to make premium laptops accessible to everyone, offering top-tier devices from leading brands with unmatched quality and support.</p>
+                    <p>Our goal is to simplify your journey to finding the perfect laptop, ensuring every purchase is informed and effortless.</p>
+                    <p><strong>With ZapZone, your ideal laptop is just a click away.</strong></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">20K+</div>
+                    <div class="stat-title">Happy Customers</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-title">Premium Laptops</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-title">Top Brands</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-title">Customer Support</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="team-section">
+        <div class="container">
+            <h2 class="section-title">Meet Our Team</h2>
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="team-image">
+                        <img src="/images/akhilat.jpeg" alt="Akhila T">
+                    </div>
+                    <div class="team-info">
+                        <h3>AKHILA T</h3>
+                        <p>CEO & Founder</p>
+                        <div class="social-links">
+                            <a href="https://www.linkedin.com/in/sidhiee/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="https://www.youtube.com/@sidhiQuee" target="_blank"><i class="fab fa-youtube"></i></a>
+                            <a href="https://www.instagram.com/sidhiquee/" target="_blank"><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="team-image">
+                        <img src="/images/fathima.jpeg" alt="Fathima">
+                    </div>
+                    <div class="team-info">
+                        <h3>FATHIMA SULAIMAN</h3>
+                        <p>Chief Technology Officer</p>
+                        <div class="social-links">
+                            <a href="https://www.linkedin.com/in/akhila-t-73670134b/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="https://www.youtube.com/@akhilatharol5993" target="_blank"><i class="fab fa-youtube"></i></a>
+                            <a href="https://www.instagram.com/__akhila__t/" target="_blank"><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="team-image">
+                        <img src="/images/shahana.jpeg" alt="Shahana Sherin">
+                    </div>
+                    <div class="team-info">
+                        <h3>SHAHANA SHERIN</h3>
+                        <p>Head of Customer Success</p>
+                        <div class="social-links">
+                            <a href="https://www.linkedin.com/in/muhammed-unais-863a73325/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="http://www.youtube.com/@unaissse" target="_blank"><i class="fab fa-youtube"></i></a>
+                            <a href="https://www.instagram.com/unnaiiss?igsh=MXU1YzRjcm1xdGt4Zw==" target="_blank"><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section class="timeline-section">
+        <div class="container">
+            <h2 class="section-title">Our Milestones</h2>
+            <div class="timeline">
+                <div class="timeline-item left">
+                    <div class="timeline-year">2019</div>
+                    <div class="timeline-content">
+                        <h3>ZapZone Founded</h3>
+                        <p>Launched with a mission to deliver premium laptops to tech enthusiasts worldwide.</p>
+                    </div>
+                </div>
+                <div class="timeline-item right">
+                    <div class="timeline-year">2021</div>
+                    <div class="timeline-content">
+                        <h3>Exclusive Partnerships</h3>
+                        <p>Partnered with top laptop brands to bring exclusive, high-performance devices to our customers.</p>
+                    </div>
+                </div>
+                <div class="timeline-item left">
+                    <div class="timeline-year">2023</div>
+                    <div class="timeline-content">
+                        <h3>Global Reach</h3>
+                        <p>Expanded our platform to serve customers in multiple countries with premium laptops.</p>
+                    </div>
+                </div>
+                <div class="timeline-item right">
+                    <div class="timeline-year">2025</div>
+                    <div class="timeline-content">
+                        <h3>Laptop Customization</h3>
+                        <p>Introduced personalized laptop configuration services to meet unique customer needs.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Discover Premium Laptops</h2>
+                <p>Explore our curated selection of high-performance laptops designed for work, creativity, and beyond.</p>
+                <a href="/shop" class="cta-btn">Shop Now <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <%- include("../partials/user/footer") %>
+
+    <!-- JS Plugins -->
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Smooth scroll for internal links
+            $('a[href*="#"]').on('click', function(e) {
+                e.preventDefault();
+                const target = $(this.hash);
+                if (target.length) {
+                    $('html, body').animate({
+                        scrollTop: target.offset().top - 80
+                    }, 800);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

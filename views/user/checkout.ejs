@@ -77,7 +77,7 @@
             margin-right: 8px;
             color: #e74c3c;
         }
-
+        
         .zz-address-card {
             border: 1px solid #e0e0e0;
             border-radius: 8px;
@@ -213,18 +213,13 @@
             background-color: #fff5f5;
         }
 
-        .zz-payment-option.disabled {
-            background-color: #f5f5f5;
-            cursor: not-allowed;
-        }
-
         .zz-payment-option.disabled label {
             color: #777;
         }
 
-        .zz-cod-unavailable {
-            color: #e74c3c;
+        .zz-coming-soon {
             font-size: 12px;
+            color: #e74c3c;
             margin-left: 10px;
         }
 
@@ -343,7 +338,7 @@
         }
 
         .zz-view-coupons-btn {
-            background-color: #e74c3c;
+            background-color: #c0392b;
             color: white;
             border: none;
             padding: 10px 15px;
@@ -480,6 +475,11 @@
             <div class="col-lg-8">
                 <div class="zz-checkout-container">
                     <h2 class="zz-checkout-title">Complete Your Order</h2>
+                    <% if (typeof message !== 'undefined' && message) { %>
+                        <div class="alert alert-warning" role="alert" style="margin-bottom: 20px;">
+                            <i class="fa fa-exclamation-triangle"></i> <%= message %>
+                        </div>
+                    <% } %>
                     <!-- Delivery Address -->
                     <div class="zz-delivery-address">
                         <h3 class="zz-section-title"><i class="fa fa-map-marker-alt"></i> Delivery Address</h3>
@@ -522,20 +522,17 @@
                     <div class="zz-payment-method">
                         <h3 class="zz-section-title"><i class="fa fa-credit-card"></i> Payment Method</h3>
                         <p class="zz-payment-security"><i class="fa fa-lock"></i> All transactions are secure and encrypted</p>
-                        <div class="zz-payment-option <%= total > 1000 ? 'disabled' : 'selected' %>" id="codOption">
-                            <input type="radio" name="payment" id="cod" value="COD" <%= total > 1000 ? 'disabled' : 'checked' %>>
+                        <div class="zz-payment-option selected">
+                            <input type="radio" name="payment" id="cod" value="COD" checked>
                             <label for="cod">Cash on Delivery</label>
-                            <% if (total > 1000) { %>
-                                <span class="zz-cod-unavailable">COD not available for orders above ₹1000</span>
-                            <% } %>
                         </div>
-                        <div class="zz-payment-option <%= total > 1000 ? 'selected' : '' %>">
-                            <input type="radio" name="payment" id="razorpay" value="Razorpay" <%= total > 1000 ? 'checked' : '' %>>
+                        <div class="zz-payment-option">
+                            <input type="radio" name="payment" id="razorpay" value="Razorpay">
                             <label for="razorpay">Razorpay</label>
                             <img src="/img/payment/razorpay-logo.svg" alt="Razorpay" width="150" height="50">
                         </div>
                         <div class="zz-payment-option disabled">
-                            <input type="radio" name="payment" id="wallet" value="Wallet" disabled>
+                            <input type="radio" name="payment" id="wallet" value="Wallet">
                             <label for="wallet">Pay using your wallet balance</label>
                             <div class="zz-wallet-balance">
                                 WALLET BALANCE: ₹<%= typeof user !== 'undefined' && user && user.walletBalance ? user.walletBalance.toFixed(2) : '0.00' %>
@@ -555,6 +552,11 @@
                                 <span class="zz-summary-label">
                                     <%= item.productId && item.productId.productName ? item.productId.productName : 'Unknown Product' %> 
                                     (Qty: <%= item.quantity || 0 %>)
+                                    <% if (item.productId && item.productId.quantity < item.quantity) { %>
+                                        <div class="zz-item-out-of-stock" style="color: #e74c3c; font-size: 13px; margin-top: 8px;">
+                                            <i class="fa fa-exclamation-circle"></i> Out of stock or only <%= item.productId.quantity %> left
+                                        </div>
+                                    <% } %>
                                     <% if (item.offerId && item.offerCode && item.discount > 0) { %>
                                         <div class="zz-item-offer">
                                             <i class="fa fa-tag"></i> Offer: <%= item.offerCode %> (Saved ₹<%= item.discount ? item.discount.toFixed(2) : '0.00' %>)
@@ -603,7 +605,7 @@
                         </div>
                         <!-- Coupon Section -->
                         <div class="zz-coupon-section">
-                            <% if (cart && cart.coupon && cart.coupon.code && couponDiscount > 0) { %>
+                            <% if ( cart && cart.coupon && cart.coupon.code && couponDiscount > 0) { %>
                                 <div class="zz-coupon-applied">
                                     <i class="fa fa-check-circle"></i>
                                     Coupon Applied: <%= cart.coupon.code %>
@@ -618,13 +620,20 @@
                     <% } else { %>
                         <p>Your cart is empty.</p>
                     <% } %>
-
+                    <% let hasOutOfStock = false; %>
+                    <% if (typeof cartItems !== 'undefined' && Array.isArray(cartItems)) { %>
+                        <% cartItems.forEach(item => { %>
+                            <% if (item.productId && item.productId.quantity < item.quantity) { %>
+                                <% hasOutOfStock = true; %>
+                            <% } %>
+                        <% }) %>
+                    <% } %>
                     <!-- Place Order Form -->
                     <form id="placeOrderForm" action="/place-order" method="POST">
                         <input type="hidden" name="addressId" id="selectedAddressId" value="<%= defaultAddress && defaultAddress._id ? defaultAddress._id : '' %>">
                         <input type="hidden" name="couponCode" id="appliedCouponCode" value="<%= cart && cart.coupon && cart.coupon.code ? cart.coupon.code : '' %>">
-                        <input type="hidden" name="paymentMethod" id="paymentMethod" value="<%= total > 1000 ? 'Razorpay' : 'COD' %>">
-                        <button type="submit" class="zz-place-order-btn" id="placeOrderBtn" <%= !defaultAddress ? 'disabled' : '' %>>Place Order</button>
+                        <input type="hidden" name="paymentMethod" id="paymentMethod" value="COD">
+                        <button type="submit" class="zz-place-order-btn" id="placeOrderBtn" <%= !defaultAddress || hasOutOfStock ? 'disabled' : '' %>>Place Order</button>
                     </form>
                     <p class="zz-secure-checkout"><i class="fa fa-lock"></i> Secure Checkout</p>
                 </div>
@@ -652,7 +661,10 @@
             const appliedCouponCode = document.querySelector('#appliedCouponCode');
             const paymentMethodInputs = document.querySelectorAll('input[name="payment"]');
             const paymentMethodField = document.querySelector('#paymentMethod');
-            const totalAmount = <%= typeof total !== 'undefined' && total ? total : 0 %>;
+            const orderIdField = document.querySelector('#orderId');
+            const razorpayOrderIdField = document.querySelector('#razorpayOrderId');
+            const razorpayPaymentIdField = document.querySelector('#razorpayPaymentId');
+            const razorpaySignatureField = document.querySelector('#razorpaySignature');
 
             if (!placeOrderForm || !placeOrderBtn || !paymentMethodField) {
                 console.error('Form, button, or payment method field not found');
@@ -664,38 +676,9 @@
                 return;
             }
 
-            // Initialize payment method based on total amount
-            if (totalAmount > 1000) {
-                paymentMethodField.value = 'Razorpay';
-                document.querySelector('#cod').disabled = true;
-                document.querySelector('#codOption').classList.add('disabled');
-                document.querySelector('#codOption').classList.remove('selected');
-                document.querySelector('#razorpay').checked = true;
-                document.querySelector('#razorpay').parentElement.classList.add('selected');
-            } else {
-                paymentMethodField.value = 'COD';
-                document.querySelector('#cod').checked = true;
-                document.querySelector('#codOption').classList.add('selected');
-            }
-
             // Update payment method
             paymentMethodInputs.forEach(input => {
                 input.addEventListener('change', function() {
-                    if (this.value === 'COD' && totalAmount > 1000) {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'COD Not Available',
-                            text: 'Cash on Delivery is not available for orders above ₹1000. Please select another payment method.'
-                        });
-                        this.checked = false;
-                        document.querySelector('#razorpay').checked = true;
-                        paymentMethodField.value = 'Razorpay';
-                        document.querySelectorAll('.zz-payment-option').forEach(option => {
-                            option.classList.remove('selected');
-                        });
-                        document.querySelector('#razorpay').parentElement.classList.add('selected');
-                        return;
-                    }
                     paymentMethodField.value = this.value;
                     document.querySelectorAll('.zz-payment-option').forEach(option => {
                         option.classList.remove('selected');
@@ -893,9 +876,25 @@
                     e.preventDefault();
                     const selectedAddressId = document.querySelector('#selectedAddressId').value;
                     const paymentMethod = paymentMethodField.value;
+                    const finalAmount = <%= typeof total !== 'undefined' && total ? total : 0 %>;
 
-                    console.log('Place Order clicked', { selectedAddressId, paymentMethod });
+                    console.log('Place Order clicked', { selectedAddressId, paymentMethod, finalAmount });
 
+                    const cartItems = <%- JSON.stringify(cartItems || []) %>;
+                    let outOfStockMessage = '';
+                    cartItems.forEach(item => {
+                        if (item.productId && item.productId.quantity < item.quantity) {
+                            outOfStockMessage = `${item.productId.productName} is out of stock or only ${item.productId.quantity} left.`;
+                        }
+                    });
+                    if (outOfStockMessage) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Out of Stock',
+                            text: outOfStockMessage
+                        });
+                        return;
+                    }
                     if (!selectedAddressId) {
                         Swal.fire({
                             icon: 'error',
@@ -914,11 +913,12 @@
                         return;
                     }
 
-                    if (paymentMethod === 'COD' && totalAmount > 1000) {
+                    if (paymentMethod === 'COD' && finalAmount > 1000) {
+                        console.warn(`COD not allowed for orders above ₹1000: finalAmount=${finalAmount}`);
                         Swal.fire({
                             icon: 'error',
-                            title: 'COD Not Available',
-                            text: 'Cash on Delivery is not available for orders above ₹1000. Please select another payment method.'
+                            title: 'Payment Method Not Allowed',
+                            text: 'Cash on Delivery is not allowed for orders above ₹1000. Please select another payment method.'
                         });
                         return;
                     }

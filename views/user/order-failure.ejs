@@ -265,14 +265,9 @@
                 </div>
                 
                 <div class="payment-action-buttons">
-                   <% if (orderId && orderId !== 'null' && orderId !== '') { %>
-    <button class="zz-btn zz-btn-primary" id="tryAgainBtn" data-order-id="<%= orderId %>" aria-label="Retry payment for order">Try Payment Again</button>
-    <button class="btn btn-secondary view-details" data-order-id="<%= orderId %>">
-        <i class="fa fa-eye"></i> View Order Details
-    </button>
-<% } else { %>
-    <a href="/orders" class="zz-btn zz-btn-primary" aria-label="View your orders">View Orders</a>
-<% } %>
+                   
+                        <a href="/orders" class="zz-btn zz-btn-primary" aria-label="View your orders">View Orders</a>
+                 
                 </div>
             </div>
         </div>
@@ -283,25 +278,6 @@
     <script src="/js/jquery-3.3.1.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-    // Existing code...
-
-    document.querySelectorAll('.view-details').forEach(button => {
-        button.addEventListener('click', () => {
-            const orderId = button.getAttribute('data-order-id');
-            if (orderId && orderId !== 'null' && orderId !== '') {
-                window.location.href = `/order-details/${orderId}`;
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Order ID not found. Please try again.',
-                    showConfirmButton: true
-                });
-            }
-        });
-    });
-});
         document.addEventListener('DOMContentLoaded', () => {
             // Set timestamp
             document.getElementById('timestamp').textContent = new Date().toLocaleString();
@@ -329,14 +305,11 @@
                 tryAgainBtn.addEventListener('click', async function(e) {
                     e.preventDefault();
                     const orderId = this.getAttribute('data-order-id');
-                    console.log('Retry Payment for Order:', orderId);
-
-                    // Check if Razorpay SDK is loaded
-                    if (typeof Razorpay === 'undefined') {
+                    if (!orderId || orderId === 'null' || orderId === '') {
                         Swal.fire({
                             icon: 'error',
-                            title: 'Payment Error',
-                            text: 'Payment service unavailable. Please try again later.',
+                            title: 'Error',
+                            text: 'Order ID is missing. Please try again or contact support.',
                             showConfirmButton: true
                         });
                         return;
@@ -347,17 +320,12 @@
                         duration: 0.4,
                         onComplete: async () => {
                             try {
-                                // Fetch order details for prefill data
-                                const orderResponse = await fetch(`/order-details/${orderId}`, {
-                                    method: 'GET',
-                                    headers: { 'Content-Type': 'application/json' }
-                                });
-                                const orderDetails = await orderResponse.json();
-                                if (!orderDetails.success || !orderDetails.order) {
+                                // Check if Razorpay SDK is loaded
+                                if (typeof Razorpay === 'undefined') {
                                     Swal.fire({
                                         icon: 'error',
-                                        title: 'Error',
-                                        text: 'Unable to retrieve order details. Please try again or contact support.',
+                                        title: 'Payment Error',
+                                        text: 'Payment service unavailable. Please try again later.',
                                         showConfirmButton: true
                                     });
                                     return;
@@ -386,8 +354,6 @@
                                     body: JSON.stringify({ orderId })
                                 });
                                 const result = await response.json();
-                                console.log('Create Razorpay order response:', result);
-
                                 if (!result.success || !result.order) {
                                     const errorMessage = errorMessages[result.errorCode] || result.message || 'Failed to create payment order.';
                                     Swal.fire({
@@ -410,7 +376,6 @@
                                     image: '/img/logo.png',
                                     order_id: result.order.id,
                                     handler: async function(response) {
-                                        console.log('Razorpay payment response:', response);
                                         try {
                                             const verifyResponse = await fetch('/verify-razorpay-payment', {
                                                 method: 'POST',
@@ -423,8 +388,6 @@
                                                 })
                                             });
                                             const verifyResult = await verifyResponse.json();
-                                            console.log('Verify payment response:', verifyResult);
-
                                             if (verifyResult.success) {
                                                 Swal.fire({
                                                     icon: 'success',
@@ -458,9 +421,9 @@
                                         }
                                     },
                                     prefill: {
-                                        name: orderDetails.user?.name || '',
-                                        email: orderDetails.user?.email || '',
-                                        contact: orderDetails.address?.phone || ''
+                                        name: result.user?.name || '',
+                                        email: result.user?.email || '',
+                                        contact: result.address?.phone || ''
                                     },
                                     theme: { color: '#e74c3c' },
                                     modal: {

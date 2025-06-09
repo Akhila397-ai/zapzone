@@ -368,6 +368,12 @@
             background-color: var(--primary-dark);
         }
 
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-light);
+        }
+
         @media (max-width: 1200px) {
             .charts-container {
                 grid-template-columns: repeat(2, 1fr);
@@ -495,7 +501,6 @@
     </style>
 </head>
 <body>
-
     <!-- Modal -->
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
         <div class="modal-dialog">
@@ -504,7 +509,9 @@
                     <h5 class="modal-title">Order Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">×</button>
                 </div>
-                <div class="modal-body" id="modalBodyContent"></div>
+                <div class="modal-body" id="modalBodyContent">
+                    <div class="loading">Loading order details...</div>
+                </div>
                 <div class="modal-button-group">
                     <button type="button" class="modal-btn modal-btn-cancel" data-bs-dismiss="modal">Close</button>
                     <button id="okbutton" type="button" class="modal-btn modal-btn-confirm" data-bs-dismiss="modal">Ok</button>
@@ -545,19 +552,19 @@
         <div class="stats-grid">
             <div class="stats-card">
                 <h3>Today's Sales</h3>
-                <p>₹<%= todaySales.toLocaleString('en-IN') %></p>
+                <p>₹<%- (todaySales || 0).toLocaleString('en-IN') %></p>
             </div>
             <div class="stats-card">
                 <h3>Yesterday's Sales</h3>
-                <p>₹<%= yesterdaySales.toLocaleString('en-IN') %></p>
+                <p>₹<%- (yesterdaySales || 0).toLocaleString('en-IN') %></p>
             </div>
             <div class="stats-card">
                 <h3>Monthly Sales</h3>
-                <p>₹<%= monthlySales.toLocaleString('en-IN') %></p>
+                <p>₹<%- (monthlySales || 0).toLocaleString('en-IN') %></p>
             </div>
             <div class="stats-card">
                 <h3>Yearly Sales</h3>
-                <p>₹<%= yearlySales.toLocaleString('en-IN') %></p>
+                <p>₹<%- (yearlySales || 0).toLocaleString('en-IN') %></p>
             </div>
         </div>
 
@@ -659,6 +666,9 @@
                             <option value="all">All Orders</option>
                             <option value="delivered">Delivered</option>
                             <option value="processing">Processing</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="returned">Returned</option>
                         </select>
                     </div>
                 </div>
@@ -714,6 +724,7 @@
                 if (!data.sales || !data.products || !data.categories || !data.brands || !data.status || !data.recentOrders) {
                     throw new Error('Invalid data structure');
                 }
+                console.log('Fetched data:', data);
                 return {
                     todaySales: data.todaySales,
                     yesterdaySales: data.yesterdaySales,
@@ -737,6 +748,7 @@
                 };
             } catch (error) {
                 console.error('Error fetching chart data:', error.message);
+                alert('Failed to load chart data. Check console for details.');
                 return {
                     todaySales: 0,
                     yesterdaySales: 0,
@@ -791,6 +803,11 @@
         }
 
         function showOrderDetailsModal(orderId) {
+            const modalBody = document.getElementById('modalBodyContent');
+            modalBody.innerHTML = '<div class="loading">Loading order details...</div>';
+            const myModal = new bootstrap.Modal(document.getElementById("myModal"));
+            myModal.show();
+
             fetch(`/admin/orderdetails?orderId=${orderId}`)
                 .then(response => {
                     if (!response.ok) throw new Error('Failed to fetch order details');
@@ -801,7 +818,6 @@
                         throw new Error(data.message || 'Order not found');
                     }
                     const orderDetails = data.order;
-                    const modalBody = document.getElementById('modalBodyContent');
                     let modalContent = `
                         <div class="row mb-3">
                             <div class="col-8">
@@ -894,12 +910,10 @@
                         </div>
                     `;
                     modalBody.innerHTML = modalContent;
-                    const myModal = new bootstrap.Modal(document.getElementById("myModal"));
-                    myModal.show();
                 })
                 .catch(error => {
                     console.error('Error fetching order details:', error.message);
-                    alert('Failed to load order details. Please try again.');
+                    modalBody.innerHTML = '<p class="text-danger">Failed to load order details. Please try again.</p>';
                 });
         }
 
@@ -950,6 +964,10 @@
             const salesCtx = document.getElementById('salesChart');
             if (salesCtx) {
                 updateSalesTotal(datasets.sales);
+                if (!labels.salesOverview.length || !datasets.sales.length) {
+                    salesCtx.parentElement.innerHTML = '<p class="loading">No sales data available for this period.</p>';
+                    return;
+                }
                 salesChart = new Chart(salesCtx, {
                     type: 'line',
                     data: {
@@ -1000,6 +1018,10 @@
 
             const productsCtx = document.getElementById('productsChart');
             if (productsCtx) {
+                if (!labels.products.length || !datasets.products.length) {
+                    productsCtx.parentElement.innerHTML = '<p class="loading">No product data available.</p>';
+                    return;
+                }
                 productsChart = new Chart(productsCtx, {
                     type: 'bar',
                     data: {
@@ -1049,6 +1071,10 @@
 
             const categoriesCtx = document.getElementById('categoriesChart');
             if (categoriesCtx) {
+                if (!labels.categories.length || !datasets.categories.length) {
+                    categoriesCtx.parentElement.innerHTML = '<p class="loading">No category data available.</p>';
+                    return;
+                }
                 categoriesChart = new Chart(categoriesCtx, {
                     type: 'pie',
                     data: {
@@ -1084,6 +1110,10 @@
 
             const brandsCtx = document.getElementById('brandsChart');
             if (brandsCtx) {
+                if (!labels.brands.length || !datasets.brands.length) {
+                    brandsCtx.parentElement.innerHTML = '<p class="loading">No brand data available.</p>';
+                    return;
+                }
                 brandsChart = new Chart(brandsCtx, {
                     type: 'doughnut',
                     data: {
@@ -1120,6 +1150,10 @@
 
             const statusCtx = document.getElementById('statusChart');
             if (statusCtx) {
+                if (!labels.orderStatus.length || !datasets.orderStatus.length) {
+                    statusCtx.parentElement.innerHTML = '<p class="loading">No order status data available.</p>';
+                    return;
+                }
                 statusChart = new Chart(statusCtx, {
                     type: 'polarArea',
                     data: {
@@ -1168,6 +1202,7 @@
 
         async function updateCharts() {
             const timeFilter = document.getElementById('time-filter').value;
+            console.log('Selected filter:', timeFilter);
             const data = await fetchChartData(timeFilter);
             renderCharts(data.labels, data.datasets);
             renderRecentOrders(data.recentOrders);

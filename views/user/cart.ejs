@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZAPZONE - Shopping Cart</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css">
-    <link rel="stylesheet" href="/css/font-awesome.min.css" type="text/css">
-    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         .zz-item-price-original {
@@ -401,7 +401,7 @@
                 <div class="zz-cart-container">
                     <h2 class="zz-cart-title">Shopping Cart</h2>
                     
-                    <% if (!cart || !cart.items || cart.items.length === 0) { %>
+                    <% if (!cart || cart.items.length === 0) { %>
                         <!-- Empty Cart Message -->
                         <div class="zz-cart-empty">
                             <i class="fa fa-shopping-cart"></i>
@@ -450,10 +450,10 @@
                                         </td>
                                         <td data-title="Price">
                                             <% if (item.discount > 0) { %>
-                                                <span class="zz-item-price-original">₹ <%= (item.price || 0).toFixed(2) %></span>
-                                                <span class="zz-item-price-offer">₹ <%= ((item.price - item.discount) || 0).toFixed(2) %></span>
+                                                <span class="zz-item-price-original">₹ <%= item.productId.salePrice.toFixed(2) %></span>
+                                                <span class="zz-item-price-offer">₹ <%= (item.productId.salePrice - item.discount).toFixed(2) %></span>
                                             <% } else { %>
-                                                <span class="zz-item-price">₹ <%= (item.price || 0).toFixed(2) %></span>
+                                                <span class="zz-item-price">₹ <%= item.price.toFixed(2) %></span>
                                             <% } %>
                                         </td>
                                         <td data-title="Quantity">
@@ -461,16 +461,13 @@
                                                 <button type="button" class="zz-quantity-btn decrease-qty">
                                                     <i class="fa fa-minus"></i>
                                                 </button>
-                                                <input type="number" class="zz-quantity-input quantity-input" 
-                                                       value="<%= item.quantity || 1 %>" 
-                                                       min="1" 
-                                                       max="<%= Math.min(item.productId.quantity, 5) || 5 %>">
+                                              <input type="number" class="zz-quantity-input quantity-input" value="<%= item.quantity %>" min="1" max="<%= Math.min(item.productId.quantity, 5) %>">
                                                 <button type="button" class="zz-quantity-btn increase-qty">
                                                     <i class="fa fa-plus"></i>
                                                 </button>
                                             </div>
                                         </td>
-                                        <td data-title="Total" class="zz-item-total">₹ <%= (item.totalPrice || 0).toFixed(2) %></td>
+                                        <td  data-title="Total" class="zz-item-total">₹ <%= (item.totalPrice).toFixed(2) %></td>
                                         <td data-title="Remove" class="zz-item-remove">
                                             <a href="#" class="remove-item" data-product-id="<%= item.productId._id %>" title="Remove this item">
                                                 <i class="fa fa-times"></i>
@@ -498,26 +495,25 @@
                     
                     <div class="zz-summary-item">
                         <span class="zz-summary-label">Subtotal</span>
-                        <span class="zz-summary-value">₹ <%= (cart && cart.subtotal ? cart.subtotal : 0).toFixed(2) %></span>
+                        <span class="zz-summary-value">₹ <%= cart && cart.items.length && cart.subtotal ? cart.subtotal.toFixed(2) : '0.00' %></span>
                     </div>
                     
                     <div class="zz-summary-item">
                         <span class="zz-summary-label">Offer Discount</span>
-                        <span class="zz-summary-value"><%= (cart && cart.displayDiscount ? cart.displayDiscount : 0).toFixed(2) %> ₹</span>
+                        <span class="zz-summary-value"><%= cart && cart.items.length && cart.displayDiscount ? cart.displayDiscount.toFixed(2) : '0.00' %> ₹</span>
                     </div>
                     
                     <div class="zz-summary-item">
                         <span class="zz-summary-label">Shipping</span>
-                        <span class="zz-summary-value">₹ <%= (cart && cart.shipping != null ? cart.shipping : 0).toFixed(2) %></span>
+                        <span class="zz-summary-value">₹ <%= cart && cart.items.length && cart.shipping != null ? cart.shipping.toFixed(2) : '50.00' %></span>
                     </div>
                     
                     <div class="zz-summary-total">
                         <span class="zz-total-label">Total</span>
-                        <span id="total" class="zz-total-value">₹ <%= (cart && cart.total ? cart.total : 0).toFixed(2) %></span>
+                        <span id="total" class="zz-total-value">₹ <%= cart && cart.items.length && cart.total ? cart.total.toFixed(2) : '0.00' %></span>
                     </div>
                     
-                    <a href="<%= cart && cart.items && cart.items.length > 0 ? '/checkout' : '#' %>" 
-                       class="zz-checkout-btn <%= cart && cart.items && cart.items.length > 0 ? '' : 'disabled' %>">
+                    <a href="<%= cart && cart.items.length > 0 ? '/checkout' : '#' %>" class="zz-checkout-btn <%= cart && cart.items.length > 0 ? '' : 'disabled' %>">
                         Proceed to Checkout
                     </a>
                     
@@ -537,16 +533,18 @@
 
     <%- include("../partials/user/footer") %>
 
-    <script src="/js/jquery-3.3.1.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-    <script>
+   <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Quantity buttons functionality
     const decreaseBtns = document.querySelectorAll('.decrease-qty');
     const increaseBtns = document.querySelectorAll('.increase-qty');
     const quantityInputs = document.querySelectorAll('.quantity-input');
     const removeButtons = document.querySelectorAll('.remove-item');
 
+    // Function to update server-side cart
     function updateCartItem(productId, quantity) {
         console.log(`Updating cart: productId=${productId}, quantity=${quantity}`);
         fetch('/update-cart', {
@@ -566,6 +564,9 @@ document.addEventListener('DOMContentLoaded', function() {
             return response.json();
         })
         .then(data => {
+            let total = document.getElementById('total')
+            console.log(data.cart.total,'tokadsfjldksa')
+            total.textContent = `₹ ${parseFloat(data.cart.total).toFixed(2)}`;
             console.log('Server response:', JSON.stringify(data, null, 2));
             if (data.success) {
                 Swal.fire({
@@ -575,6 +576,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     timer: 2000,
                     showConfirmButton: false
                 });
+                // Update UI with server data
                 updateCartUI(data.cart);
             } else {
                 let errorMessage = data.message || 'There was an issue updating your cart.';
@@ -600,13 +602,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Function to update the entire cart UI
     function updateCartUI(cart) {
         console.log('Updating cart UI with:', JSON.stringify(cart, null, 2));
+        // Update cart items
         updateCartItemsUI(cart.items);
+        // Update cart summary
         updateCartSummary(cart);
+        // Handle empty cart
         handleEmptyCart(cart);
     }
 
+    // Function to update cart items UI
     function updateCartItemsUI(items) {
         const cartTableBody = document.querySelector('.zz-cart-table tbody');
         if (!cartTableBody) {
@@ -614,210 +621,91 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Clear and re-render all items to ensure consistency
-        cartTableBody.innerHTML = '';
+        // Update existing items
         items.forEach(item => {
-            const row = document.createElement('tr');
-            row.className = 'zz-cart-item';
-            row.setAttribute('data-product-id', item.productId._id);
-            row.innerHTML = `
-                <td data-title="Image">
-                    <div class="zz-item-image">
-                        <img src="/Uploads/product-images/${item.productId.productImage[0]}" alt="${item.productId.productName}">
-                    </div>
-                </td>
-                <td data-title="Product" class="zz-item-info">
-                    <h4><a href="/productDetails?id=${item.productId._id}">${item.productId.productName}</a></h4>
-                    <div class="zz-item-meta">
-                        ${item.productId.brand && item.productId.brand.name ? `<span>Brand: ${item.productId.brand.name}</span>` : ''}
-                        ${item.productId.color ? `<span> | Color: ${item.productId.color}</span>` : ''}
-                    </div>
-                    ${item.offerId && item.offerCode && item.discount > 0
-                        ? `<div class="zz-item-offer"><i class="fas fa-tag"></i> ${item.offerCode}: Saved ₹${item.discount.toFixed(2)}</div>`
-                        : `<div class="zz-no-offer">No offer applied</div>`}
-                </td>
-                <td data-title="Price">
-                    ${item.discount > 0
-                        ? `<span class="zz-item-price-original">₹ ${item.price.toFixed(2)}</span>
-                           <span class="zz-item-price-offer">₹ ${(item.price - item.discount).toFixed(2)}</span>`
-                        : `<span class="zz-item-price">₹ ${item.price.toFixed(2)}</span>`}
-                </td>
-                <td data-title="Quantity">
-                    <div class="zz-quantity-widget">
-                        <button type="button" class="zz-quantity-btn decrease-qty"><i class="fa fa-minus"></i></button>
-                        <input type="number" class="zz-quantity-input quantity-input" 
-                               value="${item.quantity || 1}" 
-                               min="1" 
-                               max="${Math.min(item.productId.quantity, 5) || 5}">
-                        <button type="button" class="zz-quantity-btn increase-qty"><i class="fa fa-plus"></i></button>
-                    </div>
-                </td>
-                <td data-title="Total" class="zz-item-total">₹ ${item.totalPrice.toFixed(2)}</td>
-                <td data-title="Remove" class="zz-item-remove">
-                    <a href="#" class="remove-item" data-product-id="${item.productId._id}" title="Remove this item">
-                        <i class="fa fa-times"></i>
-                    </a>
-                </td>
-            `;
-            cartTableBody.appendChild(row);
-        });
+            console.log(`Updating item ${item.productId._id}: quantity=${item.quantity}, price=${item.price}, discount=${item.discount}, totalPrice=${item.totalPrice}`);
+            const cartItem = document.querySelector(`.zz-cart-item[data-product-id="${item.productId._id}"]`);
+            if (cartItem) {
+                // Update quantity
+                const quantityInput = cartItem.querySelector('.quantity-input');
+                quantityInput.value = item.quantity;
 
-        // Re-attach event listeners for newly created buttons
-        document.querySelectorAll('.decrease-qty').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const input = this.parentNode.querySelector('.quantity-input');
-                const currentValue = parseInt(input.value);
-                const productId = this.closest('.zz-cart-item').getAttribute('data-product-id');
-                if (currentValue > 1) {
-                    input.value = currentValue - 1;
-                    updateCartItem(productId, currentValue - 1);
-                }
-            });
-        });
+                // Update price display
+                const priceContainer = cartItem.querySelector('td[data-title="Price"]');
+                let priceElement = cartItem.querySelector('.zz-item-price-offer') || cartItem.querySelector('.zz-item-price');
+                const originalPriceElement = cartItem.querySelector('.zz-item-price-original');
+                const totalElement = cartItem.querySelector('.zz-item-total');
 
-        document.querySelectorAll('.increase-qty').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const input = this.parentNode.querySelector('.quantity-input');
-                const currentValue = parseInt(input.value);
-                const maxValue = parseInt(input.getAttribute('max'));
-                const productId = this.closest('.zz-cart-item').getAttribute('data-product-id');
-                const productName = this.closest('.zz-cart-item').querySelector('.zz-item-info h4 a').textContent;
-
-                if (currentValue < maxValue) {
-                    input.value = currentValue + 1;
-                    updateCartItem(productId, currentValue + 1);
-                } else {
-                    let message = maxValue === 5 
-                        ? `You can only add up to 5 units of ${productName} to your cart.`
-                        : `Only ${maxValue} units of ${productName} available.`;
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Quantity Limit Reached',
-                        text: message,
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                }
-            });
-        });
-
-        document.querySelectorAll('.quantity-input').forEach(input => {
-            input.addEventListener('change', function() {
-                const value = parseInt(this.value);
-                const min = parseInt(this.getAttribute('min'));
-                const max = parseInt(this.getAttribute('max'));
-                const productId = this.closest('.zz-cart-item').getAttribute('data-product-id');
-                const productName = this.closest('.zz-cart-item').querySelector('.zz-item-info h4 a').textContent;
-
-                if (value < min || isNaN(value)) {
-                    this.value = min;
-                    Swal.fire({
-                        icon: 'info',
-                        title: 'Invalid Quantity',
-                        text: `Quantity must be at least 1 for ${productName}.`,
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                } else if (value > max) {
-                    this.value = max;
-                    let message = max === 5 
-                        ? `You can only add up to 5 units of ${productName} to your cart.`
-                        : `Only ${max} units of ${productName} available.`;
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Quantity Limit Reached',
-                        text: message,
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                }
-
-                updateCartItem(productId, parseInt(this.value));
-            });
-        });
-
-        document.querySelectorAll('.remove-item').forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                const productId = this.getAttribute('data-product-id');
-                console.log('Attempting to remove productId:', productId);
-
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: 'Do you want to remove this item from your cart?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, remove it!',
-                    cancelButtonText: 'Cancel'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        fetch(`/removeFromCart/${productId}`, {
-                            method: 'PATCH',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            credentials: 'include'
-                        })
-                        .then(response => {
-                            console.log('Remove response status:', response.status);
-                            if (!response.ok) {
-                                throw new Error(`HTTP error! Status: ${response.status}`);
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            console.log('Remove response data:', data);
-                            if (data.success) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Removed',
-                                    text: 'Item removed from cart.',
-                                    timer: 1500,
-                                    showConfirmButton: false
-                                }).then(() => {
-                                    const cartItem = button.closest('.zz-cart-item');
-                                    if (cartItem) {
-                                        cartItem.remove();
-                                    } else {
-                                        console.warn(`Cart item with productId ${productId} not found in DOM`);
-                                    }
-                                    updateCartUI(data.cart);
-                                });
-                            } else {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Failed',
-                                    text: data.message || 'Failed to remove item from cart.',
-                                    showConfirmButton: true
-                                });
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error removing item:', error);
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: error.message || 'An error occurred while removing the item.',
-                                showConfirmButton: true
-                            });
-                        });
+                if (item.discount > 0) {
+                    // Show original and discounted price
+                    if (originalPriceElement) {
+                        originalPriceElement.innerText = `₹ ${item.price.toFixed(2)}`;
+                    } else {
+                        priceContainer.innerHTML = `
+                            <span class="zz-item-price-original">₹ ${item.price.toFixed(2)}</span>
+                            <span class="zz-item-price-offer">₹ ${(item.price - item.discount).toFixed(2)}</span>
+                        `;
+                        priceElement = cartItem.querySelector('.zz-item-price-offer');
                     }
-                });
-            });
+                    priceElement.classList.add('zz-item-price-offer');
+                } else {
+                    // Show only original price
+                    if (originalPriceElement) {
+                        originalPriceElement.innerText = '';
+                    }
+                    priceElement.innerText = `₹ ${item.price.toFixed(2)}`;
+                    priceElement.classList.remove('zz-item-price-offer');
+                }
+
+                // Update total
+                totalElement.innerText = `₹ ${item.totalPrice.toFixed(2)}`;
+                console.log(`Updated DOM for item ${item.productId._id}: totalElement.innerText=${totalElement.innerText}`);
+
+                // Update offer display
+                const offerElement = cartItem.querySelector('.zz-item-offer');
+                const noOfferElement = cartItem.querySelector('.zz-no-offer');
+                if (item.offerId && item.offerCode && item.discount > 0) {
+                    if (offerElement) {
+                        offerElement.innerHTML = `<i class="fas fa-tag"></i> ${item.offerCode}: Saved ₹${item.discount.toFixed(2)}`;
+                        offerElement.style.display = 'block';
+                    }
+                    if (noOfferElement) {
+                        noOfferElement.style.display = 'none';
+                    }
+                } else {
+                    if (offerElement) {
+                        offerElement.style.display = 'none';
+                    }
+                    if (noOfferElement) {
+                        noOfferElement.style.display = 'block';
+                    }
+                }
+            } else {
+                console.warn(`Cart item with productId ${item.productId._id} not found in DOM`);
+            }
         });
     }
 
+    // Function to update cart summary totals
     function updateCartSummary(cart) {
         console.log(`Updating cart summary: subtotal=${cart.subtotal}, displayDiscount=${cart.displayDiscount}, shipping=${cart.shipping}, total=${cart.total}`);
         const subtotalElement = document.querySelector('.zz-cart-summary .zz-summary-item:nth-child(1) .zz-summary-value');
         const discountElement = document.querySelector('.zz-cart-summary .zz-summary-item:nth-child(2) .zz-summary-value');
         const shippingElement = document.querySelector('.zz-cart-summary .zz-summary-item:nth-child(3) .zz-summary-value');
-        const totalElement = document.querySelector('.zz-total-value');
+        const totalElement = document.querySelector('.zz-cart-summary .zz-total-value');
+        const checkoutBtn = document.querySelector('.zz-checkout-btn');
+
         if (!subtotalElement || !discountElement || !shippingElement || !totalElement) {
-            console.error('Summary elements not found');
+            console.error('Summary elements not found: ', {
+                subtotalElement: !!subtotalElement,
+                discountElement: !!discountElement,
+                shippingElement: !!shippingElement,
+                totalElement: !!totalElement
+            });
             return;
         }
 
+        // Use fallback values to prevent undefined errors
         subtotalElement.innerText = `₹ ${(cart.subtotal || 0).toFixed(2)}`;
         discountElement.innerText = `${(cart.displayDiscount || 0).toFixed(2)} ₹`;
         shippingElement.innerText = `₹ ${(cart.shipping || 0).toFixed(2)}`;
@@ -825,8 +713,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         console.log(`DOM updated: subtotal=${subtotalElement.innerText}, discount=${discountElement.innerText}, shipping=${shippingElement.innerText}, total=${totalElement.innerText}`);
 
-        const checkoutBtn = document.querySelector('.zz-checkout-btn');
-        if (cart.items && cart.items.length > 0) {
+        // Enable/disable checkout button
+        if (cart.items.length > 0) {
             checkoutBtn.classList.remove('disabled');
             checkoutBtn.href = '/checkout';
         } else {
@@ -835,11 +723,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Function to handle empty cart
     function handleEmptyCart(cart) {
         const cartContainer = document.querySelector('.zz-cart-container');
         const cartTable = document.querySelector('.zz-cart-table');
+        const cartActions = document.querySelector('.zz-cart-actions');
 
-        if (!cart.items || cart.items.length === 0) {
+        if (cart.items.length === 0) {
             console.log('Cart is empty, showing empty cart message');
             cartContainer.innerHTML = `
                 <h2 class="zz-cart-title">Shopping Cart</h2>
@@ -850,34 +740,35 @@ document.addEventListener('DOMContentLoaded', function() {
                     <a href="/shop" class="btn btn-primary">Continue Shopping</a>
                 </div>
             `;
-        } else if (!cartTable) {
-            console.log('Re-creating cart table');
-            cartContainer.innerHTML = `
-                <h2 class="zz-cart-title">Shopping Cart</h2>
-                <table class="zz-cart-table">
-                    <thead>
-                        <tr>
-                            <th colspan="2">Product</th>
-                            <th>Price</th>
-                            <th>Quantity</th>
-                            <th>Total</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-                <div class="zz-cart-actions">
-                    <a href="/shop" class="zz-continue-shopping">
-                        <i class="fa fa-arrow-left"></i>
-                        Continue Shopping
-                    </a>
-                </div>
-            `;
-            updateCartItemsUI(cart.items);
+        } else {
+            if (!cartTable) {
+                console.log('Re-creating cart table');
+                cartContainer.innerHTML = `
+                    <h2 class="zz-cart-title">Shopping Cart</h2>
+                    <table class="zz-cart-table">
+                        <thead>
+                            <tr>
+                                <th colspan="2">Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <div class="zz-cart-actions">
+                        <a href="/shop" class="zz-continue-shopping">
+                            <i class="fa fa-arrow-left"></i> Continue Shopping
+                        </a>
+                    </div>
+                `;
+                updateCartItemsUI(cart.items);
+            }
         }
     }
 
-    // Initial event listeners for existing buttons
+    // Update the quantity value when the decrease button is clicked
     decreaseBtns.forEach(btn => {
         btn.addEventListener('click', function() {
             const input = this.parentNode.querySelector('.quantity-input');
@@ -890,6 +781,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Update the quantity value when the increase button is clicked
     increaseBtns.forEach(btn => {
         btn.addEventListener('click', function() {
             const input = this.parentNode.querySelector('.quantity-input');
@@ -904,18 +796,19 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 let message = maxValue === 5 
                     ? `You can only add up to 5 units of ${productName} to your cart.`
-                    : `Only ${maxValue} units of ${productName} available.`;
+                    : `Only ${maxValue} units of ${productName} are available in stock.`;
                 Swal.fire({
-                    icon: 'warning',
+                    icon: 'info',
                     title: 'Quantity Limit Reached',
                     text: message,
-                    timer: 2000,
+                    timer: 1500,
                     showConfirmButton: false
                 });
             }
         });
     });
 
+    // Validate quantity when input value changes
     quantityInputs.forEach(input => {
         input.addEventListener('change', function() {
             const value = parseInt(this.value);
@@ -930,19 +823,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     icon: 'info',
                     title: 'Invalid Quantity',
                     text: `Quantity must be at least 1 for ${productName}.`,
-                    timer: 2000,
+                    timer: 1500,
                     showConfirmButton: false
                 });
             } else if (value > max) {
                 this.value = max;
                 let message = max === 5 
                     ? `You can only add up to 5 units of ${productName} to your cart.`
-                    : `Only ${max} units of ${productName} available.`;
+                    : `Only ${max} units of ${productName} are available in stock.`;
                 Swal.fire({
-                    icon: 'warning',
+                    icon: 'info',
                     title: 'Quantity Limit Reached',
                     text: message,
-                    timer: 2000,
+                    timer: 1500,
                     showConfirmButton: false
                 });
             }
@@ -951,11 +844,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Remove item functionality
     removeButtons.forEach(button => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
             const productId = this.getAttribute('data-product-id');
-            console.log('Attempting to remove productId:', productId);
 
             Swal.fire({
                 title: 'Are you sure?',
@@ -969,19 +862,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     fetch(`/removeFromCart/${productId}`, {
                         method: 'PATCH',
                         headers: {
-                            'Content-Type': 'application/json',
+                            'Content-Type': 'application/json'
                         },
                         credentials: 'include'
                     })
                     .then(response => {
-                        console.log('Remove response status:', response.status);
                         if (!response.ok) {
                             throw new Error(`HTTP error! Status: ${response.status}`);
                         }
                         return response.json();
                     })
                     .then(data => {
-                        console.log('Remove response data:', data);
                         if (data.success) {
                             Swal.fire({
                                 icon: 'success',
@@ -991,29 +882,23 @@ document.addEventListener('DOMContentLoaded', function() {
                                 showConfirmButton: false
                             }).then(() => {
                                 const cartItem = button.closest('.zz-cart-item');
-                                if (cartItem) {
-                                    cartItem.remove();
-                                } else {
-                                    console.warn(`Cart item with productId ${productId} not found in DOM`);
-                                }
+                                if (cartItem) cartItem.remove();
                                 updateCartUI(data.cart);
                             });
                         } else {
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Failed',
-                                text: data.message || 'Failed to remove item from cart.',
-                                showConfirmButton: true
+                                text: data.message || 'Failed to remove item'
                             });
                         }
                     })
                     .catch(error => {
-                        console.error('Error removing item:', error);
+                        console.error('Fetch error:', error);
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: error.message || 'An error occurred while removing the item.',
-                            showConfirmButton: true
+                            text: error.message || 'An error occurred. Please try again.'
                         });
                     });
                 }
@@ -1021,6 +906,5 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
-    </script>
-</body>
+</script></body>
 </html>

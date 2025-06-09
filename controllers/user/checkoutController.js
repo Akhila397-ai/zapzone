@@ -237,10 +237,23 @@ const placeOrder = async (req, res) => {
         return res.redirect("/pageNotFound");
       }
 
-      const validItems = cart.items.filter(item =>
-        item.productId && typeof item.productId.quantity === "number" &&
-        item.productId.quantity >= item.quantity && typeof item.price === "number" && !isNaN(item.price)
-      );
+     // 🔍 Stock Validation: check for out-of-stock items
+const outOfStockItem = cart.items.find(item => {
+  return item.productId.quantity < item.quantity;
+});
+console.log(outOfStockItem,'121212121212');
+
+
+if (outOfStockItem) {
+  console.warn("Product out of stock:", outOfStockItem.productId.name);
+  return res.render("checkout", {
+    cart: cart.items,
+    message: `${outOfStockItem.productId.name} is out of stock or only ${outOfStockItem.productId.quantity} left.`,
+    user: req.session.user,
+    addressId,
+  });
+}
+
 
       if (!validItems.length) {
         console.error("No valid items to process order:", { cartItems: cart.items });
@@ -1730,4 +1743,5 @@ module.exports = {
   loadPaymentFailurePage,
   updateOrderStatus,
   downloadInvoice,
+  
 };
